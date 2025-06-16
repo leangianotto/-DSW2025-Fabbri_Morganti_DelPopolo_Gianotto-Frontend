@@ -1,0 +1,31 @@
+<!-- Botones para filtrar por categoría -->
+<div class="categorias">
+  <button (click)="getByCategory(1)">Celulares</button>
+  <button (click)="getByCategory(2)">Computadoras</button>
+  <button (click)="getByCategory(3)">Accesorios</button>
+  <button (click)="loadAllProducts()">Todos</button>
+</div>
+
+<!-- Mensaje de carga si aún no hay productos -->
+<div *ngIf="products.length === 0">No hay productos</div>
+
+<!-- Listado de productos -->
+<div *ngFor="let product of products" class="product-card">
+  <h3>{{ product.name }}</h3>
+  <p>{{ product.description }}</p>
+  <p>Precio: ${{ product.price }}</p>
+  <p>Stock: {{ product.stock }}</p>
+
+  <a [routerLink]="['/products', product.id]">
+    <h3>{{ product.name }}</h3>
+  </a>
+  <!-- o todo el div clickable -->
+
+  <!-- Mostrar imagen si existe -->
+  <img
+    *ngIf="product.imageUrl"
+    [src]="product.imageUrl"
+    alt="{{ product.name }}"
+    width="150"
+  />
+</div>
