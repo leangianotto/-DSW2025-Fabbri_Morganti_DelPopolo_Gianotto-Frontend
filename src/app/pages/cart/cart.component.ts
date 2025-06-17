@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CartService, CartItem } from 'src/app/services/cart.service';
+ 
 
 @Component({
   selector: 'app-cart',
@@ -7,8 +9,14 @@ import { CartService, CartItem } from 'src/app/services/cart.service';
 })
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
+  
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    
+    private router: Router
+  ) {}
+  
 
   ngOnInit(): void {
     this.cartItems = this.cartService.getCart();
@@ -25,8 +33,12 @@ export class CartComponent implements OnInit {
   }
 
   getTotal(): number {
-    return this.cartService.getTotal();
+    return this.cartItems.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0
+    );
   }
+  
 
   updateQuantity(productId: number, change: number): void {
     const item = this.cartItems.find(i => i.product.id === productId);
@@ -37,6 +49,20 @@ export class CartComponent implements OnInit {
     this.cartService.updateQuantity(productId, newQuantity);
     this.cartItems = this.cartService.getCart();
   }
+
+  checkout() {
+    const token = localStorage.getItem('token'); // o donde guardes el JWT
+  
+    if (!token) {
+      alert('Debes iniciar sesión para realizar un pedido.');
+      this.router.navigate(['/login']); // redirige al login
+      return;
+    }
+  
+    
+  }
+  
+  
   
 }
 

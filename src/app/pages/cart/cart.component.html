@@ -35,5 +35,9 @@
 
   <h3>Total: ${{ getTotal() }}</h3>
 
+  <button (click)="checkout()" [disabled]="cartItems.length === 0">
+    Comprar
+  </button>
+
   <button (click)="clearCart()">Vaciar carrito</button>
 </div>

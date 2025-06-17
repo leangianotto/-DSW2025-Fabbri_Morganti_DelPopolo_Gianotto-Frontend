@@ -1,1 +1,20 @@
-<p>register works!</p>
+<h2>Registro de Usuario</h2>
+<form (ngSubmit)="onRegister()" #registerForm="ngForm">
+  <label>
+    Nombre:
+    <input type="text" [(ngModel)]="name" name="name" required />
+  </label>
+  <br />
+  <label>
+    Email:
+    <input type="email" [(ngModel)]="email" name="email" required />
+  </label>
+  <br />
+  <label>
+    Contraseña:
+    <input type="password" [(ngModel)]="password" name="password" required />
+  </label>
+  <br />
+  <button type="submit" [disabled]="registerForm.invalid">Registrarse</button>
+</form>
+<p *ngIf="message">{{ message }}</p>
