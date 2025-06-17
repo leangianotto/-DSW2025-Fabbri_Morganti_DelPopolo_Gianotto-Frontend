@@ -2,4 +2,11 @@
   <a routerLink="/">Inicio</a> | <a routerLink="/products">Productos</a> |
   <a routerLink="/login">Login</a> |
   <a routerLink="/register">Registrarse</a>
+
+  <div style="float: right">
+    <span *ngIf="userName">Hola, {{ userName }}</span>
+    <button *ngIf="userName" (click)="logout()">Cerrar sesión</button>
+
+    <a *ngIf="!userName" routerLink="/login">Iniciar sesión</a>
+  </div>
 </nav>
