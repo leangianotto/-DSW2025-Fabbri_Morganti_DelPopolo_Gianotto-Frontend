@@ -1,27 +1,48 @@
-# A
+Proyecto E-commerce Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
+Este es el frontend del proyecto de e-commerce desarrollado con Angular y Bootstrap. Incluye funcionalidades como:
 
-## Development server
+-Registro e inicio de sesión
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+-Navegación por productos
 
-## Code scaffolding
+-Carrito de compras
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+-Detalle de productos y reseñas
 
-## Build
+-Página de inicio con landing atractiva
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Requisitos
 
-## Running unit tests
+Node.js (v16 o superior)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Angular CLI instalado globalmente --> npm install -g @angular/cli
 
-## Running end-to-end tests
+INSTALACION
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+1.Cloná el proyecto y ejecutá los siguientes pasos:
 
-## Further help
+git clone https://github.com/leangianotto/-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend.git
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+cd -DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend
+
+2.Instalá las dependencias:
+npm install
+
+3.Instalá Bootstrap y Bootstrap Icons:
+npm install bootstrap bootstrap-icons
+
+4.Levantar el servidor
+ng serve
+
+La app estará disponible en:
+http://localhost:4200
+
+Librerías usadas:
+Bootstrap 5
+Bootstrap Icons
+
+Notas
+Asegurate de tener el backend corriendo en http://localhost:3000
+
+Los estilos y scripts de Bootstrap están referenciados desde angular.json

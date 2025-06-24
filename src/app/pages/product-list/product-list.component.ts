@@ -1,11 +1,7 @@
-
-
-
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { CartService } from 'src/app/services/cart.service';
-
 
 @Component({
   selector: 'app-product-list',
@@ -13,44 +9,83 @@ import { CartService } from 'src/app/services/cart.service';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-
   products: Product[] = [];
+  filteredProducts: Product[] = [];
   loading: boolean = true;
 
- 
+  // Filtros
+  searchTerm: string = '';
+  sortOption: string = '';
 
-  constructor(private productService: ProductService,
-    private cartService: CartService) {}
+  // Paginación
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
     this.loadAllProducts();
   }
 
-
-
   loadAllProducts(): void {
     this.loading = true;
     this.productService.getProducts().subscribe({
-      next: (data) => this.products = data,
+      next: (data) => {
+        this.products = data;
+        this.applyFilters();
+      },
       error: (err) => console.error('Error al cargar productos:', err),
-      complete: () => this.loading = false
+      complete: () => (this.loading = false)
     });
   }
 
   getByCategory(categoryId: number): void {
     this.loading = true;
     this.productService.getProductsByCategory(categoryId).subscribe({
-      next: (data) => this.products = data,
-      error: (error) => console.error('Error al obtener productos por categoría:', error),
-      complete: () => this.loading = false
+      next: (data) => {
+        this.products = data;
+        this.currentPage = 1;
+        this.applyFilters();
+      },
+      error: (err) => console.error('Error al obtener productos por categoría:', err),
+      complete: () => (this.loading = false)
     });
   }
 
-  addToCart(product: Product) {
+  applyFilters(): void {
+    this.filteredProducts = this.products.filter(product =>
+      product.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+
+    if (this.sortOption === 'asc') {
+      this.filteredProducts.sort((a, b) => a.price - b.price);
+    } else if (this.sortOption === 'desc') {
+      this.filteredProducts.sort((a, b) => b.price - a.price);
+    }
+  }
+
+  get paginatedProducts(): Product[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredProducts.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredProducts.length / this.itemsPerPage);
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+  }
+
+  addToCart(product: Product): void {
     this.cartService.addProduct(product);
     alert('Producto agregado al carrito');
   }
 }
+
 
 
 

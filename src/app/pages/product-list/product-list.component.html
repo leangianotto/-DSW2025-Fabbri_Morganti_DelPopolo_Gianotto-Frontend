@@ -1,29 +1,39 @@
-<!-- Botones para filtrar por categoría -->
+<!-- Filtro por categoría -->
 <div class="mb-4 d-flex justify-content-center gap-2 flex-wrap categorias">
-  <button
-    class="btn btn-outline-primary"
-    (click)="getByCategory(1)"
-    type="button"
-  >
+  <button class="btn btn-outline-primary" (click)="getByCategory(1)">
     Celulares
   </button>
-  <button
-    class="btn btn-outline-primary"
-    (click)="getByCategory(2)"
-    type="button"
-  >
+  <button class="btn btn-outline-primary" (click)="getByCategory(2)">
     Computadoras
   </button>
-  <button
-    class="btn btn-outline-primary"
-    (click)="getByCategory(3)"
-    type="button"
-  >
+  <button class="btn btn-outline-primary" (click)="getByCategory(3)">
     Accesorios
   </button>
-  <button class="btn btn-primary" (click)="loadAllProducts()" type="button">
-    Todos
-  </button>
+  <button class="btn btn-primary" (click)="loadAllProducts()">Todos</button>
+</div>
+
+<!-- Barra de búsqueda y orden mayor/menor, -->
+<div class="row mb-4 justify-content-center">
+  <div class="col-md-4">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar productos..."
+      [(ngModel)]="searchTerm"
+      (input)="applyFilters()"
+    />
+  </div>
+  <div class="col-md-3">
+    <select
+      class="form-select"
+      [(ngModel)]="sortOption"
+      (change)="applyFilters()"
+    >
+      <option value="">Ordenar por</option>
+      <option value="asc">Precio: menor a mayor</option>
+      <option value="desc">Precio: mayor a menor</option>
+    </select>
+  </div>
 </div>
 
 <!-- Spinner de carga -->
@@ -33,17 +43,20 @@
   </div>
 </div>
 
-<!-- Mensaje si no hay productos -->
+<!-- Si no hay productos -->
 <div
-  *ngIf="!loading && products.length === 0"
+  *ngIf="!loading && filteredProducts.length === 0"
   class="alert alert-warning text-center mt-3"
 >
   No hay productos disponibles.
 </div>
 
-<!-- Grid de productos -->
-<div class="row" *ngIf="!loading && products.length > 0">
-  <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of products">
+<!-- tabla de productos -->
+<div class="row" *ngIf="!loading && filteredProducts.length > 0">
+  <div
+    class="col-sm-6 col-md-4 col-lg-3 mb-4"
+    *ngFor="let product of paginatedProducts"
+  >
     <div class="card h-100 shadow-sm rounded">
       <img
         *ngIf="product.imageUrl"
@@ -73,14 +86,33 @@
           class="btn btn-outline-primary mb-2"
           >Ver Detalles</a
         >
-        <button
-          class="btn btn-success"
-          (click)="addToCart(product)"
-          [attr.aria-label]="'Agregar ' + product.name + ' al carrito'"
-        >
+        <button class="btn btn-success" (click)="addToCart(product)">
           🛒 Agregar al carrito
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Paginación -->
+<nav *ngIf="totalPages > 1" class="mt-4">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link" (click)="changePage(currentPage - 1)">
+        Anterior
+      </button>
+    </li>
+    <li
+      class="page-item"
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="currentPage === i + 1"
+    >
+      <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link" (click)="changePage(currentPage + 1)">
+        Siguiente
+      </button>
+    </li>
+  </ul>
+</nav>
