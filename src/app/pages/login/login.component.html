@@ -1,15 +1,70 @@
-<h2>Iniciar sesión</h2>
+<div class="container mt-5" style="max-width: 400px">
+  <h2 class="mb-4 text-center fw-bold">Iniciar sesión</h2>
 
-<form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-  <div>
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="email" name="email" required />
-  </div>
-  <div>
-    <label>Contraseña:</label>
-    <input type="password" [(ngModel)]="password" name="password" required />
-  </div>
-  <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
-  <p *ngIf="error" style="color: red">{{ error }}</p>
-  <p *ngIf="success" style="color: green">{{ success }}</p>
-</form>
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email:</label>
+      <input
+        id="email"
+        type="email"
+        class="form-control"
+        [(ngModel)]="email"
+        name="email"
+        required
+        email
+        #emailInput="ngModel"
+        [class.is-invalid]="emailInput.invalid && emailInput.touched"
+      />
+      <div
+        *ngIf="emailInput.errors && emailInput.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="emailInput.errors['required']">
+          El email es obligatorio.
+        </div>
+        <div *ngIf="emailInput.errors['email']">Ingrese un email válido.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña:</label>
+      <input
+        id="password"
+        type="password"
+        class="form-control"
+        [(ngModel)]="password"
+        name="password"
+        required
+        minlength="6"
+        #passwordInput="ngModel"
+        [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
+      />
+      <div
+        *ngIf="passwordInput.errors && passwordInput.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="passwordInput.errors['required']">
+          La contraseña es obligatoria.
+        </div>
+        <div *ngIf="passwordInput.errors['minlength']">
+          La contraseña debe tener al menos 6 caracteres.
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary w-100"
+      [disabled]="loginForm.invalid"
+    >
+      Ingresar
+    </button>
+
+    <div *ngIf="error" class="alert alert-danger mt-3" role="alert">
+      {{ error }}
+    </div>
+    <div *ngIf="success" class="alert alert-success mt-3" role="alert">
+      {{ success }}
+    </div>
+  </form>
+</div>

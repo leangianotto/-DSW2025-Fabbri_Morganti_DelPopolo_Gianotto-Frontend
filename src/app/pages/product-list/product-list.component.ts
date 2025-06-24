@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+
+
+
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
+import { CartService } from 'src/app/services/cart.service';
+
 
 @Component({
   selector: 'app-product-list',
@@ -10,31 +15,45 @@ import { Product } from '../../models/product';
 export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
+  loading: boolean = true;
 
-  constructor(private productService: ProductService) {}
+ 
+
+  constructor(private productService: ProductService,
+    private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.loadAllProducts();  // al iniciar, cargo todos los productos
+    this.loadAllProducts();
   }
 
-  loadAllProducts() {
+
+
+  loadAllProducts(): void {
+    this.loading = true;
     this.productService.getProducts().subscribe({
       next: (data) => this.products = data,
       error: (err) => console.error('Error al cargar productos:', err),
-      complete: () => console.log('Carga de productos completada')
+      complete: () => this.loading = false
     });
   }
 
-  getByCategory(categoryId: number) {
+  getByCategory(categoryId: number): void {
+    this.loading = true;
     this.productService.getProductsByCategory(categoryId).subscribe({
       next: (data) => this.products = data,
       error: (error) => console.error('Error al obtener productos por categoría:', error),
-      complete: () => console.log('Productos por categoría cargados')
+      complete: () => this.loading = false
     });
   }
-  
 
+  addToCart(product: Product) {
+    this.cartService.addProduct(product);
+    alert('Producto agregado al carrito');
+  }
 }
+
+
+
 
 
 

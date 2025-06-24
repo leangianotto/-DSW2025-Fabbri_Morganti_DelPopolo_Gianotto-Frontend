@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService, CartItem } from 'src/app/services/cart.service';
- 
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-cart',
@@ -13,7 +13,7 @@ export class CartComponent implements OnInit {
 
   constructor(
     private cartService: CartService,
-    
+    private orderService: OrderService,
     private router: Router
   ) {}
   
@@ -58,7 +58,18 @@ export class CartComponent implements OnInit {
       this.router.navigate(['/login']); // redirige al login
       return;
     }
-  
+    const items = this.cartService.getCart();
+    this.orderService.createOrder(items).subscribe({
+      next: (res) => {
+        alert('Pedido realizado con éxito');
+        this.cartService.clearCart();
+        this.router.navigate(['/products']);
+      },
+      error: (err) => {
+        console.error('Error al realizar el pedido:', err);
+        alert('Hubo un problema al realizar el pedido.');
+      },
+    });
     
   }
   

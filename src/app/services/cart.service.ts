@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
+import { BehaviorSubject } from 'rxjs';
+
 
 export interface CartItem {
   product: Product;
@@ -8,9 +10,13 @@ export interface CartItem {
 
 @Injectable({
   providedIn: 'root',
+  
 })
 export class CartService {
   private cartKey = 'cart';
+  
+  
+  
 
   constructor() {
     this.initCart();
@@ -20,8 +26,18 @@ export class CartService {
     const existing = localStorage.getItem(this.cartKey);
     if (!existing) {
       localStorage.setItem(this.cartKey, JSON.stringify([]));
+      this.updateCartCount();
     }
   }
+
+  private cartCountSubject = new BehaviorSubject<number>(0);
+cartCount$ = this.cartCountSubject.asObservable(); // observable para suscribirse
+
+private updateCartCount(): void {
+  const cart = this.getCart();
+  this.cartCountSubject.next(cart.reduce((sum, item) => sum + item.quantity, 0));
+}
+
 
   getCart(): CartItem[] {
     const data = localStorage.getItem(this.cartKey);
@@ -39,16 +55,19 @@ export class CartService {
     }
 
     localStorage.setItem(this.cartKey, JSON.stringify(cart));
+    this.updateCartCount();
   }
 
   removeProduct(productId: number): void {
     let cart = this.getCart();
     cart = cart.filter((item) => item.product.id !== productId);
     localStorage.setItem(this.cartKey, JSON.stringify(cart));
+    this.updateCartCount();
   }
 
   clearCart(): void {
     localStorage.setItem(this.cartKey, JSON.stringify([]));
+    this.updateCartCount();
   }
 
   getTotal(): number {
@@ -68,8 +87,10 @@ export class CartService {
         this.removeProduct(productId); // elimina si es 0 o menos
       } else {
         localStorage.setItem(this.cartKey, JSON.stringify(cart));
+        this.updateCartCount();
       }
     }
   }
   
+
 }
