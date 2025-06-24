@@ -1,20 +1,87 @@
-<h2>Registro de Usuario</h2>
-<form (ngSubmit)="onRegister()" #registerForm="ngForm">
-  <label>
-    Nombre:
-    <input type="text" [(ngModel)]="name" name="name" required />
-  </label>
-  <br />
-  <label>
-    Email:
-    <input type="email" [(ngModel)]="email" name="email" required />
-  </label>
-  <br />
-  <label>
-    Contraseña:
-    <input type="password" [(ngModel)]="password" name="password" required />
-  </label>
-  <br />
-  <button type="submit" [disabled]="registerForm.invalid">Registrarse</button>
-</form>
-<p *ngIf="message">{{ message }}</p>
+<div class="container mt-5" style="max-width: 400px">
+  <h2 class="mb-4 text-center fw-bold">Registro de Usuario</h2>
+
+  <form (ngSubmit)="onRegister()" #registerForm="ngForm" novalidate>
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre:</label>
+      <input
+        id="name"
+        type="text"
+        class="form-control"
+        [(ngModel)]="name"
+        name="name"
+        required
+        #nameInput="ngModel"
+        [class.is-invalid]="nameInput.invalid && nameInput.touched"
+      />
+      <div
+        *ngIf="nameInput.invalid && nameInput.touched"
+        class="invalid-feedback"
+      >
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email:</label>
+      <input
+        id="email"
+        type="email"
+        class="form-control"
+        [(ngModel)]="email"
+        name="email"
+        required
+        email
+        #emailInput="ngModel"
+        [class.is-invalid]="emailInput.invalid && emailInput.touched"
+      />
+      <div
+        *ngIf="emailInput.errors && emailInput.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="emailInput.errors['required']">
+          El email es obligatorio.
+        </div>
+        <div *ngIf="emailInput.errors['email']">Ingrese un email válido.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña:</label>
+      <input
+        id="password"
+        type="password"
+        class="form-control"
+        [(ngModel)]="password"
+        name="password"
+        required
+        minlength="6"
+        #passwordInput="ngModel"
+        [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
+      />
+      <div
+        *ngIf="passwordInput.errors && passwordInput.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="passwordInput.errors['required']">
+          La contraseña es obligatoria.
+        </div>
+        <div *ngIf="passwordInput.errors['minlength']">
+          La contraseña debe tener al menos 6 caracteres.
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-success w-100"
+      [disabled]="registerForm.invalid"
+    >
+      Registrarse
+    </button>
+
+    <div *ngIf="message" class="alert alert-info mt-3" role="alert">
+      {{ message }}
+    </div>
+  </form>
+</div>

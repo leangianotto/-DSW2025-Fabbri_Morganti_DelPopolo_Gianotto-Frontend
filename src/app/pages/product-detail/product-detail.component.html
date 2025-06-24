@@ -1,14 +1,82 @@
-<div *ngIf="product">
-  <h2>{{ product.name }}</h2>
-  <p>{{ product.description }}</p>
-  <p>Precio: ${{ product.price }}</p>
-  <p>Stock: {{ product.stock }}</p>
-  <p>Categoría: {{ product.category?.name }}</p>
-  <img
-    *ngIf="product.imageUrl"
-    [src]="product.imageUrl"
-    alt="{{ product.name }}"
-    width="200"
-  />
-  <button (click)="addToCart(product)">Agregar al carrito</button>
+<div *ngIf="product" class="container my-4">
+  <div class="row">
+    <!-- Imagen y detalles -->
+    <div class="col-md-5 text-center">
+      <img
+        *ngIf="product.imageUrl"
+        [src]="product.imageUrl"
+        alt="{{ product.name }}"
+        class="img-fluid rounded shadow-sm"
+        style="max-height: 300px; object-fit: contain"
+      />
+    </div>
+
+    <div class="col-md-7">
+      <h2 class="mb-3">{{ product.name }}</h2>
+      <p class="text-muted">{{ product.description }}</p>
+      <p><strong>Precio:</strong> ${{ product.price }}</p>
+      <p><strong>Stock:</strong> {{ product.stock }}</p>
+      <p><strong>Categoría:</strong> {{ product.category?.name }}</p>
+
+      <button class="btn btn-primary btn-lg mt-3" (click)="addToCart(product)">
+        🛒 Agregar al carrito
+      </button>
+    </div>
+  </div>
+
+  <hr class="my-4" />
+
+  <!-- Sección reseñas -->
+  <div>
+    <h3>Reseñas</h3>
+
+    <div *ngIf="reviews.length === 0" class="alert alert-info">
+      Aún no hay reseñas.
+    </div>
+
+    <div *ngFor="let review of reviews" class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <p class="mb-1">
+          <strong>⭐ {{ review.rating }}/5</strong>
+        </p>
+        <p class="mb-0">{{ review.comment }}</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4" />
+
+  <!-- Formulario para dejar reseña -->
+  <div>
+    <h4>Dejar una reseña</h4>
+    <form (ngSubmit)="submitReview()" class="mb-5">
+      <div class="mb-3">
+        <label for="rating" class="form-label">Puntaje:</label>
+        <select
+          id="rating"
+          [(ngModel)]="rating"
+          name="rating"
+          class="form-select"
+          required
+        >
+          <option *ngFor="let r of [1, 2, 3, 4, 5]" [value]="r">{{ r }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="comment" class="form-label">Comentario:</label>
+        <textarea
+          id="comment"
+          [(ngModel)]="comment"
+          name="comment"
+          class="form-control"
+          rows="3"
+          required
+          placeholder="Escribe tu opinión aquí..."
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success">Enviar reseña</button>
+    </form>
+  </div>
 </div>

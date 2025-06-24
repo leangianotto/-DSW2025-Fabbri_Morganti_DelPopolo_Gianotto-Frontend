@@ -1,30 +1,86 @@
 <!-- Botones para filtrar por categoría -->
-<div class="categorias">
-  <button (click)="getByCategory(1)">Celulares</button>
-  <button (click)="getByCategory(2)">Computadoras</button>
-  <button (click)="getByCategory(3)">Accesorios</button>
-  <button (click)="loadAllProducts()">Todos</button>
+<div class="mb-4 d-flex justify-content-center gap-2 flex-wrap categorias">
+  <button
+    class="btn btn-outline-primary"
+    (click)="getByCategory(1)"
+    type="button"
+  >
+    Celulares
+  </button>
+  <button
+    class="btn btn-outline-primary"
+    (click)="getByCategory(2)"
+    type="button"
+  >
+    Computadoras
+  </button>
+  <button
+    class="btn btn-outline-primary"
+    (click)="getByCategory(3)"
+    type="button"
+  >
+    Accesorios
+  </button>
+  <button class="btn btn-primary" (click)="loadAllProducts()" type="button">
+    Todos
+  </button>
 </div>
 
-<!-- Mensaje de carga si aún no hay productos -->
-<div *ngIf="products.length === 0">No hay productos</div>
+<!-- Spinner de carga -->
+<div class="text-center mt-4" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Cargando productos...</span>
+  </div>
+</div>
 
-<!-- Listado de productos -->
-<div *ngFor="let product of products" class="product-card">
-  <h3>{{ product.name }}</h3>
-  <p>{{ product.description }}</p>
-  <p>Precio: ${{ product.price }}</p>
-  <p>Stock: {{ product.stock }}</p>
+<!-- Mensaje si no hay productos -->
+<div
+  *ngIf="!loading && products.length === 0"
+  class="alert alert-warning text-center mt-3"
+>
+  No hay productos disponibles.
+</div>
 
-  <a [routerLink]="['/products', product.id]">
-    <h3>{{ product.name }}</h3>
-  </a>
-
-  <!-- Mostrar imagen si existe -->
-  <img
-    *ngIf="product.imageUrl"
-    [src]="product.imageUrl"
-    alt="{{ product.name }}"
-    width="150"
-  />
+<!-- Grid de productos -->
+<div class="row" *ngIf="!loading && products.length > 0">
+  <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let product of products">
+    <div class="card h-100 shadow-sm rounded">
+      <img
+        *ngIf="product.imageUrl"
+        [src]="product.imageUrl"
+        class="card-img-top"
+        [alt]="product.name"
+        style="object-fit: cover; height: 180px"
+      />
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-truncate" title="{{ product.name }}">
+          {{ product.name }}
+        </h5>
+        <p
+          class="card-text flex-grow-1 text-truncate"
+          title="{{ product.description }}"
+        >
+          {{ product.description }}
+        </p>
+        <p class="card-text mb-1">
+          <strong>Precio:</strong> ${{ product.price.toFixed(2) }}
+        </p>
+        <p class="card-text mb-3">
+          <strong>Stock:</strong> {{ product.stock }}
+        </p>
+        <a
+          [routerLink]="['/products', product.id]"
+          class="btn btn-outline-primary mb-2"
+          >Ver Detalles</a
+        >
+        <button
+          class="btn btn-success"
+          (click)="addToCart(product)"
+          [attr.aria-label]="'Agregar ' + product.name + ' al carrito'"
+        >
+          🛒 Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

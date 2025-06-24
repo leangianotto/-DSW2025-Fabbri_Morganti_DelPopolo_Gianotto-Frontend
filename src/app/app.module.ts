@@ -24,7 +24,7 @@ import { CartComponent } from './pages/cart/cart.component';
     ProductListComponent,
     ProductDetailComponent,
     NavbarComponent,
-    // CartComponent
+    CartComponent
   ],
   imports: [
     BrowserModule,

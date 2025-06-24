@@ -1,12 +1,81 @@
-<nav>
-  <a routerLink="/">Inicio</a> | <a routerLink="/products">Productos</a> |
-  <a routerLink="/login">Login</a> |
-  <a routerLink="/register">Registrarse</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/">MiEcommerce</a>
 
-  <div style="float: right">
-    <span *ngIf="userName">Hola, {{ userName }}</span>
-    <button *ngIf="userName" (click)="logout()">Cerrar sesión</button>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent"
+      aria-controls="navbarContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <a *ngIf="!userName" routerLink="/login">Iniciar sesión</a>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/products">Productos</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+        <li class="nav-item me-3 position-relative">
+          <a
+            class="nav-link text-dark"
+            routerLink="/cart"
+            aria-label="Carrito de compras"
+          >
+            <i class="bi bi-cart" style="font-size: 1.5rem"></i>
+            <span
+              *ngIf="cartCount > 0"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 0.75rem"
+            >
+              {{ cartCount }}
+              <span class="visually-hidden">productos en carrito</span>
+            </span>
+          </a>
+        </li>
+
+        <li *ngIf="userName" class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="userDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Hola, {{ userName }}
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="userDropdown"
+          >
+            <li><a class="dropdown-item" routerLink="/profile">Perfil</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </li>
+
+        <li *ngIf="!userName" class="nav-item">
+          <a class="nav-link" routerLink="/login">Iniciar sesión</a>
+        </li>
+
+        <li *ngIf="!userName" class="nav-item">
+          <a class="nav-link" routerLink="/register">Registrarse</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
