@@ -1,0 +1,15 @@
+<div class="container mt-4">
+  <h2>Perfil de Usuario</h2>
+
+  <div *ngIf="user; else notLoggedIn">
+    <p><strong>Nombre:</strong> {{ user.name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button>
+  </div>
+
+  <ng-template #notLoggedIn>
+    <p>No has iniciado sesión.</p>
+    <a routerLink="/login" class="btn btn-primary">Iniciar sesión</a>
+  </ng-template>
+</div>
