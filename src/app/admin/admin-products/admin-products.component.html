@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <h2>Administrar Productos</h2>
+
+  <!-- Formulario -->
+  <form (ngSubmit)="onSubmit()" class="mb-4">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <input
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Nombre"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-md-6">
+        <input
+          [(ngModel)]="price"
+          name="price"
+          type="number"
+          placeholder="Precio"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-md-6">
+        <input
+          [(ngModel)]="stock"
+          name="stock"
+          type="number"
+          placeholder="Stock"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-md-6">
+        <input
+          [(ngModel)]="categoryId"
+          name="categoryId"
+          type="number"
+          placeholder="Categoría ID"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <input
+          [(ngModel)]="imageUrl"
+          name="imageUrl"
+          placeholder="URL de imagen"
+          class="form-control"
+        />
+      </div>
+      <div class="col-12">
+        <textarea
+          [(ngModel)]="description"
+          name="description"
+          placeholder="Descripción"
+          class="form-control"
+          required
+        ></textarea>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary w-100">
+          {{ selectedProductId ? "Actualizar" : "Crear" }}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla -->
+  <div *ngIf="products.length">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{ p.name }}</td>
+          <td>${{ p.price }}</td>
+          <td>{{ p.stock }}</td>
+          <td>{{ p.categoryId }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="onEdit(p)">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="onDelete(p.id)">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

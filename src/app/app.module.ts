@@ -15,6 +15,11 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { AdminProductsComponent } from './admin/admin-products/admin-products.component';
+import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
+import { AdminCategoriesComponent } from './admin/admin-categories/admin-categories.component';
+import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +31,12 @@ import { ProfileComponent } from './components/profile/profile.component';
     ProductDetailComponent,
     NavbarComponent,
     CartComponent,
-    ProfileComponent
+    ProfileComponent,
+    FooterComponent,
+    AdminProductsComponent,
+    AdminOrdersComponent,
+    AdminCategoriesComponent,
+    AdminUsersComponent
   ],
   imports: [
     BrowserModule,

@@ -12,25 +12,29 @@ import { CartService } from 'src/app/services/cart.service'; // <--
 export class NavbarComponent implements OnInit, OnDestroy {
   userName: string | null = null;
   cartCount = 0;
+  isAdmin = false;
+
 
   private userSubscription!: Subscription;
   private cartSubscription!: Subscription;
 
   constructor(
     private authService: AuthService,
-    private cartService: CartService, // <--
+    private cartService: CartService, 
     private router: Router
   ) {}
 
   ngOnInit() {
     this.userSubscription = this.authService.currentUser$.subscribe((user) => {
       this.userName = user ? user.name : null;
+      this.isAdmin = user?.role === 'admin'; 
     });
-
+  
     this.cartSubscription = this.cartService.cartCount$.subscribe((count: number) => {
       this.cartCount = count;
     });
   }
+  
 
   ngOnDestroy() {
     this.userSubscription.unsubscribe();

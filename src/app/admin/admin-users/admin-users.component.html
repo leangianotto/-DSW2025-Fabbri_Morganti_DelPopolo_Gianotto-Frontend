@@ -1,0 +1,102 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Gestión de Usuarios</h2>
+
+  <!-- Mensajes -->
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <!-- Crear nuevo usuario -->
+  <div class="card mb-4 p-3">
+    <h5>Crear nuevo usuario</h5>
+    <div class="row">
+      <div class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Nombre"
+          [(ngModel)]="newUser.name"
+        />
+      </div>
+      <div class="col-md-3">
+        <input
+          type="email"
+          class="form-control"
+          placeholder="Email"
+          [(ngModel)]="newUser.email"
+        />
+      </div>
+      <div class="col-md-2">
+        <input
+          type="password"
+          class="form-control"
+          placeholder="Contraseña"
+          [(ngModel)]="newUser.password"
+        />
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" [(ngModel)]="newUser.role">
+          <option value="user">Usuario</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" (click)="createUser()">
+          Crear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <!-- Si estamos editando este usuario -->
+        <ng-container *ngIf="editUser && editUser.id === user.id; else viewRow">
+          <td><input [(ngModel)]="editUser.name" class="form-control" /></td>
+          <td><input [(ngModel)]="editUser.email" class="form-control" /></td>
+          <td>
+            <select [(ngModel)]="editUser.role" class="form-select">
+              <option value="user">Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-success me-2" (click)="updateUser()">
+              Guardar
+            </button>
+            <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">
+              Cancelar
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Vista normal (no editando) -->
+        <ng-template #viewRow>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="edit(user)">
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteUser(user.id!)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+</div>

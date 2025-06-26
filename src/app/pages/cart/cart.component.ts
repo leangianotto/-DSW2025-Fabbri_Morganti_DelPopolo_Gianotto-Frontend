@@ -33,11 +33,9 @@ export class CartComponent implements OnInit {
   }
 
   getTotal(): number {
-    return this.cartItems.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    );
+    return this.cartService.getTotal();
   }
+  
   
 
   updateQuantity(productId: number, change: number): void {
@@ -45,10 +43,10 @@ export class CartComponent implements OnInit {
     if (!item) return;
   
     const newQuantity = item.quantity + change;
-  
     this.cartService.updateQuantity(productId, newQuantity);
     this.cartItems = this.cartService.getCart();
   }
+  
 
   checkout() {
     const token = localStorage.getItem('token'); // o donde guardes el JWT
