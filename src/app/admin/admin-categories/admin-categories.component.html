@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <h2 class="mb-4 text-center fw-bold">Administrar Categorías</h2>
+
+  <!-- Crear nueva categoría -->
+  <div class="mb-3 d-flex gap-2">
+    <input
+      type="text"
+      [(ngModel)]="newCategoryName"
+      class="form-control"
+      placeholder="Nueva categoría"
+    />
+    <button class="btn btn-success" (click)="createCategory()">Crear</button>
+  </div>
+
+  <!-- Lista de categorías -->
+  <table class="table table-bordered table-hover mt-4">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cat of categories">
+        <td>{{ cat.id }}</td>
+
+        <!-- Modo edición -->
+        <td *ngIf="editingCategory?.id === cat.id">
+          <input type="text" [(ngModel)]="updatedName" class="form-control" />
+        </td>
+
+        <!-- Modo visualización -->
+        <td *ngIf="editingCategory?.id !== cat.id">
+          {{ cat.name }}
+        </td>
+
+        <td class="text-center">
+          <ng-container *ngIf="editingCategory?.id === cat.id; else normal">
+            <button class="btn btn-sm btn-primary me-2" (click)="saveEdit()">
+              Guardar
+            </button>
+            <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">
+              Cancelar
+            </button>
+          </ng-container>
+
+          <ng-template #normal>
+            <button
+              class="btn btn-sm btn-warning me-2"
+              (click)="startEdit(cat)"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteCategory(cat.id)"
+            >
+              Eliminar
+            </button>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

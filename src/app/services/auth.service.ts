@@ -2,13 +2,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
+
 interface LoginResponse {
   token: string;
   user: {
     id: number;
     name: string;
     email: string;
-   
+    role: string; 
   };
 }
 
@@ -18,12 +19,10 @@ interface LoginResponse {
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/users';
 
-   // BehaviorSubject para emitir el usuario actual
-   private currentUserSubject = new BehaviorSubject<LoginResponse['user'] | null>(null);
-   currentUser$ = this.currentUserSubject.asObservable();
+  private currentUserSubject = new BehaviorSubject<LoginResponse['user'] | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Inicializar BehaviorSubject con usuario de localStorage si existe
     const user = localStorage.getItem('user');
     if (user) {
       this.currentUserSubject.next(JSON.parse(user));
@@ -35,7 +34,8 @@ export class AuthService {
       tap(response => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
-        this.currentUserSubject.next(response.user);  // Emitir nuevo usuario
+        localStorage.setItem('role', response.user.role); 
+        this.currentUserSubject.next(response.user);
       })
     );
   }
@@ -43,6 +43,8 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('role'); 
+    this.currentUserSubject.next(null);
   }
 
   getToken(): string | null {
@@ -57,5 +59,10 @@ export class AuthService {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
+
+  isAdmin(): boolean {
+    return localStorage.getItem('role') === 'admin'; 
+  }
 }
+
 

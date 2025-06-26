@@ -15,9 +15,6 @@ export interface CartItem {
 export class CartService {
   private cartKey = 'cart';
   
-  
-  
-
   constructor() {
     this.initCart();
   }
@@ -37,7 +34,6 @@ private updateCartCount(): void {
   const cart = this.getCart();
   this.cartCountSubject.next(cart.reduce((sum, item) => sum + item.quantity, 0));
 }
-
 
   getCart(): CartItem[] {
     const data = localStorage.getItem(this.cartKey);
@@ -91,6 +87,4 @@ private updateCartCount(): void {
       }
     }
   }
-  
-
 }
