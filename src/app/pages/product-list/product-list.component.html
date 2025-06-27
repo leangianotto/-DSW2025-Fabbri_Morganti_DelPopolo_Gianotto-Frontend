@@ -86,8 +86,19 @@
           class="btn btn-outline-primary mb-2"
           >Ver Detalles</a
         >
-        <button class="btn btn-success" (click)="addToCart(product)">
-          🛒 Agregar al carrito
+        <button
+          class="btn btn-success d-flex align-items-center justify-content-center gap-2"
+          (click)="addToCart(product)"
+          [disabled]="product.stock === 0 || addingProductId === product.id"
+        >
+          <span
+            *ngIf="addingProductId === product.id"
+            class="spinner-border spinner-border-sm"
+          ></span>
+          <span *ngIf="addingProductId !== product.id"
+            >🛒 Agregar al carrito</span
+          >
+          <span *ngIf="addingProductId === product.id">Agregando...</span>
         </button>
       </div>
     </div>

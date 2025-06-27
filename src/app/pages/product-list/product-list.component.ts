@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { CartService } from 'src/app/services/cart.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-product-list',
@@ -12,18 +13,20 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   loading: boolean = true;
+  
 
-  // Filtros
   searchTerm: string = '';
   sortOption: string = '';
 
-  // Paginación
   currentPage: number = 1;
   itemsPerPage: number = 8;
 
+  addingProductId: number | null = null; 
+
   constructor(
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -81,10 +84,23 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: Product): void {
+    if (product.stock === 0) {
+      this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
+      return;
+    }
+  
+    this.addingProductId = product.id;
+  
     this.cartService.addProduct(product);
-    alert('Producto agregado al carrito');
+    this.toast.showToast('Producto agregado al carrito.', 'success');
+  
+    setTimeout(() => {
+      this.addingProductId = null;
+    }, 1000);
   }
+  
 }
+
 
 
 

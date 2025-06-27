@@ -4,6 +4,7 @@ import { ProductService } from 'src/app/services/product.service';
 import { Product } from 'src/app/models/product';
 import { CartService } from 'src/app/services/cart.service';
 import { ReviewService, Review } from 'src/app/services/review.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -21,7 +22,8 @@ export class ProductDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -40,9 +42,15 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    if (product.stock === 0) {
+      this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
+      return;
+    }
+  
     this.cartService.addProduct(product);
-    alert('Producto agregado al carrito');
+    this.toast.showToast('Producto agregado al carrito.', 'success');
   }
+  
 
   loadReviews() {
     this.reviewService.getReviewsByProduct(this.product.id).subscribe({
@@ -58,26 +66,24 @@ export class ProductDetailComponent implements OnInit {
       rating: this.rating,
       comment: this.comment,
     };
-    
-
+  
     this.reviewService.addReview(this.product.id, review).subscribe({
       next: () => {
-        alert('Reseña enviada con éxito');
+        this.toast.showToast('Reseña enviada con éxito.', 'success');
         this.comment = '';
         this.rating = 5;
-        this.loadReviews(); // recargar reseñas
+        this.loadReviews();
       },
       error: (err) => {
-        console.error('Error al enviar reseña:', err);
         if (err.status === 401) {
-          alert('Debes iniciar sesión para dejar una reseña.');
+          this.toast.showToast('Debes iniciar sesión para dejar una reseña.', 'warning');
         } else {
-          alert('Hubo un error al enviar la reseña. Intenta nuevamente.');
+          this.toast.showToast('Hubo un error al enviar la reseña.', 'danger');
         }
-      }
-      
+      },
     });
   }
+  
 }
 
 

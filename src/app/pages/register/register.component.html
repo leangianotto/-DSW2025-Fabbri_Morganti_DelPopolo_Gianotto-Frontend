@@ -2,6 +2,7 @@
   <h2 class="mb-4 text-center fw-bold">Registro de Usuario</h2>
 
   <form (ngSubmit)="onRegister()" #registerForm="ngForm" novalidate>
+    <!-- Nombre -->
     <div class="mb-3">
       <label for="name" class="form-label">Nombre:</label>
       <input
@@ -22,6 +23,7 @@
       </div>
     </div>
 
+    <!-- Email -->
     <div class="mb-3">
       <label for="email" class="form-label">Email:</label>
       <input
@@ -46,6 +48,7 @@
       </div>
     </div>
 
+    <!-- Contraseña -->
     <div class="mb-3">
       <label for="password" class="form-label">Contraseña:</label>
       <input
@@ -72,16 +75,20 @@
       </div>
     </div>
 
+    <!-- Botón -->
     <button
       type="submit"
-      class="btn btn-success w-100"
-      [disabled]="registerForm.invalid"
+      class="btn btn-success w-100 d-flex align-items-center justify-content-center"
+      [disabled]="registerForm.invalid || loading"
     >
-      Registrarse
+      <span *ngIf="!loading">Registrarse</span>
+      <div
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm text-light"
+        role="status"
+      >
+        <span class="visually-hidden">Registrando...</span>
+      </div>
     </button>
-
-    <div *ngIf="message" class="alert alert-info mt-3" role="alert">
-      {{ message }}
-    </div>
   </form>
 </div>

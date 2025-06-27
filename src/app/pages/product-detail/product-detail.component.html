@@ -18,7 +18,11 @@
       <p><strong>Stock:</strong> {{ product.stock }}</p>
       <p><strong>Categoría:</strong> {{ product.category?.name }}</p>
 
-      <button class="btn btn-primary btn-lg mt-3" (click)="addToCart(product)">
+      <button
+        class="btn btn-success"
+        (click)="addToCart(product)"
+        [disabled]="product.stock === 0"
+      >
         🛒 Agregar al carrito
       </button>
     </div>
