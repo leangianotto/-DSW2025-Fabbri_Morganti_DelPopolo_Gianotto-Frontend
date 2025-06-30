@@ -1,1 +1,156 @@
-<p>admin-orders works!</p>
+<div class="container mt-4">
+  <h2 class="mb-4">Lista de Pedidos</h2>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Total ($)</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let order of orders">
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.User?.name || "Sin asignar" }}</td>
+          <td>{{ order.totalAmount | currency : "ARS" }}</td>
+          <td>
+            <ng-container
+              *ngIf="selectedOrder?.id === order.id; else estadoNormal"
+            >
+              <select
+                [(ngModel)]="selectedOrder.status"
+                class="form-select form-select-sm"
+              >
+                <option value="pendiente">Pendiente</option>
+                <option value="enviado">Enviado</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </ng-container>
+            <ng-template #estadoNormal>
+              {{ order.status | titlecase }}
+            </ng-template>
+          </td>
+          <td>{{ order.createdAt | date : "short" }}</td>
+          <td>
+            <ng-container
+              *ngIf="selectedOrder?.id === order.id; else botonesNormales"
+            >
+              <button
+                class="btn btn-success btn-sm me-2"
+                (click)="updateOrder()"
+              >
+                Guardar
+              </button>
+              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </ng-container>
+            <ng-template #botonesNormales>
+              <button
+                class="btn btn-primary btn-sm me-2"
+                (click)="selectOrder(order)"
+              >
+                Editar
+              </button>
+              <button
+                class="btn btn-info btn-sm me-2"
+                (click)="toggleDetails(order.id)"
+              >
+                {{
+                  expandedOrderId === order.id
+                    ? "Ocultar detalles"
+                    : "Ver detalles"
+                }}
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                (click)="deleteOrder(order.id)"
+              >
+                Eliminar
+              </button>
+            </ng-template>
+          </td>
+        </tr>
+
+        <!-- Fila de detalle de productos -->
+        <tr *ngIf="expandedOrderId === order.id">
+          <td colspan="6">
+            <div *ngIf="order.productos?.length > 0; else sinProductos">
+              <h6 class="mb-3">Productos del pedido:</h6>
+              <table class="table table-sm table-striped">
+                <thead class="table-light">
+                  <tr>
+                    <th>Producto</th>
+                    <th>Precio unitario</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of order.productos">
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.price | currency : "ARS" }}</td>
+                    <td style="width: 100px">
+                      <input
+                        type="number"
+                        min="1"
+                        class="form-control form-control-sm"
+                        [(ngModel)]="p.OrderProducts.quantity"
+                      />
+                    </td>
+                    <td>
+                      {{
+                        p.price * p.OrderProducts.quantity | currency : "ARS"
+                      }}
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-success btn-sm me-1"
+                        (click)="
+                          updateQuantity(
+                            order.id,
+                            p.id,
+                            p.OrderProducts.quantity
+                          )
+                        "
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        class="btn btn-outline-danger btn-sm"
+                        (click)="removeProductFromOrder(order.id, p.id)"
+                      >
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="text-end fw-bold me-2">
+                Total actual: {{ calculateTotal(order) | currency : "ARS" }}
+              </div>
+            </div>
+
+            <ng-template #sinProductos>
+              <div class="alert alert-warning mb-0">
+                No hay productos en este pedido.
+              </div>
+            </ng-template>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+  <div *ngIf="orders.length === 0" class="alert alert-info mt-3">
+    No hay pedidos registrados.
+  </div>
+</div>

@@ -17,6 +17,8 @@ export class ProductDetailComponent implements OnInit {
   // propiedades para el formulario de reseña
   rating: number = 5;
   comment: string = '';
+  hoveredRating: number = 0;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -83,6 +85,25 @@ export class ProductDetailComponent implements OnInit {
       },
     });
   }
+
+  get averageRating(): number {
+    if (this.reviews.length === 0) return 0;
+    const total = this.reviews.reduce((sum, r) => sum + r.rating, 0);
+    return +(total / this.reviews.length).toFixed(1);
+  }
+
+  get averageRatingRounded(): number {
+    return Math.round(this.averageRating);
+  }
+  
+  get totalReviews(): number {
+    return this.reviews.length;
+  }
+  
+  getStarsArray(rating: number): number[] {
+    return Array(5).fill(0).map((_, i) => (i < rating ? 1 : 0));
+  }
+  
   
 }
 

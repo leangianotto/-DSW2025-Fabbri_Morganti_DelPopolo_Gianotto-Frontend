@@ -12,11 +12,33 @@
     </div>
 
     <div class="col-md-7">
-      <h2 class="mb-3">{{ product.name }}</h2>
+      <h2 class="mb-2">{{ product.name }}</h2>
       <p class="text-muted">{{ product.description }}</p>
       <p><strong>Precio:</strong> ${{ product.price }}</p>
       <p><strong>Stock:</strong> {{ product.stock }}</p>
       <p><strong>Categoría:</strong> {{ product.category?.name }}</p>
+
+      <!-- Calificación promedio -->
+      <div class="mb-3">
+        <strong>Calificación:</strong>
+        <ng-container *ngIf="totalReviews > 0; else noReviewsYet">
+          <ng-container
+            *ngFor="let filled of getStarsArray(averageRatingRounded)"
+          >
+            <i
+              class="bi"
+              [ngClass]="
+                filled ? 'bi-star-fill text-warning' : 'bi-star text-muted'
+              "
+            ></i>
+          </ng-container>
+
+          ({{ averageRating }}/5 - {{ totalReviews }} reseñas)
+        </ng-container>
+        <ng-template #noReviewsYet>
+          <span class="text-muted">Este producto aún no tiene reseñas.</span>
+        </ng-template>
+      </div>
 
       <button
         class="btn btn-success"
@@ -42,6 +64,9 @@
       <div class="card-body">
         <p class="mb-1">
           <strong>⭐ {{ review.rating }}/5</strong>
+          <span class="text-muted" *ngIf="review.User?.name">
+            — {{ review.User?.name }}</span
+          >
         </p>
         <p class="mb-0">{{ review.comment }}</p>
       </div>
@@ -54,19 +79,29 @@
   <div>
     <h4>Dejar una reseña</h4>
     <form (ngSubmit)="submitReview()" class="mb-5">
+      <!-- Estrellas clickeables -->
       <div class="mb-3">
-        <label for="rating" class="form-label">Puntaje:</label>
-        <select
-          id="rating"
-          [(ngModel)]="rating"
-          name="rating"
-          class="form-select"
-          required
-        >
-          <option *ngFor="let r of [1, 2, 3, 4, 5]" [value]="r">{{ r }}</option>
-        </select>
+        <label class="form-label">Puntaje:</label>
+        <div class="star-rating">
+          <i
+            *ngFor="let star of [1, 2, 3, 4, 5]"
+            class="bi"
+            [class.bi-star-fill]="star <= (hoveredRating || rating)"
+            [class.bi-star]="star > (hoveredRating || rating)"
+            (mouseenter)="hoveredRating = star"
+            (mouseleave)="hoveredRating = 0"
+            (click)="rating = star"
+            style="font-size: 1.6rem; color: gold; cursor: pointer"
+          ></i>
+          <span class="ms-2">
+            {{ hoveredRating || rating }} estrella{{
+              (hoveredRating || rating) > 1 ? "s" : ""
+            }}
+          </span>
+        </div>
       </div>
 
+      <!-- Comentario -->
       <div class="mb-3">
         <label for="comment" class="form-label">Comentario:</label>
         <textarea
