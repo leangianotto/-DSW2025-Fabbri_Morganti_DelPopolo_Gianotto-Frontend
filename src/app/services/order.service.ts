@@ -61,14 +61,17 @@ export class OrderService {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
   
-    return this.http.put(`${this.apiUrl}/orders/${orderId}/product/${productId}`, { quantity }, { headers });
+    
+    return this.http.put(`${this.apiUrl}/order-products/${orderId}/${productId}`, { quantity }, { headers });
   }
   
   removeProductFromOrder(orderId: number, productId: number): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
   
-    return this.http.delete(`${this.apiUrl}/orders/${orderId}/product/${productId}`, { headers });
+    
+    return this.http.delete(`${this.apiUrl}/order-products/${orderId}/${productId}`, { headers });
   }
+  
   
 }
