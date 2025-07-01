@@ -4,6 +4,8 @@ import { CartService, CartItem } from 'src/app/services/cart.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ToastService } from 'src/app/services/toast.service';
 
+declare var MercadoPago: any;
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
@@ -49,16 +51,32 @@ export class CartComponent implements OnInit {
 
   checkout() {
     const token = localStorage.getItem('token');
-  
+
     if (!token) {
       alert('Debes iniciar sesión para realizar un pedido.');
       this.router.navigate(['/login']);
       return;
     }
-  
-    const items = this.cartService.getCart();
-    this.orderService.createOrder(items).subscribe({
-      next: (res) => {
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.id;
+
+    const cart = this.cartService.getCart();
+    if (cart.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    const items = cart.map(item => ({
+      productId: item.product.id,
+      quantity: item.quantity
+    }));
+
+    const totalAmount = this.cartService.getTotal();
+    const order = { userId, totalAmount, items };
+
+    this.orderService.createOrder(order).subscribe({
+      next: () => {
         alert('Pedido realizado con éxito');
         this.cartService.clearCart();
         this.cartItems = [];
@@ -70,6 +88,34 @@ export class CartComponent implements OnInit {
       },
     });
   }
-  
-  
+
+  pagarConMercadoPago() {
+    const cart = this.cartService.getCart();
+
+    if (cart.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    const items = cart.map(item => ({
+      title: item.product.name,
+      unit_price: Number(item.product.price), 
+      quantity: item.quantity
+    }));
+    
+
+    this.orderService.crearPreferencia(items).subscribe({
+      next: (res) => {
+        if (res.init_point) {
+          window.location.href = res.init_point;
+        } else {
+          alert('No se pudo iniciar el pago.');
+        }
+      },
+      error: (err) => {
+        console.error('Error al crear la preferencia:', err);
+        alert('Error al iniciar el pago.');
+      }
+    });
+  }
 }

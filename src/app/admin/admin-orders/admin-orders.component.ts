@@ -19,10 +19,14 @@ export class AdminOrdersComponent implements OnInit {
 
   getOrders() {
     this.orderService.getAllOrders().subscribe({
-      next: (data) => this.orders = data,
+      next: (data) => {
+        
+        this.orders = data;
+      },
       error: (err) => console.error('Error al obtener pedidos', err),
     });
   }
+  
 
   selectOrder(order: any) {
     this.selectedOrder = { ...order }; // clonamos para no mutar directamente el objeto original
@@ -79,9 +83,24 @@ export class AdminOrdersComponent implements OnInit {
     if (!order || !order.productos) return 0;
   
     return order.productos.reduce((acc: number, p: any) => {
-      return acc + (p.price * p.OrderProducts.quantity);
+      return acc + (p.price * (p.OrderProduct?.quantity || 0));
     }, 0);
   }
+  
+  setQuantity(p: any, value: number) {
+    if (!p.orderProduct) {
+      p.orderProduct = { quantity: value };
+    } else {
+      p.orderProduct.quantity = value;
+    }
+  }
+
+  onQuantityChange(orderId: number, productId: number, quantity: number) {
+    this.updateQuantity(orderId, productId, quantity);
+  }
+  
+  
+  
   
   
   

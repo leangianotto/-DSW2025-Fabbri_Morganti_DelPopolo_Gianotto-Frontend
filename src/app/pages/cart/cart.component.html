@@ -64,6 +64,16 @@
         >
           Comprar
         </button>
+
+        <!-- 🔹 BOTÓN DE MERCADO PAGO -->
+        <button
+          class="btn btn-success me-2"
+          (click)="pagarConMercadoPago()"
+          [disabled]="cartItems.length === 0"
+        >
+          Pagar con Mercado Pago
+        </button>
+
         <button class="btn btn-outline-danger" (click)="clearCart()">
           Vaciar carrito
         </button>

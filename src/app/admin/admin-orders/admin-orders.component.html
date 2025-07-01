@@ -102,14 +102,19 @@
                         type="number"
                         min="1"
                         class="form-control form-control-sm"
-                        [(ngModel)]="p.OrderProducts.quantity"
+                        [ngModel]="p.OrderProduct?.quantity"
+                        (ngModelChange)="
+                          onQuantityChange(order.id, p.id, $event)
+                        "
                       />
                     </td>
                     <td>
                       {{
-                        p.price * p.OrderProducts.quantity | currency : "ARS"
+                        p.price * (p.OrderProduct?.quantity || 0)
+                          | currency : "ARS"
                       }}
                     </td>
+
                     <td>
                       <button
                         class="btn btn-success btn-sm me-1"
@@ -117,7 +122,7 @@
                           updateQuantity(
                             order.id,
                             p.id,
-                            p.OrderProducts.quantity
+                            p.OrderProduct?.quantity || 0
                           )
                         "
                       >
