@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { CartService, CartItem } from 'src/app/services/cart.service';
 import { OrderService } from 'src/app/services/order.service';
 
+declare var MercadoPago: any;
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
 })
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
-  
 
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
     private router: Router
   ) {}
-  
 
   ngOnInit(): void {
     this.cartItems = this.cartService.getCart();
@@ -35,30 +35,44 @@ export class CartComponent implements OnInit {
   getTotal(): number {
     return this.cartService.getTotal();
   }
-  
-  
 
   updateQuantity(productId: number, change: number): void {
     const item = this.cartItems.find(i => i.product.id === productId);
     if (!item) return;
-  
+
     const newQuantity = item.quantity + change;
     this.cartService.updateQuantity(productId, newQuantity);
     this.cartItems = this.cartService.getCart();
   }
-  
 
   checkout() {
-    const token = localStorage.getItem('token'); // o donde guardes el JWT
-  
+    const token = localStorage.getItem('token');
     if (!token) {
       alert('Debes iniciar sesión para realizar un pedido.');
-      this.router.navigate(['/login']); // redirige al login
+      this.router.navigate(['/login']);
       return;
     }
-    const items = this.cartService.getCart();
-    this.orderService.createOrder(items).subscribe({
-      next: (res) => {
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.id;
+
+    const cart = this.cartService.getCart();
+    if (cart.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    const items = cart.map(item => ({
+      productId: item.product.id,
+      quantity: item.quantity
+    }));
+
+    const totalAmount = this.cartService.getTotal();
+
+    const order = { userId, totalAmount, items };
+
+    this.orderService.createOrder(order).subscribe({
+      next: () => {
         alert('Pedido realizado con éxito');
         this.cartService.clearCart();
         this.router.navigate(['/products']);
@@ -68,11 +82,34 @@ export class CartComponent implements OnInit {
         alert('Hubo un problema al realizar el pedido.');
       },
     });
-    
   }
-  
-  
-  
+
+  pagarConMercadoPago() {
+    const cart = this.cartService.getCart();
+
+    if (cart.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    const items = cart.map(item => ({
+      name: item.product.name,
+      price: item.product.price,
+      quantity: item.quantity
+    }));
+
+    this.orderService.crearPreferencia(items).subscribe({
+      next: (res) => {
+        if (res.init_point) {
+          window.location.href = res.init_point;
+        } else {
+          alert('No se pudo iniciar el pago.');
+        }
+      },
+      error: (err) => {
+        console.error('Error al crear la preferencia:', err);
+        alert('Error al iniciar el pago.');
+      }
+    });
+  }
 }
-
-
