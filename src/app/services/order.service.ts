@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface OrderItem {
   productId: number;
@@ -14,16 +15,54 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  createOrder(order: { userId: number; totalAmount: number; items: OrderItem[] }) {
+  createOrder(order: { userId: any; totalAmount: number; items: { productId: number; quantity: number }[] }): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
+
     return this.http.post(`${this.apiUrl}/orders`, order, { headers });
   }
 
-      crearPreferencia(items: { name: string; price: number; quantity: number }[]) {
-    return this.http.post<{ init_point: string }>(`${this.apiUrl}/checkout`, { items });
-}
+  getAllOrders(): Observable<any[]> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.get<any[]>(`${this.apiUrl}/orders`, { headers });
+  }
 
+  deleteOrder(id: number) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.delete(`${this.apiUrl}/orders/${id}`, { headers });
+  }
+
+  updateOrder(id: number, body: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.put<any>(`${this.apiUrl}/orders/${id}`, body, { headers });
+  }
+
+  updateOrderProductQuantity(orderId: number, productId: number, quantity: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    
+    return this.http.put(`${this.apiUrl}/orderProducts/${orderId}/${productId}`, { quantity }, { headers });
+  }
+
+  removeProductFromOrder(orderId: number, productId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    
+    return this.http.delete(`${this.apiUrl}/orderProducts/${orderId}/${productId}`, { headers });
+  }
+
+  crearPreferencia(items: { title: string; unit_price: number; quantity: number }[]) {
+    return this.http.post<{ init_point: string }>(`${this.apiUrl}/checkout`, { items });
+  }
 }

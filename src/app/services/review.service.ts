@@ -10,6 +10,7 @@ export interface Review {
   userId: number;
   productId: number;
   createdAt: string;
+  User?: { name: string };
 }
 
 @Injectable({

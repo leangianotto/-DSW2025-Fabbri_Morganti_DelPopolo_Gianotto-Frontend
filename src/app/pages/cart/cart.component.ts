@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService, CartItem } from 'src/app/services/cart.service';
 import { OrderService } from 'src/app/services/order.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 declare var MercadoPago: any;
 
@@ -15,6 +16,7 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
+    private toast: ToastService,
     private router: Router
   ) {}
 
@@ -41,12 +43,15 @@ export class CartComponent implements OnInit {
     if (!item) return;
 
     const newQuantity = item.quantity + change;
+    if (newQuantity < 1) return;
+
     this.cartService.updateQuantity(productId, newQuantity);
     this.cartItems = this.cartService.getCart();
   }
 
   checkout() {
     const token = localStorage.getItem('token');
+
     if (!token) {
       alert('Debes iniciar sesión para realizar un pedido.');
       this.router.navigate(['/login']);
@@ -68,13 +73,13 @@ export class CartComponent implements OnInit {
     }));
 
     const totalAmount = this.cartService.getTotal();
-
     const order = { userId, totalAmount, items };
 
     this.orderService.createOrder(order).subscribe({
       next: () => {
         alert('Pedido realizado con éxito');
         this.cartService.clearCart();
+        this.cartItems = [];
         this.router.navigate(['/products']);
       },
       error: (err) => {
@@ -93,10 +98,11 @@ export class CartComponent implements OnInit {
     }
 
     const items = cart.map(item => ({
-      name: item.product.name,
-      price: item.product.price,
+      title: item.product.name,
+      unit_price: Number(item.product.price), 
       quantity: item.quantity
     }));
+    
 
     this.orderService.crearPreferencia(items).subscribe({
       next: (res) => {

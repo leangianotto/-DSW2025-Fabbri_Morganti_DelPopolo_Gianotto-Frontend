@@ -2,6 +2,7 @@
   <h2 class="mb-4 text-center fw-bold">Iniciar sesión</h2>
 
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+    <!-- Email -->
     <div class="mb-3">
       <label for="email" class="form-label">Email:</label>
       <input
@@ -16,16 +17,17 @@
         [class.is-invalid]="emailInput.invalid && emailInput.touched"
       />
       <div
-        *ngIf="emailInput.errors && emailInput.touched"
+        *ngIf="emailInput.invalid && emailInput.touched"
         class="invalid-feedback"
       >
-        <div *ngIf="emailInput.errors['required']">
+        <div *ngIf="emailInput.errors?.['required']">
           El email es obligatorio.
         </div>
-        <div *ngIf="emailInput.errors['email']">Ingrese un email válido.</div>
+        <div *ngIf="emailInput.errors?.['email']">Ingrese un email válido.</div>
       </div>
     </div>
 
+    <!-- Contraseña -->
     <div class="mb-3">
       <label for="password" class="form-label">Contraseña:</label>
       <input
@@ -40,31 +42,31 @@
         [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
       />
       <div
-        *ngIf="passwordInput.errors && passwordInput.touched"
+        *ngIf="passwordInput.invalid && passwordInput.touched"
         class="invalid-feedback"
       >
-        <div *ngIf="passwordInput.errors['required']">
+        <div *ngIf="passwordInput.errors?.['required']">
           La contraseña es obligatoria.
         </div>
-        <div *ngIf="passwordInput.errors['minlength']">
+        <div *ngIf="passwordInput.errors?.['minlength']">
           La contraseña debe tener al menos 6 caracteres.
         </div>
       </div>
     </div>
 
+    <!-- Botón -->
     <button
       type="submit"
       class="btn btn-primary w-100"
-      [disabled]="loginForm.invalid"
+      [disabled]="loginForm.invalid || loading"
     >
+      <span
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
       Ingresar
     </button>
-
-    <div *ngIf="error" class="alert alert-danger mt-3" role="alert">
-      {{ error }}
-    </div>
-    <div *ngIf="success" class="alert alert-success mt-3" role="alert">
-      {{ success }}
-    </div>
   </form>
 </div>

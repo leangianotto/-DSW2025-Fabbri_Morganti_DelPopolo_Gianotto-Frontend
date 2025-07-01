@@ -20,6 +20,7 @@ import { AdminProductsComponent } from './admin/admin-products/admin-products.co
 import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
 import { AdminCategoriesComponent } from './admin/admin-categories/admin-categories.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
+import { ToastComponent } from './components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
     AdminProductsComponent,
     AdminOrdersComponent,
     AdminCategoriesComponent,
-    AdminUsersComponent
+    AdminUsersComponent,
+    ToastComponent
   ],
   imports: [
     BrowserModule,

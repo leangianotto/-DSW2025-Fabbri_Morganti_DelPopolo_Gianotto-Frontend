@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
+import { ToastService } from 'src/app/services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,19 +11,30 @@ export class RegisterComponent {
   name = '';
   email = '';
   password = '';
-  message = '';
+  loading = false; // ✅ nueva bandera
 
-  constructor(private UserService: UserService) {}
+  constructor(
+    private UserService: UserService,
+    private router: Router,
+    private toast: ToastService
+  ) {}
 
   onRegister() {
+    if (this.loading) return;
+  
+    this.loading = true;
+  
     this.UserService.register(this.name, this.email, this.password).subscribe({
-      next: (res) => {
-        this.message = 'Usuario registrado con éxito. Ahora podés iniciar sesión.';
+      next: () => {
+        this.toast.showToast('Usuario creado con éxito. Ahora podés iniciar sesión.', 'success');
+        this.loading = false; 
+        setTimeout(() => this.router.navigate(['/login']), 1500);
       },
-      error: (err) => {
-        this.message = 'Error al registrar: ' + (err.error.message || err.message);
-      },
+      error: () => {
+        this.toast.showToast('Error al registrar', 'danger');
+        this.loading = false; 
+      }
     });
   }
+  
 }
-
