@@ -72,4 +72,11 @@ export class OrderService {
   
     return this.http.get<any[]>(`${this.apiUrl}/orders/my-orders`, { headers });
   }
+
+  getOrderById(id: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.get<any>(`${this.apiUrl}/orders/${id}`, { headers });
+  }
+  
 }
