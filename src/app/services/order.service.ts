@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 export interface OrderItem {
   productId: number;
@@ -24,12 +25,23 @@ export class OrderService {
     return this.http.post(`${this.apiUrl}/orders`, order, { headers });
   }
 
-  getAllOrders(): Observable<any[]> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-    return this.http.get<any[]>(`${this.apiUrl}/orders`, { headers });
+  getAllOrders(filtros?: any): Observable<any[]> {
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  
+    let params = new HttpParams();
+  
+    if (filtros) {
+      if (filtros.user)      params = params.set('user', filtros.user);
+      if (filtros.product)   params = params.set('product', filtros.product);
+      if (filtros.dateFrom)  params = params.set('dateFrom', filtros.dateFrom);
+      if (filtros.dateTo)    params = params.set('dateTo', filtros.dateTo);
+      if (filtros.minTotal)  params = params.set('minTotal', filtros.minTotal);
+      if (filtros.maxTotal)  params = params.set('maxTotal', filtros.maxTotal);
+      if (filtros.status)    params = params.set('status', filtros.status);
+    }
+  
+    return this.http.get<any[]>(`${this.apiUrl}/orders`, { headers, params });
   }
 
   deleteOrder(id: number) {

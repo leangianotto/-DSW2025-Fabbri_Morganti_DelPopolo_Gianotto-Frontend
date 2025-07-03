@@ -1,161 +1,350 @@
 <div class="container mt-4">
   <h2 class="mb-4">Lista de Pedidos</h2>
 
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Usuario</th>
-        <th>Total ($)</th>
-        <th>Estado</th>
-        <th>Fecha</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngFor="let order of orders">
-        <tr>
-          <td>{{ order.id }}</td>
-          <td>{{ order.User?.name || "Sin asignar" }}</td>
-          <td>{{ order.totalAmount | currency : "ARS" }}</td>
-          <td>
-            <ng-container
-              *ngIf="selectedOrder?.id === order.id; else estadoNormal"
-            >
-              <select
-                [(ngModel)]="selectedOrder.status"
-                class="form-select form-select-sm"
-              >
-                <option value="pendiente">Pendiente</option>
-                <option value="enviado">Enviado</option>
-                <option value="entregado">Entregado</option>
-                <option value="cancelado">Cancelado</option>
-              </select>
-            </ng-container>
-            <ng-template #estadoNormal>
-              {{ order.status | titlecase }}
-            </ng-template>
-          </td>
-          <td>{{ order.createdAt | date : "short" }}</td>
-          <td>
-            <ng-container
-              *ngIf="selectedOrder?.id === order.id; else botonesNormales"
-            >
-              <button
-                class="btn btn-success btn-sm me-2"
-                (click)="updateOrder()"
-              >
-                Guardar
-              </button>
-              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
-                Cancelar
-              </button>
-            </ng-container>
-            <ng-template #botonesNormales>
-              <button
-                class="btn btn-primary btn-sm me-2"
-                (click)="selectOrder(order)"
-              >
-                Editar
-              </button>
-              <button
-                class="btn btn-info btn-sm me-2"
-                (click)="toggleDetails(order.id)"
-              >
-                {{
-                  expandedOrderId === order.id
-                    ? "Ocultar detalles"
-                    : "Ver detalles"
-                }}
-              </button>
-              <button
-                class="btn btn-danger btn-sm"
-                (click)="deleteOrder(order.id)"
-              >
-                Eliminar
-              </button>
-            </ng-template>
-          </td>
-        </tr>
+  <!-- FILTROS -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+      <h5 class="mb-3 text-primary fw-bold">
+        <i class="bi bi-funnel-fill me-2"></i>Filtros avanzados
+      </h5>
 
-        <!-- Fila de detalle de productos -->
-        <tr *ngIf="expandedOrderId === order.id">
-          <td colspan="6">
-            <div *ngIf="order.productos?.length > 0; else sinProductos">
-              <h6 class="mb-3">Productos del pedido:</h6>
-              <table class="table table-sm table-striped">
-                <thead class="table-light">
-                  <tr>
-                    <th>Producto</th>
-                    <th>Precio unitario</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let p of order.productos">
-                    <td>{{ p.name }}</td>
-                    <td>{{ p.price | currency : "ARS" }}</td>
-                    <td style="width: 100px">
-                      <input
-                        type="number"
-                        min="1"
-                        class="form-control form-control-sm"
-                        [ngModel]="p.OrderProduct?.quantity"
-                        (ngModelChange)="
-                          onQuantityChange(order.id, p.id, $event)
-                        "
-                      />
-                    </td>
-                    <td>
-                      {{
-                        p.price * (p.OrderProduct?.quantity || 0)
-                          | currency : "ARS"
-                      }}
-                    </td>
-
-                    <td>
-                      <button
-                        class="btn btn-success btn-sm me-1"
-                        (click)="
-                          updateQuantity(
-                            order.id,
-                            p.id,
-                            p.OrderProduct?.quantity || 0
-                          )
-                        "
-                      >
-                        Guardar
-                      </button>
-                      <button
-                        class="btn btn-outline-danger btn-sm"
-                        (click)="removeProductFromOrder(order.id, p.id)"
-                      >
-                        Quitar
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div class="text-end fw-bold me-2">
-                Total actual: {{ calculateTotal(order) | currency : "ARS" }}
+      <!-- Filtros activables -->
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="d-flex flex-wrap gap-3">
+            <div *ngFor="let filtro of filtroNombres">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [checked]="filtrosActivos[filtro.key]"
+                  (change)="activarFiltro(filtro.key)"
+                  id="filtro-{{ filtro.key }}"
+                />
+                <label
+                  class="form-check-label text-capitalize"
+                  [for]="'filtro-' + filtro.key"
+                >
+                  {{ filtro.label }}
+                </label>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <ng-template #sinProductos>
-              <div class="alert alert-warning mb-0">
-                No hay productos en este pedido.
-              </div>
-            </ng-template>
-          </td>
-        </tr>
-      </ng-container>
-    </tbody>
-  </table>
+      <!-- Campos del filtro activo -->
+      <div class="row g-3">
+        <div class="col-md-3" *ngIf="visibleFiltro === 'id'">
+          <label class="form-label">ID de pedido</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="filtros.id"
+            placeholder="Ej: 12"
+          />
+        </div>
 
-  <div *ngIf="orders.length === 0" class="alert alert-info mt-3">
-    No hay pedidos registrados.
+        <div class="col-md-4" *ngIf="visibleFiltro === 'user'">
+          <label class="form-label">Usuario (nombre o email)</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="filtros.user"
+            placeholder="Ej: juan@email.com"
+          />
+        </div>
+
+        <div class="col-md-4" *ngIf="visibleFiltro === 'product'">
+          <label class="form-label">Producto</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="filtros.product"
+            placeholder="Ej: Teclado"
+          />
+        </div>
+
+        <div class="col-md-3" *ngIf="visibleFiltro === 'date'">
+          <label class="form-label">Desde</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="filtros.dateFrom"
+          />
+        </div>
+        <div class="col-md-3" *ngIf="filtrosActivos.date">
+          <label class="form-label">Hasta</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="filtros.dateTo"
+          />
+        </div>
+
+        <div class="col-md-3" *ngIf="visibleFiltro === 'price'">
+          <label class="form-label">Precio mínimo ($)</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="filtros.minTotal"
+            placeholder="Ej: 1000"
+          />
+        </div>
+        <div class="col-md-3" *ngIf="filtrosActivos.price">
+          <label class="form-label">Precio máximo ($)</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="filtros.maxTotal"
+            placeholder="Ej: 5000"
+          />
+        </div>
+
+        <div class="col-md-3" *ngIf="visibleFiltro === 'status'">
+          <label class="form-label">Estado</label>
+          <select class="form-select" [(ngModel)]="filtros.status">
+            <option value="">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="enviado">Enviado</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <!-- Botones -->
+        <div class="col-md-3 d-flex align-items-end gap-2">
+          <button
+            class="btn btn-sm btn-primary w-100"
+            (click)="buscarConFiltros()"
+          >
+            <i class="bi bi-search me-1"></i>Buscar
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary w-100"
+            (click)="limpiarFiltros()"
+          >
+            <i class="bi bi-x-circle me-1"></i>Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Badges resumen -->
+      <div class="mt-4" *ngIf="hayFiltrosActivos()">
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.id && filtros.id"
+          >ID: {{ filtros.id }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.user && filtros.user"
+          >Usuario: {{ filtros.user }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.product && filtros.product"
+          >Producto: {{ filtros.product }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.date && filtros.dateFrom"
+          >Desde: {{ filtros.dateFrom }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.date && filtros.dateTo"
+          >Hasta: {{ filtros.dateTo }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.price && filtros.minTotal"
+          >Mín: ${{ filtros.minTotal }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.price && filtros.maxTotal"
+          >Máx: ${{ filtros.maxTotal }}</span
+        >
+        <span
+          class="badge bg-secondary me-2"
+          *ngIf="filtrosActivos.status && filtros.status"
+          >Estado: {{ filtros.status | titlecase }}</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla (usá acá la versión mejorada que ya te pasé antes) -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <!-- incluí acá tu tabla de pedidos -->
+
+      <!-- Tabla de pedidos -->
+      <table class="table table-bordered table-hover mt-4">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Total ($)</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let order of orders">
+            <tr class="align-middle">
+              <td>{{ order.id }}</td>
+              <td>{{ order.User?.name || "Sin asignar" }}</td>
+              <td>{{ order.totalAmount | currency : "ARS" }}</td>
+              <td>
+                <ng-container
+                  *ngIf="selectedOrder?.id === order.id; else estadoNormal"
+                >
+                  <select
+                    [(ngModel)]="selectedOrder.status"
+                    class="form-select form-select-sm"
+                  >
+                    <option value="pendiente">Pendiente</option>
+                    <option value="enviado">Enviado</option>
+                    <option value="entregado">Entregado</option>
+                    <option value="cancelado">Cancelado</option>
+                  </select>
+                </ng-container>
+                <ng-template #estadoNormal>
+                  {{ order.status | titlecase }}
+                </ng-template>
+              </td>
+              <td class="text-nowrap">
+                {{ order.createdAt | date : "short" }}
+              </td>
+              <td class="text-nowrap">
+                <ng-container
+                  *ngIf="selectedOrder?.id === order.id; else botonesNormales"
+                >
+                  <button
+                    class="btn btn-success btn-sm me-2"
+                    (click)="updateOrder()"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    (click)="cancelEdit()"
+                  >
+                    Cancelar
+                  </button>
+                </ng-container>
+                <ng-template #botonesNormales>
+                  <button
+                    class="btn btn-primary btn-sm me-2"
+                    (click)="selectOrder(order)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    class="btn btn-info btn-sm me-2"
+                    (click)="toggleDetails(order.id)"
+                  >
+                    {{
+                      expandedOrderId === order.id
+                        ? "Ocultar detalles"
+                        : "Ver detalles"
+                    }}
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    (click)="deleteOrder(order.id)"
+                  >
+                    Eliminar
+                  </button>
+                </ng-template>
+              </td>
+            </tr>
+
+            <!-- Fila de detalle de productos -->
+            <tr *ngIf="expandedOrderId === order.id">
+              <td colspan="6">
+                <div *ngIf="order.productos?.length > 0; else sinProductos">
+                  <h6 class="mb-3">Productos del pedido:</h6>
+                  <table class="table table-sm table-striped">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Producto</th>
+                        <th>Precio unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let p of order.productos">
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.price | currency : "ARS" }}</td>
+                        <td style="width: 100px">
+                          <input
+                            type="number"
+                            min="1"
+                            class="form-control form-control-sm"
+                            [ngModel]="p.OrderProduct?.quantity"
+                            (ngModelChange)="
+                              onQuantityChange(order.id, p.id, $event)
+                            "
+                          />
+                        </td>
+                        <td>
+                          {{
+                            p.price * (p.OrderProduct?.quantity || 0)
+                              | currency : "ARS"
+                          }}
+                        </td>
+                        <td class="text-nowrap">
+                          <button
+                            class="btn btn-success btn-sm me-1"
+                            (click)="
+                              updateQuantity(
+                                order.id,
+                                p.id,
+                                p.OrderProduct?.quantity || 0
+                              )
+                            "
+                          >
+                            Guardar
+                          </button>
+                          <button
+                            class="btn btn-outline-danger btn-sm"
+                            (click)="removeProductFromOrder(order.id, p.id)"
+                          >
+                            Quitar
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="text-end fw-bold me-2">
+                    Total actual: {{ calculateTotal(order) | currency : "ARS" }}
+                  </div>
+                </div>
+
+                <ng-template #sinProductos>
+                  <div class="alert alert-warning mb-0">
+                    No hay productos en este pedido.
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <!-- Mensaje si no hay pedidos -->
+      <div *ngIf="orders.length === 0" class="alert alert-info mt-3">
+        No hay pedidos registrados.
+      </div>
+
+      <!-- ... -->
+    </div>
   </div>
 </div>
