@@ -65,4 +65,11 @@ export class OrderService {
   crearPreferencia(items: { title: string; unit_price: number; quantity: number }[]) {
     return this.http.post<{ init_point: string }>(`${this.apiUrl}/checkout`, { items });
   }
+
+  getUserOrders(): Observable<any[]> {
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  
+    return this.http.get<any[]>(`${this.apiUrl}/orders/my-orders`, { headers });
+  }
 }
