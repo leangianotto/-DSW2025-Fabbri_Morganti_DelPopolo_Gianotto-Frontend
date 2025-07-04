@@ -32,6 +32,7 @@ export class OrderService {
     let params = new HttpParams();
   
     if (filtros) {
+      if (filtros.id)        params = params.set('id', filtros.id);
       if (filtros.user)      params = params.set('user', filtros.user);
       if (filtros.product)   params = params.set('product', filtros.product);
       if (filtros.dateFrom)  params = params.set('dateFrom', filtros.dateFrom);
@@ -91,4 +92,7 @@ export class OrderService {
     return this.http.get<any>(`${this.apiUrl}/orders/${id}`, { headers });
   }
   
+  getTopSellingProducts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/orders/productos-mas-vendidos`);
+  }
 }

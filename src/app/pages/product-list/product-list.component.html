@@ -1,18 +1,44 @@
-<!-- Filtro por categoría -->
-<div class="mb-4 d-flex justify-content-center gap-2 flex-wrap categorias">
-  <button class="btn btn-outline-primary" (click)="getByCategory(1)">
-    Celulares
+<!-- Categorías + botón más vendidos -->
+<div
+  class="mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2"
+>
+  <!-- Categorías -->
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-outline-primary" (click)="getByCategory(1)">
+      📱 Celulares
+    </button>
+    <button class="btn btn-outline-primary" (click)="getByCategory(2)">
+      💻 Computadoras
+    </button>
+    <button class="btn btn-outline-primary" (click)="getByCategory(3)">
+      🎧 Accesorios
+    </button>
+    <button class="btn btn-primary" (click)="loadAllProducts()">
+      🔄 Todos
+    </button>
+  </div>
+
+  <!-- Botón más vendidos -->
+  <button
+    class="btn btn-outline-danger"
+    (click)="mostrandoMasVendidos ? loadAllProducts() : loadMasVendidos()"
+  >
+    {{ mostrandoMasVendidos ? "⬅ Ver todos" : " Ver TOP vendidos" }}
   </button>
-  <button class="btn btn-outline-primary" (click)="getByCategory(2)">
-    Computadoras
-  </button>
-  <button class="btn btn-outline-primary" (click)="getByCategory(3)">
-    Accesorios
-  </button>
-  <button class="btn btn-primary" (click)="loadAllProducts()">Todos</button>
 </div>
 
-<!-- Barra de búsqueda y orden mayor/menor, -->
+<!-- Título de sección -->
+<div class="mb-3">
+  <h2 class="text-center">
+    {{
+      mostrandoMasVendidos
+        ? " Productos más vendidos"
+        : "🛒 Todos los productos"
+    }}
+  </h2>
+</div>
+
+<!-- Barra de búsqueda y orden -->
 <div class="row mb-4 justify-content-center">
   <div class="col-md-4">
     <input
@@ -43,7 +69,7 @@
   </div>
 </div>
 
-<!-- Si no hay productos -->
+<!-- Sin resultados -->
 <div
   *ngIf="!loading && filteredProducts.length === 0"
   class="alert alert-warning text-center mt-3"
@@ -51,7 +77,7 @@
   No hay productos disponibles.
 </div>
 
-<!-- tabla de productos -->
+<!-- Lista de productos -->
 <div class="row" *ngIf="!loading && filteredProducts.length > 0">
   <div
     class="col-sm-6 col-md-4 col-lg-3 mb-4"
@@ -84,8 +110,9 @@
         <a
           [routerLink]="['/products', product.id]"
           class="btn btn-outline-primary mb-2"
-          >Ver Detalles</a
         >
+          Ver Detalles
+        </a>
         <button
           class="btn btn-success d-flex align-items-center justify-content-center gap-2"
           (click)="addToCart(product)"
@@ -95,9 +122,9 @@
             *ngIf="addingProductId === product.id"
             class="spinner-border spinner-border-sm"
           ></span>
-          <span *ngIf="addingProductId !== product.id"
-            >🛒 Agregar al carrito</span
-          >
+          <span *ngIf="addingProductId !== product.id">
+            🛒 Agregar al carrito
+          </span>
           <span *ngIf="addingProductId === product.id">Agregando...</span>
         </button>
       </div>
@@ -118,7 +145,9 @@
       *ngFor="let page of [].constructor(totalPages); let i = index"
       [class.active]="currentPage === i + 1"
     >
-      <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+      <button class="page-link" (click)="changePage(i + 1)">
+        {{ i + 1 }}
+      </button>
     </li>
     <li class="page-item" [class.disabled]="currentPage === totalPages">
       <button class="page-link" (click)="changePage(currentPage + 1)">

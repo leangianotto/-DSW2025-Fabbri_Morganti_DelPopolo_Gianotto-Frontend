@@ -8,6 +8,7 @@ import { Product } from 'src/app/models/product';
 })
 export class HomeComponent implements OnInit {
   featuredProducts: Product[] = [];
+  topSellingProducts: any[] = [];
 
   testimonials = [
     { user: 'Lucía M.', comment: 'Excelente atención y envío rápido.' },
@@ -37,6 +38,36 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => console.error(err),
     });
+  
+    this.loadTopSellingProducts(); // ← 🔥 esta línea era lo que faltaba
+  }
+  
+
+  loadFeaturedProducts(): void {
+    this.productService.getProducts().subscribe({
+      next: (data) => {
+        this.featuredProducts = data.slice(0, 4); // primeros 4 productos
+      },
+      error: (err) => console.error('Error al cargar productos destacados:', err),
+    });
+  }
+
+  loadTopSellingProducts(): void {
+    this.productService.getTopSellingProducts().subscribe({
+      next: (data) => {
+        console.log('✅ Top vendidos crudos:', data);
+    
+        this.topSellingProducts = data
+          .filter(item => item.Product)
+          .map(item => ({
+            product: item.Product,             // ⬅️ CORRECTO
+            totalVendidas: item.totalVendidas
+          }));
+    
+        console.log('🟢 Procesados:', this.topSellingProducts);
+      },
+      error: (err) => console.error('Error al cargar más vendidos:', err),
+    });
   }
 
   subscribeNewsletter() {
@@ -51,4 +82,5 @@ export class HomeComponent implements OnInit {
     this.contact = { name: '', email: '', message: '' };
   }
 }
+
 

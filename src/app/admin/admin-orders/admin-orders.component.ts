@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
+import { ProductService } from '../../services/product.service';
 
 type FiltroClave = 'id' | 'user' | 'product' | 'dateFrom' | 'dateTo' | 'minTotal' | 'maxTotal' | 'status';
 type FiltroActivoClave = 'id' | 'user' | 'product' | 'date' | 'price' | 'status';
@@ -19,6 +20,9 @@ export class AdminOrdersComponent implements OnInit {
   expandedOrderId: number | null = null;
   loading = false;
   visibleFiltro: FiltroActivoClave | null = null;
+  topSellingProducts: { product: any; totalVendidas: string }[] = [];
+  mostrarTopVendidos = false;
+
 
   filtros: Filtros = {
     id: '',
@@ -49,10 +53,14 @@ export class AdminOrdersComponent implements OnInit {
     { key: 'status', label: 'Estado' }
   ];
 
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit() {
     this.getOrders();
+    this.loadTopSellingProducts();
   }
 
   getOrders() {
@@ -135,6 +143,11 @@ export class AdminOrdersComponent implements OnInit {
   buscarConFiltros() {
     const filtrosAplicados: Partial<Filtros> = {};
 
+    if (this.filtrosActivos.id && this.filtros.id) {
+      filtrosAplicados.id = this.filtros.id;
+    }
+    
+
     if (this.filtrosActivos.user && this.filtros.user) filtrosAplicados.user = this.filtros.user;
     if (this.filtrosActivos.product && this.filtros.product) filtrosAplicados.product = this.filtros.product;
 
@@ -192,5 +205,22 @@ export class AdminOrdersComponent implements OnInit {
     // Si está activado, mostrar ese campo. Si se desactiva, ocultar todo.
     this.visibleFiltro = this.filtrosActivos[filtro] ? filtro : null;
   }
+
+  loadTopSellingProducts() {
+    this.productService.getTopSellingProducts().subscribe({
+      next: (data) => {
+        this.topSellingProducts = data
+          .filter(item => item.Product)
+          .map(item => ({
+            product: item.Product,
+            totalVendidas: item.totalVendidas
+          }));
+      },
+      error: (err) => console.error('Error al cargar productos más vendidos:', err),
+    });
+  }
   
+  toggleTopVendidos() {
+    this.mostrarTopVendidos = !this.mostrarTopVendidos;
+  }
 }
