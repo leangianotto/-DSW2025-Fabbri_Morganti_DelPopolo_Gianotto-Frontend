@@ -72,8 +72,8 @@
         <tbody>
           <tr *ngFor="let prod of pedidoBuscado.productos">
             <td>{{ prod.name }}</td>
-            <td>${{ prod.orderProduct.price_at_purchase }}</td>
-            <td>{{ prod.orderProduct.quantity }}</td>
+            <td>{{ prod.OrderProduct?.price_at_purchase }}</td>
+            <td>{{ prod.OrderProduct?.quantity }}</td>
           </tr>
         </tbody>
       </table>
