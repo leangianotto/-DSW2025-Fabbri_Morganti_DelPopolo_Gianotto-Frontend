@@ -1,15 +1,95 @@
-<div class="container mt-4">
-  <h2>Perfil de Usuario</h2>
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">
+        <i class="bi bi-person-circle me-2"></i> Perfil de Usuario
+      </h4>
+    </div>
 
-  <div *ngIf="user; else notLoggedIn">
-    <p><strong>Nombre:</strong> {{ user.name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
+    <div class="card-body" *ngIf="user; else notLoggedIn">
+      <!-- Si no está editando -->
+      <div *ngIf="!editando">
+        <p class="mb-2"><strong>Nombre:</strong> {{ user.name }}</p>
+        <p class="mb-3"><strong>Email:</strong> {{ user.email }}</p>
 
-    <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-outline-primary" (click)="editando = true">
+            <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+          </button>
+
+          <button class="btn btn-danger" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulario de edición -->
+      <div *ngIf="editando">
+        <form (ngSubmit)="guardarCambios()">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input
+              type="text"
+              id="nombre"
+              class="form-control"
+              [(ngModel)]="user.name"
+              name="name"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              [(ngModel)]="user.email"
+              name="email"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label"
+              >Nueva contraseña (opcional)</label
+            >
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              [(ngModel)]="newPassword"
+              name="password"
+            />
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle me-1"></i> Guardar
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cancelarEdicion()"
+            >
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+          </div>
+
+          <div *ngIf="mensaje" class="mt-3 alert alert-info">
+            {{ mensaje }}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <ng-template #notLoggedIn>
+      <div class="card-body text-center">
+        <p>No has iniciado sesión.</p>
+        <a routerLink="/login" class="btn btn-primary">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+        </a>
+      </div>
+    </ng-template>
   </div>
-
-  <ng-template #notLoggedIn>
-    <p>No has iniciado sesión.</p>
-    <a routerLink="/login" class="btn btn-primary">Iniciar sesión</a>
-  </ng-template>
 </div>

@@ -1,6 +1,7 @@
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { Observable, tap, BehaviorSubject } from 'rxjs';
 
 interface LoginResponse {
@@ -63,6 +64,21 @@ export class AuthService {
   isAdmin(): boolean {
     return localStorage.getItem('role') === 'admin'; 
   }
+
+  getProfile(): Observable<any> {
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  
+    return this.http.get(`${this.apiUrl}/profile`, { headers });
+  }
+  
+  updateProfile(data: { name: string; email: string }): Observable<any> {
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  
+    return this.http.put(`${this.apiUrl}/profile`, data, { headers });
+  }
+  
 }
 
 

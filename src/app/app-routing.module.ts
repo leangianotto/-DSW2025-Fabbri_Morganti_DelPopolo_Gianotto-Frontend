@@ -8,6 +8,8 @@ import { ProductListComponent } from './pages/product-list/product-list.componen
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { UserOrdersComponent } from './components/user-orders/user-orders.component';
+
 
 import { AdminProductsComponent } from './admin/admin-products/admin-products.component';
 import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
@@ -24,6 +26,8 @@ const routes: Routes = [
   { path: 'products/:id', component: ProductDetailComponent },
   { path: 'cart', component: CartComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'my-orders', component: UserOrdersComponent },
+
 
   //  Rutas protegidas por rol admin
   { path: 'admin/products', component: AdminProductsComponent, canActivate: [AdminGuard] },

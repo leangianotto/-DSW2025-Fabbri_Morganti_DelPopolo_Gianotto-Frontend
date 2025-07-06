@@ -13,7 +13,6 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   loading: boolean = true;
-  
 
   searchTerm: string = '';
   sortOption: string = '';
@@ -21,7 +20,9 @@ export class ProductListComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 8;
 
-  addingProductId: number | null = null; 
+  addingProductId: number | null = null;
+
+  mostrandoMasVendidos: boolean = false;
 
   constructor(
     private productService: ProductService,
@@ -35,6 +36,7 @@ export class ProductListComponent implements OnInit {
 
   loadAllProducts(): void {
     this.loading = true;
+    this.mostrandoMasVendidos = false;
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
@@ -45,8 +47,23 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  loadMasVendidos(): void {
+    this.loading = true;
+    this.mostrandoMasVendidos = true;
+
+    this.productService. getTopSellingProducts().subscribe({
+      next: (data) => {
+        this.products = data.map(p => p.Product);
+        this.applyFilters();
+      },
+      error: (err) => console.error('Error al obtener más vendidos:', err),
+      complete: () => (this.loading = false)
+    });
+  }
+
   getByCategory(categoryId: number): void {
     this.loading = true;
+    this.mostrandoMasVendidos = false;
     this.productService.getProductsByCategory(categoryId).subscribe({
       next: (data) => {
         this.products = data;
@@ -88,18 +105,18 @@ export class ProductListComponent implements OnInit {
       this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
       return;
     }
-  
+
     this.addingProductId = product.id;
-  
+
     this.cartService.addProduct(product);
     this.toast.showToast('Producto agregado al carrito.', 'success');
-  
+
     setTimeout(() => {
       this.addingProductId = null;
     }, 1000);
   }
-  
 }
+
 
 
 

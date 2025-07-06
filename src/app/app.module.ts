@@ -21,6 +21,7 @@ import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.componen
 import { AdminCategoriesComponent } from './admin/admin-categories/admin-categories.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { ToastComponent } from './components/toast/toast.component';
+import { UserOrdersComponent } from './components/user-orders/user-orders.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ToastComponent } from './components/toast/toast.component';
     AdminOrdersComponent,
     AdminCategoriesComponent,
     AdminUsersComponent,
-    ToastComponent
+    ToastComponent,
+    UserOrdersComponent
   ],
   imports: [
     BrowserModule,

@@ -1,15 +1,15 @@
 <div class="container mt-5">
   <!-- Hero banner -->
-  <div class="row align-items-center mb-5">
+  <div class="row align-items-center mb-5 bg-light rounded shadow-sm p-4">
     <div class="col-md-6 text-center text-md-start">
       <h1 class="display-4 fw-bold">Bienvenido a MiEcommerce</h1>
       <p class="lead">
         Tu tienda de tecnología al mejor precio. Celulares, computadoras,
         accesorios y más.
       </p>
-      <a routerLink="/products" class="btn btn-primary btn-lg mt-3"
-        >Explorar productos</a
-      >
+      <a routerLink="/products" class="btn btn-primary btn-lg mt-3">
+        Explorar productos
+      </a>
     </div>
     <div class="col-md-6 text-center">
       <img
@@ -45,25 +45,47 @@
           <a
             [routerLink]="['/products', product.id]"
             class="btn btn-outline-primary mt-auto"
-            >Ver detalles</a
           >
+            Ver detalles
+          </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Sección testimonios -->
-  <h2 class="text-center mb-4">Lo que dicen nuestros clientes</h2>
+  <!-- Productos más vendidos -->
+  <h2 class="text-center mb-4">🔥 Más vendidos</h2>
   <div class="row justify-content-center mb-5">
-    <div class="col-md-8">
-      <div
-        *ngFor="let testimonial of testimonials"
-        class="mb-4 p-4 border rounded shadow-sm bg-light"
-      >
-        <p class="fst-italic">"{{ testimonial.comment }}"</p>
-        <p class="fw-bold mb-0 text-end">- {{ testimonial.user }}</p>
+    <ng-container *ngFor="let item of topSellingProducts">
+      <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngIf="item.product">
+        <div class="card h-100 border-success shadow-sm">
+          <img
+            [src]="
+              item.product.imageUrl ||
+              'https://via.placeholder.com/300x180?text=Sin+imagen'
+            "
+            class="card-img-top"
+            [alt]="item.product.name"
+            style="object-fit: cover; height: 180px"
+          />
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-truncate">{{ item.product.name }}</h5>
+            <p class="card-text text-truncate">
+              {{ item.product.description || "Sin descripción" }}
+            </p>
+            <p>
+              <strong>${{ item.product.price }}</strong>
+            </p>
+            <a
+              [routerLink]="['/products', item.product.id]"
+              class="btn btn-success mt-auto"
+            >
+              Ver detalles
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 
   <!-- Marcas asociadas -->

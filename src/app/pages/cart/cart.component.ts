@@ -30,10 +30,15 @@ export class CartComponent implements OnInit {
   }
 
   clearCart(): void {
-    this.cartService.clearCart();
-    this.cartItems = this.cartService.getCart();
+    const confirmDelete = window.confirm('¿Estás seguro de que querés vaciar el carrito?');
+  
+    if (confirmDelete) {
+      this.cartService.clearCart();
+      this.cartItems = this.cartService.getCart();
+      this.toast.showToast('Carrito vaciado con éxito', 'info');
+    }
   }
-
+  
   getTotal(): number {
     return this.cartService.getTotal();
   }

@@ -1,0 +1,142 @@
+<div class="container mt-5">
+  <h2 class="text-center fw-bold mb-4 text-primary">
+    <i class="bi bi-bag-check-fill me-2"></i> Mis pedidos
+  </h2>
+
+  <!-- Spinner de carga -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay pedidos -->
+  <div
+    *ngIf="!loading && orders.length === 0 && !pedidoBuscado"
+    class="alert alert-info text-center"
+  >
+    <i class="bi bi-info-circle-fill me-2"></i> Aún no realizaste ningún pedido.
+  </div>
+
+  <!-- Buscador por ID -->
+  <div class="mb-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title text-primary mb-3">
+          <i class="bi bi-search me-2"></i>Consultar estado de un pedido
+        </h5>
+
+        <div class="row g-2 align-items-center">
+          <div class="col-sm-8 col-12">
+            <input
+              type="number"
+              [(ngModel)]="buscarId"
+              class="form-control form-control-lg"
+              placeholder="Ingrese el ID del pedido..."
+              min="1"
+            />
+          </div>
+          <div class="col-sm-4 col-12">
+            <button
+              class="btn btn-primary btn-lg w-100"
+              (click)="buscarPedido()"
+            >
+              <i class="bi bi-search"></i> Buscar
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="errorBusqueda" class="text-danger mt-3">
+          <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorBusqueda }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultado de búsqueda -->
+  <div *ngIf="pedidoBuscado" class="card mb-4 border-success">
+    <div class="card-header bg-success text-white">
+      <strong>Pedido #{{ pedidoBuscado.id }}</strong> -
+      {{ pedidoBuscado.status }} -
+      {{ pedidoBuscado.createdAt | date : "short" }}
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prod of pedidoBuscado.productos">
+            <td>{{ prod.name }}</td>
+            <td>${{ prod.orderProduct.price_at_purchase }}</td>
+            <td>{{ prod.orderProduct.quantity }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-end fw-bold">
+        Total: ${{ pedidoBuscado.totalAmount }}
+      </div>
+
+      <div class="text-center mt-3">
+        <button class="btn btn-outline-secondary" (click)="verTodos()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Ver todos los pedidos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial completo (oculto si hay búsqueda activa) -->
+  <div *ngIf="!pedidoBuscado">
+    <div *ngFor="let order of orders" class="card shadow-sm mb-4 border-0">
+      <div
+        class="card-header bg-light d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <strong class="text-dark">Pedido #{{ order.id }}</strong>
+          <span class="badge bg-secondary ms-2 text-uppercase">
+            {{ order.status }}
+          </span>
+        </div>
+        <small class="text-muted">{{ order.createdAt | date : "short" }}</small>
+      </div>
+
+      <div class="card-body">
+        <table class="table table-sm align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Producto</th>
+              <th>Precio unitario</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of order.productos">
+              <td>{{ prod.name }}</td>
+              <td>${{ prod.OrderProduct.price_at_purchase.toFixed(2) }}</td>
+              <td>{{ prod.OrderProduct.quantity }}</td>
+              <td>
+                ${{
+                  (
+                    prod.OrderProduct.price_at_purchase *
+                    prod.OrderProduct.quantity
+                  ).toFixed(2)
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="text-end mt-3">
+          <span class="fw-bold fs-5">
+            Total: ${{ order.totalAmount.toFixed(2) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
