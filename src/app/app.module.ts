@@ -22,6 +22,7 @@ import { AdminCategoriesComponent } from './admin/admin-categories/admin-categor
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { UserOrdersComponent } from './components/user-orders/user-orders.component';
+import { CompraFinalizadaComponent } from './pages/compra-finalizada/compra-finalizada.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { UserOrdersComponent } from './components/user-orders/user-orders.compon
     AdminCategoriesComponent,
     AdminUsersComponent,
     ToastComponent,
-    UserOrdersComponent
+    UserOrdersComponent,
+    CompraFinalizadaComponent
   ],
   imports: [
     BrowserModule,

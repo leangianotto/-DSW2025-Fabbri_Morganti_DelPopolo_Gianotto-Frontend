@@ -21,24 +21,27 @@ export class CartComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.actualizarVista();
+  }
+
+  actualizarVista(): void {
     this.cartItems = this.cartService.getCart();
   }
 
   removeItem(productId: number): void {
     this.cartService.removeProduct(productId);
-    this.cartItems = this.cartService.getCart();
+    this.actualizarVista();
   }
 
   clearCart(): void {
     const confirmDelete = window.confirm('¿Estás seguro de que querés vaciar el carrito?');
-  
     if (confirmDelete) {
       this.cartService.clearCart();
-      this.cartItems = this.cartService.getCart();
       this.toast.showToast('Carrito vaciado con éxito', 'info');
+      this.actualizarVista();
     }
   }
-  
+
   getTotal(): number {
     return this.cartService.getTotal();
   }
@@ -51,7 +54,7 @@ export class CartComponent implements OnInit {
     if (newQuantity < 1) return;
 
     this.cartService.updateQuantity(productId, newQuantity);
-    this.cartItems = this.cartService.getCart();
+    this.actualizarVista();
   }
 
   checkout() {
@@ -81,11 +84,11 @@ export class CartComponent implements OnInit {
     const order = { userId, totalAmount, items };
 
     this.orderService.createOrder(order).subscribe({
-      next: () => {
-        alert('Pedido realizado con éxito');
+      next: (res) => {
+        
         this.cartService.clearCart();
-        this.cartItems = [];
-        this.router.navigate(['/products']);
+        this.actualizarVista();
+        this.router.navigate(['/compra-finalizada'], { queryParams: { orderId: res.orderId } });
       },
       error: (err) => {
         console.error('Error al realizar el pedido:', err);
@@ -107,7 +110,6 @@ export class CartComponent implements OnInit {
       unit_price: Number(item.product.price), 
       quantity: item.quantity
     }));
-    
 
     this.orderService.crearPreferencia(items).subscribe({
       next: (res) => {

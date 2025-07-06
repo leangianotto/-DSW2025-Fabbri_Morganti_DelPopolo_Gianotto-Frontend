@@ -9,6 +9,7 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
 import { CartComponent } from './pages/cart/cart.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { UserOrdersComponent } from './components/user-orders/user-orders.component';
+import { CompraFinalizadaComponent } from './pages/compra-finalizada/compra-finalizada.component';
 
 
 import { AdminProductsComponent } from './admin/admin-products/admin-products.component';
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'my-orders', component: UserOrdersComponent },
+  { path: 'compra-finalizada', component: CompraFinalizadaComponent },
 
 
   //  Rutas protegidas por rol admin
