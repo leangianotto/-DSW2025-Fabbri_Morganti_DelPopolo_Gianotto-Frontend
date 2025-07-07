@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from 'src/app/services/product.service';
-import { Product } from 'src/app/models/product';
+import { Product, ProductForm} from 'src/app/models/product';
 
 @Component({
   selector: 'app-admin-products',
@@ -16,7 +16,7 @@ export class AdminProductsComponent implements OnInit {
   price!: number;
   stock!: number;
   categoryId!: number;
-  imageUrl = '';
+  image = '';
 
   selectedProductId: number | null = null;
 
@@ -41,7 +41,7 @@ export class AdminProductsComponent implements OnInit {
     this.price = product.price;
     this.stock = product.stock;
     this.categoryId = product.categoryId;
-    this.imageUrl = product.imageUrl || '';
+    this.image = product.image || '';
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -55,28 +55,49 @@ export class AdminProductsComponent implements OnInit {
   }
 
   onSubmit() {
-    const product: Product = {
-      id: this.selectedProductId || 0,
-      name: this.name,
-      description: this.description,
-      price: this.price,
-      stock: this.stock,
-      categoryId: this.categoryId,
-      imageUrl: this.imageUrl,
-    };
+     const productForm: ProductForm = {
+    id: this.selectedProductId ?? undefined,
+    name: this.name,
+    description: this.description,
+    price: this.price,
+    stock: this.stock,
+    categoryId: this.categoryId,
+    image: this.image,
+  };
 
-    if (this.selectedProductId) {
-      this.productService.updateProduct(product).subscribe(() => {
+  console.log('onSubmit, productForm:', productForm);
+
+  if (this.selectedProductId !== null && this.selectedProductId !== undefined) {
+    const productToUpdate: Product = {
+      ...productForm,
+      id: this.selectedProductId,
+    };
+    console.log('Updating product:', productToUpdate);
+
+    this.productService.updateProduct(productToUpdate).subscribe({
+      next: (res) => {
+        console.log('Update response:', res);
         this.resetForm();
         this.loadProducts();
-      });
-    } else {
-      this.productService.createProduct(product).subscribe(() => {
+      },
+      error: (err) => {
+        console.error('Update error:', err);
+      }
+    });
+  } else {
+    this.productService.createProduct(productForm).subscribe({
+      next: (res) => {
+        console.log('Create response:', res);
         this.resetForm();
         this.loadProducts();
-      });
-    }
+      },
+      error: (err) => {
+        console.error('Create error:', err);
+      }
+    });
   }
+}
+  
 
   resetForm() {
     this.selectedProductId = null;
@@ -85,7 +106,7 @@ export class AdminProductsComponent implements OnInit {
     this.price = 0;
     this.stock = 0;
     this.categoryId = 0;
-    this.imageUrl = '';
+    this.image = '';
   }
 }
 

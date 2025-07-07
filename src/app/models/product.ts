@@ -10,8 +10,10 @@ export interface Product {
   description: string;
   price: number;
   stock: number;
-  imageUrl?: string;
+  image?: string;
   categoryId: number;
   category?: Category;  // hace falta?
 }
 
+// Tipo para formularios (crear o editar)
+export type ProductForm = Omit<Product, 'id'> & { id?: number };
