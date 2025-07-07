@@ -31,17 +31,17 @@ export class HomeComponent implements OnInit {
 
   constructor(private productService: ProductService) {}
 
-  ngOnInit(): void {
-    this.productService.getProducts().subscribe({
-      next: (data) => {
-        this.featuredProducts = data.slice(0, 4);
-      },
-      error: (err) => console.error(err),
-    });
-  
-    this.loadTopSellingProducts(); // ← 🔥 esta línea era lo que faltaba
-  }
-  
+ngOnInit(): void {
+  this.productService.getProducts().subscribe({
+    next: (data) => {
+      this.featuredProducts = data.slice(0, 4);
+    },
+    error: (err) => console.error(err),
+  });
+
+  this.loadTopSellingProducts(); // ← 🔥 esta línea era lo que faltaba
+}
+
 
   loadFeaturedProducts(): void {
     this.productService.getProducts().subscribe({

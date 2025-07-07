@@ -1,13 +1,16 @@
-<div class="container mt-5">
+<div class="container py-5">
   <!-- Hero banner -->
-  <div class="row align-items-center mb-5 bg-light rounded shadow-sm p-4">
+  <div class="row align-items-center mb-5 bg-light rounded shadow-sm p-5">
     <div class="col-md-6 text-center text-md-start">
-      <h1 class="display-4 fw-bold">Bienvenido a MiEcommerce</h1>
-      <p class="lead">
+      <h1 class="display-4 fw-bold text-primary">Bienvenido a MiEcommerce</h1>
+      <p class="lead text-secondary">
         Tu tienda de tecnología al mejor precio. Celulares, computadoras,
         accesorios y más.
       </p>
-      <a routerLink="/products" class="btn btn-primary btn-lg mt-3">
+      <a
+        routerLink="/products"
+        class="btn btn-primary btn-lg mt-3 px-4 fw-semibold shadow-sm"
+      >
         Explorar productos
       </a>
     </div>
@@ -16,119 +19,142 @@
         src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png"
         alt="Tech"
         class="img-fluid"
-        style="max-height: 300px"
+        style="
+          max-height: 320px;
+          filter: drop-shadow(0 0 8px rgba(0, 123, 255, 0.3));
+        "
       />
     </div>
   </div>
 
   <!-- Productos destacados -->
-  <h2 class="text-center mb-4">Productos destacados</h2>
-  <div class="row justify-content-center mb-5">
-    <div
-      class="col-sm-6 col-md-4 col-lg-3 mb-4"
-      *ngFor="let product of featuredProducts"
-    >
-      <div class="card h-100 shadow-sm">
-        <img
-          *ngIf="product.imageUrl"
-          [src]="product.imageUrl"
-          class="card-img-top"
-          [alt]="product.name"
-          style="object-fit: cover; height: 180px"
-        />
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title text-truncate">{{ product.name }}</h5>
-          <p class="card-text text-truncate">{{ product.description }}</p>
-          <p>
-            <strong>${{ product.price }}</strong>
-          </p>
-          <a
-            [routerLink]="['/products', product.id]"
-            class="btn btn-outline-primary mt-auto"
-          >
-            Ver detalles
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Productos más vendidos -->
-  <h2 class="text-center mb-4">🔥 Más vendidos</h2>
-  <div class="row justify-content-center mb-5">
-    <ng-container *ngFor="let item of topSellingProducts">
-      <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngIf="item.product">
-        <div class="card h-100 border-success shadow-sm">
+  <section>
+    <h2 class="text-center mb-4 fw-bold text-primary">Productos destacados</h2>
+    <div class="row justify-content-center">
+      <div
+        class="col-sm-6 col-md-4 col-lg-3 mb-4"
+        *ngFor="let product of featuredProducts"
+      >
+        <div class="card h-100 shadow-sm border-0 rounded">
           <img
-            [src]="
-              item.product.imageUrl ||
-              'https://via.placeholder.com/300x180?text=Sin+imagen'
-            "
-            class="card-img-top"
-            [alt]="item.product.name"
-            style="object-fit: cover; height: 180px"
+            *ngIf="product.imageUrl"
+            [src]="product.imageUrl"
+            [alt]="product.name"
+            class="card-img-top rounded-top"
+            style="height: 180px; object-fit: cover"
           />
           <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-truncate">{{ item.product.name }}</h5>
-            <p class="card-text text-truncate">
-              {{ item.product.description || "Sin descripción" }}
+            <h5 class="card-title text-truncate fw-semibold">
+              {{ product.name }}
+            </h5>
+            <p class="card-text text-truncate text-muted">
+              {{ product.description }}
             </p>
-            <p>
-              <strong>${{ item.product.price }}</strong>
-            </p>
+            <p class="fw-bold fs-5 text-primary">${{ product.price }}</p>
             <a
-              [routerLink]="['/products', item.product.id]"
-              class="btn btn-success mt-auto"
+              [routerLink]="['/products', product.id]"
+              class="btn btn-outline-primary mt-auto fw-semibold"
+              >Ver detalles</a
             >
-              Ver detalles
-            </a>
           </div>
         </div>
       </div>
-    </ng-container>
-  </div>
+    </div>
+  </section>
+
+  <!-- Productos más vendidos -->
+  <section>
+    <h2 class="text-center mb-4 fw-bold text-primary">Más vendidos</h2>
+    <div class="row justify-content-center">
+      <ng-container *ngFor="let item of topSellingProducts">
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngIf="item.product">
+          <div class="card h-100 shadow-sm border-primary border-2 rounded">
+            <img
+              [src]="
+                item.product.imageUrl ||
+                'https://via.placeholder.com/300x180?text=Sin+imagen'
+              "
+              [alt]="item.product.name"
+              class="card-img-top rounded-top"
+              style="height: 180px; object-fit: cover"
+            />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-truncate fw-semibold">
+                {{ item.product.name }}
+              </h5>
+              <p class="card-text text-truncate text-muted">
+                {{ item.product.description || "Sin descripción" }}
+              </p>
+              <p class="fw-bold fs-5 text-primary">${{ item.product.price }}</p>
+              <a
+                [routerLink]="['/products', item.product.id]"
+                class="btn btn-primary mt-auto fw-semibold"
+                >Ver detalles</a
+              >
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </section>
 
   <!-- Marcas asociadas -->
-  <h2 class="text-center mb-4">Marcas que confiamos</h2>
-  <div
-    class="d-flex justify-content-center align-items-center gap-5 mb-5 flex-wrap"
-  >
-    <img
-      *ngFor="let brand of brands"
-      [src]="brand.logoUrl"
-      [alt]="brand.name"
-      style="height: 50px; filter: grayscale(100%); transition: filter 0.3s"
-      class="brand-logo"
-    />
-  </div>
+  <section>
+    <h2 class="text-center mb-4 fw-bold text-secondary">
+      Marcas que confiamos
+    </h2>
+    <div
+      class="d-flex justify-content-center align-items-center gap-5 mb-5 flex-wrap"
+    >
+      <img
+        *ngFor="let brand of brands"
+        [src]="brand.logoUrl"
+        [alt]="brand.name"
+        class="brand-logo rounded"
+        style="
+          height: 50px;
+          filter: grayscale(100%);
+          transition: filter 0.3s;
+          cursor: pointer;
+        "
+      />
+    </div>
+  </section>
 
   <!-- Por qué elegirnos -->
-  <h2 class="text-center mb-4">¿Por qué elegirnos?</h2>
-  <div class="row text-center mb-5">
-    <div class="col-md-4 mb-4">
-      <i class="bi bi-truck fs-1 text-primary mb-3"></i>
-      <h5>Envío rápido y seguro</h5>
-      <p>Recibí tus productos en tiempo récord y con total seguridad.</p>
+  <section>
+    <h2 class="text-center mb-4 fw-bold text-primary">¿Por qué elegirnos?</h2>
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-truck fs-1 text-primary mb-3"></i>
+        <h5 class="fw-semibold">Envío rápido y seguro</h5>
+        <p class="text-muted">
+          Recibí tus productos en tiempo récord y con total seguridad.
+        </p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-cash-stack fs-1 text-primary mb-3"></i>
+        <h5 class="fw-semibold">Pagá en cuotas</h5>
+        <p class="text-muted">
+          Ofrecemos múltiples opciones de pago para tu comodidad.
+        </p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <i class="bi bi-headset fs-1 text-primary mb-3"></i>
+        <h5 class="fw-semibold">Soporte 24/7</h5>
+        <p class="text-muted">Estamos para ayudarte cuando nos necesites.</p>
+      </div>
     </div>
-    <div class="col-md-4 mb-4">
-      <i class="bi bi-cash-stack fs-1 text-primary mb-3"></i>
-      <h5>Pagá en cuotas</h5>
-      <p>Ofrecemos múltiples opciones de pago para tu comodidad.</p>
-    </div>
-    <div class="col-md-4 mb-4">
-      <i class="bi bi-headset fs-1 text-primary mb-3"></i>
-      <h5>Soporte 24/7</h5>
-      <p>Estamos para ayudarte cuando nos necesites.</p>
-    </div>
-  </div>
+  </section>
 
   <!-- Newsletter -->
-  <div class="bg-primary text-white p-4 rounded mb-5 text-center">
-    <h4>Suscribite a nuestro newsletter</h4>
-    <p>Recibí ofertas exclusivas y novedades</p>
+  <section class="bg-primary text-white p-5 rounded mb-5 text-center">
+    <h4 class="fw-bold mb-2">Suscribite a nuestro newsletter</h4>
+    <p class="mb-4 fs-5">Recibí ofertas exclusivas y novedades</p>
     <form
       (ngSubmit)="subscribeNewsletter()"
-      class="d-flex justify-content-center flex-wrap gap-2"
+      class="d-flex justify-content-center flex-wrap gap-3"
+      novalidate
     >
       <input
         type="email"
@@ -136,63 +162,74 @@
         name="newsletterEmail"
         required
         placeholder="Tu email"
-        class="form-control w-auto"
+        class="form-control form-control-lg w-auto"
+        style="min-width: 280px"
       />
-      <button type="submit" class="btn btn-light">Suscribirse</button>
+      <button type="submit" class="btn btn-light btn-lg fw-semibold px-4">
+        Suscribirse
+      </button>
     </form>
-    <p *ngIf="newsletterMessage" class="mt-2">{{ newsletterMessage }}</p>
-  </div>
+    <p *ngIf="newsletterMessage" class="mt-3 fw-semibold">
+      {{ newsletterMessage }}
+    </p>
+  </section>
 
   <!-- Formulario contacto -->
-  <h2 class="text-center mb-4">Contacto</h2>
-  <form
-    (ngSubmit)="submitContact()"
-    #contactForm="ngForm"
-    class="mx-auto"
-    style="max-width: 500px"
-  >
-    <div class="mb-3">
-      <label for="name" class="form-label">Nombre</label>
-      <input
-        type="text"
-        id="name"
-        class="form-control"
-        [(ngModel)]="contact.name"
-        name="name"
-        required
-      />
-    </div>
-    <div class="mb-3">
-      <label for="emailContact" class="form-label">Email</label>
-      <input
-        type="email"
-        id="emailContact"
-        class="form-control"
-        [(ngModel)]="contact.email"
-        name="email"
-        required
-      />
-    </div>
-    <div class="mb-3">
-      <label for="message" class="form-label">Mensaje</label>
-      <textarea
-        id="message"
-        rows="4"
-        class="form-control"
-        [(ngModel)]="contact.message"
-        name="message"
-        required
-      ></textarea>
-    </div>
-    <button
-      type="submit"
-      class="btn btn-primary w-100"
-      [disabled]="contactForm.invalid"
+  <section>
+    <h2 class="text-center mb-4 fw-bold text-primary">Contacto</h2>
+    <form
+      (ngSubmit)="submitContact()"
+      #contactForm="ngForm"
+      class="mx-auto"
+      style="max-width: 500px"
+      novalidate
     >
-      Enviar mensaje
-    </button>
-  </form>
-  <p class="text-center mt-3 text-success" *ngIf="contactSuccess">
-    {{ contactSuccess }}
-  </p>
+      <div class="mb-4">
+        <label for="name" class="form-label fw-semibold">Nombre</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control form-control-lg"
+          [(ngModel)]="contact.name"
+          name="name"
+          required
+          minlength="2"
+        />
+      </div>
+      <div class="mb-4">
+        <label for="emailContact" class="form-label fw-semibold">Email</label>
+        <input
+          type="email"
+          id="emailContact"
+          class="form-control form-control-lg"
+          [(ngModel)]="contact.email"
+          name="email"
+          required
+          email
+        />
+      </div>
+      <div class="mb-4">
+        <label for="message" class="form-label fw-semibold">Mensaje</label>
+        <textarea
+          id="message"
+          rows="5"
+          class="form-control form-control-lg"
+          [(ngModel)]="contact.message"
+          name="message"
+          required
+          minlength="10"
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary btn-lg w-100 fw-semibold"
+        [disabled]="contactForm.invalid"
+      >
+        Enviar mensaje
+      </button>
+    </form>
+    <p class="text-center mt-3 text-success fw-semibold" *ngIf="contactSuccess">
+      {{ contactSuccess }}
+    </p>
+  </section>
 </div>

@@ -40,6 +40,8 @@ export class AdminCategoriesComponent implements OnInit {
   startEdit(category: Category) {
     this.editingCategory = { ...category };
     this.updatedName = category.name;
+
+    
   }
 
   saveEdit() {
