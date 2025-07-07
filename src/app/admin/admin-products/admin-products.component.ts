@@ -42,6 +42,8 @@ export class AdminProductsComponent implements OnInit {
     this.stock = product.stock;
     this.categoryId = product.categoryId;
     this.imageUrl = product.imageUrl || '';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   onDelete(id: number) {

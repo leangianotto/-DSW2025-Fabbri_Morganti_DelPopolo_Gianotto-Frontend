@@ -1,101 +1,137 @@
-<div class="container mt-4">
-  <h2>Administrar Productos</h2>
+<div class="container py-5">
+  <div class="bg-white p-4 rounded shadow-sm">
+    <h2 class="mb-4 text-center text-primary">Gestión de Productos</h2>
 
-  <!-- Formulario -->
-  <form (ngSubmit)="onSubmit()" class="mb-4">
-    <div class="row g-3">
-      <div class="col-md-6">
-        <input
-          [(ngModel)]="name"
-          name="name"
-          placeholder="Nombre"
-          class="form-control"
-          required
-        />
+    <!-- FORMULARIO -->
+    <form (ngSubmit)="onSubmit()">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label for="name" class="form-label">Nombre del producto</label>
+          <input
+            [(ngModel)]="name"
+            name="name"
+            id="name"
+            class="form-control"
+            type="text"
+            placeholder="Ej: Samsung Galaxy A54"
+            required
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label for="price" class="form-label">Precio ($)</label>
+          <input
+            [(ngModel)]="price"
+            name="price"
+            id="price"
+            class="form-control"
+            type="number"
+            placeholder="Ej: 1499.99"
+            required
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label for="stock" class="form-label">Stock disponible</label>
+          <input
+            [(ngModel)]="stock"
+            name="stock"
+            id="stock"
+            class="form-control"
+            type="number"
+            placeholder="Ej: 25"
+            required
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label for="categoryId" class="form-label">ID de Categoría</label>
+          <input
+            [(ngModel)]="categoryId"
+            name="categoryId"
+            id="categoryId"
+            class="form-control"
+            type="number"
+            placeholder="Ej: 2"
+            required
+          />
+        </div>
+
+        <div class="col-12">
+          <label for="imageUrl" class="form-label">URL de imagen</label>
+          <input
+            [(ngModel)]="imageUrl"
+            name="imageUrl"
+            id="imageUrl"
+            class="form-control"
+            type="text"
+            placeholder="https://ejemplo.com/imagen.jpg"
+          />
+        </div>
+
+        <div class="col-12">
+          <label for="description" class="form-label">Descripción</label>
+          <textarea
+            [(ngModel)]="description"
+            name="description"
+            id="description"
+            class="form-control"
+            rows="3"
+            placeholder="Breve descripción del producto"
+            required
+          ></textarea>
+        </div>
+
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-success px-4 fw-bold">
+            {{ selectedProductId ? "Actualizar" : "Crear" }} producto
+          </button>
+        </div>
       </div>
-      <div class="col-md-6">
-        <input
-          [(ngModel)]="price"
-          name="price"
-          type="number"
-          placeholder="Precio"
-          class="form-control"
-          required
-        />
+    </form>
+  </div>
+
+  <!-- TABLA -->
+  <div *ngIf="products.length" class="mt-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Listado de Productos</h5>
       </div>
-      <div class="col-md-6">
-        <input
-          [(ngModel)]="stock"
-          name="stock"
-          type="number"
-          placeholder="Stock"
-          class="form-control"
-          required
-        />
-      </div>
-      <div class="col-md-6">
-        <input
-          [(ngModel)]="categoryId"
-          name="categoryId"
-          type="number"
-          placeholder="Categoría ID"
-          class="form-control"
-          required
-        />
-      </div>
-      <div class="col-12">
-        <input
-          [(ngModel)]="imageUrl"
-          name="imageUrl"
-          placeholder="URL de imagen"
-          class="form-control"
-        />
-      </div>
-      <div class="col-12">
-        <textarea
-          [(ngModel)]="description"
-          name="description"
-          placeholder="Descripción"
-          class="form-control"
-          required
-        ></textarea>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary w-100">
-          {{ selectedProductId ? "Actualizar" : "Crear" }}
-        </button>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Categoría</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td class="fw-semibold">{{ p.name }}</td>
+              <td>${{ p.price }}</td>
+              <td>{{ p.stock }}</td>
+              <td>{{ p.categoryId }}</td>
+              <td class="text-center">
+                <button
+                  class="btn btn-sm btn-outline-warning me-2"
+                  (click)="onEdit(p)"
+                >
+                  Editar
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDelete(p.id)"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </form>
-
-  <!-- Tabla -->
-  <div *ngIf="products.length">
-    <table class="table table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Nombre</th>
-          <th>Precio</th>
-          <th>Stock</th>
-          <th>Categoría</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let p of products">
-          <td>{{ p.name }}</td>
-          <td>${{ p.price }}</td>
-          <td>{{ p.stock }}</td>
-          <td>{{ p.categoryId }}</td>
-          <td>
-            <button class="btn btn-sm btn-warning me-2" (click)="onEdit(p)">
-              Editar
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="onDelete(p.id)">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </div>
