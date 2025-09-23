@@ -85,12 +85,16 @@
   >
     <div class="card h-100 shadow-sm rounded">
       <img
-        *ngIf="product.image"
-        [src]="product.image"
+        [src]="
+          product.image?.startsWith('http')
+            ? product.image
+            : 'assets/images/' + product.image
+        "
         class="card-img-top"
         [alt]="product.name"
-        style="object-fit: contain; height: 180px; width: 100%;"
+        style="object-fit: contain; height: 180px; width: 100%"
       />
+
       <div class="card-body d-flex flex-column">
         <h5 class="card-title text-truncate" title="{{ product.name }}">
           {{ product.name }}

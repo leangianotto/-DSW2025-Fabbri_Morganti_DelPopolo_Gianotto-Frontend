@@ -39,8 +39,7 @@
                 <td>
                   <img
                     [src]="
-                      item.product.imageUrl ||
-                      'https://via.placeholder.com/100x80?text=Sin+imagen'
+                      'assets/images/' + (item.product.image || 'default.jpg')
                     "
                     alt="Imagen"
                     class="rounded"
