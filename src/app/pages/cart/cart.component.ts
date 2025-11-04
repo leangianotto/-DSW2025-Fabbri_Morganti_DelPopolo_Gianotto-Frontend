@@ -111,18 +111,10 @@ export class CartComponent implements OnInit {
       quantity: item.quantity
     }));
 
-    this.orderService.crearPreferencia(items).subscribe({
-      next: (res) => {
-        if (res.init_point) {
-          window.location.href = res.init_point;
-        } else {
-          alert('No se pudo iniciar el pago.');
-        }
-      },
-      error: (err) => {
-        console.error('Error al crear la preferencia:', err);
-        alert('Error al iniciar el pago.');
-      }
-    });
+    this.orderService.crearCheckout(items).subscribe({
+  next: (res) => window.location.href = res.url,
+  error: (err) => console.error('Error en checkout:', err),
+});
+
   }
 }

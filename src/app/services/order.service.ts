@@ -75,8 +75,8 @@ export class OrderService {
     return this.http.delete(`${this.apiUrl}/orderProducts/${orderId}/${productId}`, { headers });
   }
 
-  crearPreferencia(items: { title: string; unit_price: number; quantity: number }[]) {
-    return this.http.post<{ init_point: string }>(`${this.apiUrl}/checkout`, { items });
+  crearCheckout(items: { title: string; unit_price: number; quantity: number }[]) {
+    return this.http.post<{ url: string }>(`${this.apiUrl}/checkout`, { items });
   }
 
   getUserOrders(): Observable<any[]> {
