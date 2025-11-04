@@ -58,11 +58,15 @@ ngOnInit(): void {
         console.log('✅ Top vendidos crudos:', data);
     
         this.topSellingProducts = data
-          .filter(item => item.Product)
-          .map(item => ({
-            product: item.Product,             // ⬅️ CORRECTO
-            totalVendidas: item.totalVendidas
-          }));
+  .filter(item => item.Product)
+  .map(item => ({
+    product: {
+      ...item.Product,
+      image: item.Product.imageUrl || 'default.jpg'  // ⬅️ agregamos image
+    },
+    totalVendidas: item.totalVendidas
+  }));
+
     
         console.log('🟢 Procesados:', this.topSellingProducts);
       },

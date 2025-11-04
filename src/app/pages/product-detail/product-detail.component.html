@@ -3,8 +3,11 @@
     <!-- Imagen y detalles -->
     <div class="col-md-5 text-center">
       <img
-        *ngIf="product.image"
-        [src]="product.image"
+        [src]="
+          product.image?.startsWith('http')
+            ? product.image
+            : 'assets/images/' + (product.image || 'default.jpg')
+        "
         alt="{{ product.name }}"
         class="img-fluid rounded shadow-sm"
         style="max-height: 300px; object-fit: contain"

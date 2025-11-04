@@ -207,18 +207,22 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   loadTopSellingProducts() {
-    this.productService.getTopSellingProducts().subscribe({
-      next: (data) => {
-        this.topSellingProducts = data
-          .filter(item => item.Product)
-          .map(item => ({
-            product: item.Product,
-            totalVendidas: item.totalVendidas
-          }));
-      },
-      error: (err) => console.error('Error al cargar productos más vendidos:', err),
-    });
-  }
+  this.productService.getTopSellingProducts().subscribe({
+    next: (data) => {
+      this.topSellingProducts = data
+        .filter(item => item.Product)
+        .map(item => ({
+          product: {
+            ...item.Product,
+            image: item.Product.imageUrl || 'default.jpg' 
+          },
+          totalVendidas: item.totalVendidas
+        }));
+    },
+    error: (err) => console.error('Error al cargar productos más vendidos:', err),
+  });
+}
+
   
   toggleTopVendidos() {
     this.mostrarTopVendidos = !this.mostrarTopVendidos;

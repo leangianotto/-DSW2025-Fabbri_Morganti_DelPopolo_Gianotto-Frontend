@@ -34,12 +34,19 @@ export class ProductListComponent implements OnInit {
     this.loadAllProducts();
   }
 
+  private normalizeProductImage(product: any): Product {
+    return {
+      ...product,
+      image: product.image || product.imageUrl || 'default.jpg'
+    };
+  }
+
   loadAllProducts(): void {
     this.loading = true;
     this.mostrandoMasVendidos = false;
     this.productService.getProducts().subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.map(p => this.normalizeProductImage(p));
         this.applyFilters();
       },
       error: (err) => console.error('Error al cargar productos:', err),
@@ -51,9 +58,9 @@ export class ProductListComponent implements OnInit {
     this.loading = true;
     this.mostrandoMasVendidos = true;
 
-    this.productService. getTopSellingProducts().subscribe({
+    this.productService.getTopSellingProducts().subscribe({
       next: (data) => {
-        this.products = data.map(p => p.Product);
+        this.products = data.map(p => this.normalizeProductImage(p.Product));
         this.applyFilters();
       },
       error: (err) => console.error('Error al obtener más vendidos:', err),
@@ -66,7 +73,7 @@ export class ProductListComponent implements OnInit {
     this.mostrandoMasVendidos = false;
     this.productService.getProductsByCategory(categoryId).subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.map(p => this.normalizeProductImage(p));
         this.currentPage = 1;
         this.applyFilters();
       },
@@ -116,12 +123,3 @@ export class ProductListComponent implements OnInit {
     }, 1000);
   }
 }
-
-
-
-
-
-
-
-
-
