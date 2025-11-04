@@ -34,12 +34,33 @@ export class ProductListComponent implements OnInit {
     this.loadAllProducts();
   }
 
-  private normalizeProductImage(product: any): Product {
-    return {
-      ...product,
-      image: product.image || product.imageUrl || 'default.jpg'
-    };
-  }
+private normalizeProductImage(p: any) {
+  const raw = p.image || p.imageUrl || '';
+  if (/^https?:\/\//i.test(raw)) return { ...p, image: raw };
+  const cleaned = String(raw)
+    .replace(/^assets\/images\//i, '')
+    .replace(/^images\//i, '')
+    .replace(/^\.?\/*/,'')
+    .toLowerCase() || 'default.jpg';
+  return { ...p, image: cleaned };
+}
+
+getImageSrc(img?: string): string {
+  if (!img) return 'assets/images/default.jpg';
+  const s = String(img).trim();
+  if (/^https?:\/\//i.test(s)) return s; // URL absoluta
+  const just = s
+    .replace(/^assets\/images\//i, '')
+    .replace(/^images\//i, '')
+    .replace(/^\.?\/*/, '')
+    .toLowerCase();
+  return `assets/images/${just}`;
+}
+
+onImgError(ev: Event) {
+  (ev.target as HTMLImageElement).src = 'assets/images/default.jpg';
+}
+
 
   loadAllProducts(): void {
     this.loading = true;

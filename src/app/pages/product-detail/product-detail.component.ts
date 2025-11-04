@@ -36,13 +36,50 @@ export class ProductDetailComponent implements OnInit {
           data.category = data.Category;
           delete data.Category;
         }
-        this.product = data;
+        this.product = this.normalizeProductImage(data);
         this.loadReviews();
       },
       error: (err) => console.error(err),
     });
   }
+ // 🔹 Normaliza el campo image para evitar prefijos duplicados y problemas de mayúsculas
+  private normalizeProductImage(p: any): Product {
+    const raw = p.image || p.imageUrl || '';
 
+    // URL absoluta → la dejo tal cual
+    if (/^https?:\/\//i.test(raw)) return { ...p, image: raw };
+
+    // limpio prefijos y fuerzo minúsculas
+    const cleaned =
+      String(raw)
+        .replace(/^assets\/images\//i, '')
+        .replace(/^images\//i, '')
+        .replace(/^\.?\/*/, '')
+        .toLowerCase() || 'default.jpg';
+
+    return { ...p, image: cleaned };
+  }
+
+  // 🔹 Construye el src final sin duplicar 'assets/images/'
+  getImageSrc(img?: string): string {
+    if (!img) return 'assets/images/default.jpg';
+    const s = String(img).trim();
+
+    if (/^https?:\/\//i.test(s)) return s; // URL externa
+
+    const just = s
+      .replace(/^assets\/images\//i, '')
+      .replace(/^images\//i, '')
+      .replace(/^\.?\/*/, '')
+      .toLowerCase();
+
+    return `assets/images/${just}`;
+  }
+
+  // 🔹 Fallback si falla la carga
+  onImgError(ev: Event) {
+    (ev.target as HTMLImageElement).src = 'assets/images/default.jpg';
+  }
   addToCart(product: Product) {
     if (product.stock === 0) {
       this.toast.showToast('Este producto no tiene stock disponible.', 'warning');

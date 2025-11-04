@@ -33,29 +33,26 @@
     <div class="row justify-content-center">
       <div
         class="col-sm-6 col-md-4 col-lg-3 mb-4"
-        *ngFor="let product of featuredProducts"
+        *ngFor="let p of featuredProducts"
       >
         <div class="card h-100 shadow-sm border-0 rounded">
           <img
-            [src]="
-              product.image?.startsWith('http')
-                ? product.image
-                : 'assets/images/' + product.image
-            "
-            [alt]="product.name"
+            [src]="getImageSrc(p.image)"
+            (error)="onImgError($event)"
+            [alt]="p.name"
             class="card-img-top rounded-top"
             style="height: 180px; object-fit: contain"
           />
           <div class="card-body d-flex flex-column">
             <h5 class="card-title text-truncate fw-semibold">
-              {{ product.name }}
+              {{ p.name }}
             </h5>
             <p class="card-text text-truncate text-muted">
-              {{ product.description }}
+              {{ p.description }}
             </p>
-            <p class="fw-bold fs-5 text-primary">${{ product.price }}</p>
+            <p class="fw-bold fs-5 text-primary">${{ p.price }}</p>
             <a
-              [routerLink]="['/products', product.id]"
+              [routerLink]="['/products', p.id]"
               class="btn btn-outline-primary mt-auto fw-semibold"
               >Ver detalles</a
             >
@@ -69,29 +66,26 @@
   <section>
     <h2 class="text-center mb-4 fw-bold text-primary">Más vendidos</h2>
     <div class="row justify-content-center">
-      <ng-container *ngFor="let item of topSellingProducts">
-        <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngIf="item.product">
+      <ng-container *ngFor="let t of topSellingProducts">
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4" *ngIf="t.product">
           <div class="card h-100 shadow-sm border-primary border-2 rounded">
             <img
-              [src]="
-                item.product.image
-                  ? 'assets/images/' + item.product.image
-                  : 'assets/images/default.jpg'
-              "
-              [alt]="item.product.name"
+              [src]="getImageSrc(t.product.image)"
+              (error)="onImgError($event)"
+              [alt]="t.product.name"
               class="card-img-top rounded-top"
               style="height: 180px; object-fit: contain"
             />
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-truncate fw-semibold">
-                {{ item.product.name }}
+                {{ t.product.name }}
               </h5>
               <p class="card-text text-truncate text-muted">
-                {{ item.product.description || "Sin descripción" }}
+                {{ t.product.description || "Sin descripción" }}
               </p>
-              <p class="fw-bold fs-5 text-primary">${{ item.product.price }}</p>
+              <p class="fw-bold fs-5 text-primary">${{ t.product.price }}</p>
               <a
-                [routerLink]="['/products', item.product.id]"
+                [routerLink]="['/products', t.product.id]"
                 class="btn btn-primary mt-auto fw-semibold"
                 >Ver detalles</a
               >

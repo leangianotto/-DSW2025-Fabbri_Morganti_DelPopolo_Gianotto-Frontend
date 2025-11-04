@@ -85,13 +85,10 @@
   >
     <div class="card h-100 shadow-sm rounded">
       <img
-        [src]="
-          product.image?.startsWith('http')
-            ? product.image
-            : 'assets/images/' + product.image
-        "
+        [src]="getImageSrc(product?.image)"
+        (error)="onImgError($event)"
         class="card-img-top"
-        [alt]="product.name"
+        [alt]="product?.name"
         style="object-fit: contain; height: 180px; width: 100%"
       />
 
