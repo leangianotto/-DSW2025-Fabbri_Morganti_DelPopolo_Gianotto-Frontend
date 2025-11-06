@@ -97,32 +97,33 @@ export class CartComponent implements OnInit {
     });
   }
 
-  pagarConMercadoPago() {
-    const cart = this.cartService.getCart();
+  pagarConStripe() {
+  const cart = this.cartService.getCart();
 
-    if (cart.length === 0) {
-      alert('El carrito está vacío.');
-      return;
-    }
-
-    const items = cart.map(item => ({
-      title: item.product.name,
-      unit_price: Number(item.product.price), 
-      quantity: item.quantity
-    }));
-
-    this.orderService.crearPreferencia(items).subscribe({
-      next: (res) => {
-        if (res.init_point) {
-          window.location.href = res.init_point;
-        } else {
-          alert('No se pudo iniciar el pago.');
-        }
-      },
-      error: (err) => {
-        console.error('Error al crear la preferencia:', err);
-        alert('Error al iniciar el pago.');
-      }
-    });
+  if (cart.length === 0) {
+    alert('El carrito está vacío.');
+    return;
   }
+
+  const items = cart.map(item => ({
+    title: item.product.name,
+    unit_price: Number(item.product.price),
+    quantity: item.quantity
+  }));
+
+  this.orderService.crearCheckout(items).subscribe({
+    next: (res) => {
+      if (res.url) {
+        window.location.href = res.url;
+      } else {
+        alert('No se pudo iniciar el pago.');
+      }
+    },
+    error: (err) => {
+      console.error('Error al crear la sesión de Stripe:', err);
+      alert('Error al iniciar el pago.');
+    }
+  });
+}
+
 }
