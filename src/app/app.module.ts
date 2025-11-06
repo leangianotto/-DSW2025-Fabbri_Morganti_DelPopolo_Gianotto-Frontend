@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+// app.module.ts
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -24,6 +25,12 @@ import { ToastComponent } from './components/toast/toast.component';
 import { UserOrdersComponent } from './components/user-orders/user-orders.component';
 import { CompraFinalizadaComponent } from './pages/compra-finalizada/compra-finalizada.component';
 
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+import localeEs from '@angular/common/locales/es';
+
+registerLocaleData(localeEsAr ?? localeEs, 'es-AR');
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,11 +53,14 @@ import { CompraFinalizadaComponent } from './pages/compra-finalizada/compra-fina
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule, 
+    AppRoutingModule,
     HttpClientModule,
     FormsModule,
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

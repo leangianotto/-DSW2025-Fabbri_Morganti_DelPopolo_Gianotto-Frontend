@@ -75,9 +75,14 @@ export class OrderService {
     return this.http.delete(`${this.apiUrl}/orderProducts/${orderId}/${productId}`, { headers });
   }
 
-  crearCheckout(items: { title: string; unit_price: number; quantity: number }[]) {
-    return this.http.post<{ url: string }>(`${this.apiUrl}/checkout`, { items });
-  }
+
+crearCheckout(
+  items: { productId: number; title: string; unit_price: number; quantity: number }[],
+  userId?: number
+) {
+  return this.http.post<{ url: string }>(`${this.apiUrl}/checkout`, { items, userId });
+}
+
 
   getUserOrders(): Observable<any[]> {
     const token = localStorage.getItem('token') || '';

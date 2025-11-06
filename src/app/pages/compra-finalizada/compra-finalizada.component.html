@@ -1,4 +1,5 @@
 <div class="container mt-5" style="max-width: 720px">
+  <!-- Título principal -->
   <h2
     class="text-center text-success mb-5 fw-bold"
     style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
@@ -6,6 +7,7 @@
     Compra finalizada con éxito
   </h2>
 
+  <!-- Estado de carga -->
   <div *ngIf="loading" class="d-flex justify-content-center my-5">
     <div
       class="spinner-border text-success"
@@ -16,11 +18,18 @@
     </div>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger text-center fs-5">
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="alert alert-danger text-center fs-5">
     {{ error }}
+    <div class="text-center mt-3">
+      <button class="btn btn-success btn-lg px-4" (click)="volverATienda()">
+        Volver a la tienda
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="order" class="card shadow-sm rounded-4 border-0">
+  <!-- Detalle de la orden -->
+  <div *ngIf="!loading && order" class="card shadow-sm rounded-4 border-0">
     <div
       class="card-header bg-success text-white rounded-top-4 d-flex justify-content-between align-items-center"
     >
@@ -29,19 +38,22 @@
         class="badge bg-light text-success fs-6 text-uppercase"
         style="letter-spacing: 1px"
       >
-        {{ order.status }}
+        {{ order.status || 'Completado' }}
       </div>
     </div>
+
     <div class="card-body px-4 py-4">
+      <!-- Datos del cliente -->
       <div class="mb-4">
         <p class="mb-1 fs-6">
-          <strong>Cliente:</strong> {{ order.User?.name || "No disponible" }}
+          <strong>Cliente:</strong> {{ order.User?.name || 'No disponible' }}
         </p>
         <p class="mb-0 fs-6 text-muted">
-          <strong>Fecha:</strong> {{ order.createdAt | date : "medium" }}
+          <strong>Fecha:</strong> {{ order.createdAt | date: 'medium' }}
         </p>
       </div>
 
+      <!-- Tabla de productos -->
       <div class="table-responsive">
         <table class="table table-sm table-hover align-middle">
           <thead
@@ -59,16 +71,21 @@
             <tr *ngFor="let prod of order.productos">
               <td class="fw-semibold">{{ prod.name }}</td>
               <td class="text-end text-success fw-bold">
-                ${{
-                  prod.OrderProduct.price_at_purchase || prod.price
-                    | number : "1.2-2"
+                {{
+                  (+(prod?.OrderProduct?.price_at_purchase ?? prod?.price))
+                    | currency:'ARS':'symbol':'1.2-2':'es-AR'
                 }}
               </td>
-              <td class="text-center">{{ prod.OrderProduct.quantity }}</td>
+
+              <td class="text-center">
+                {{ prod?.OrderProduct?.quantity || 1 }}
+              </td>
+
               <td class="text-end fw-bold">
-                ${{
-                  prod.OrderProduct.price_at_purchase *
-                    prod.OrderProduct.quantity | number : "1.2-2"
+                {{
+                  (+(prod?.OrderProduct?.price_at_purchase ?? prod?.price) *
+                    +(prod?.OrderProduct?.quantity ?? 1))
+                    | currency:'ARS':'symbol':'1.2-2':'es-AR'
                 }}
               </td>
             </tr>
@@ -76,14 +93,17 @@
         </table>
       </div>
 
+      <!-- Total -->
       <div
         class="d-flex justify-content-end align-items-center mt-3 border-top pt-3"
       >
         <h5 class="mb-0 fw-bold text-success" style="letter-spacing: 0.5px">
-          Total: ${{ order.totalAmount | number : "1.2-2" }}
+          Total:
+          {{ (+order?.totalAmount) | currency:'ARS':'symbol':'1.2-2':'es-AR' }}
         </h5>
       </div>
 
+      <!-- Botón volver -->
       <div class="text-center mt-5">
         <button
           class="btn btn-success btn-lg px-5 shadow-sm"

@@ -57,6 +57,7 @@ export class CartComponent implements OnInit {
     this.actualizarVista();
   }
 
+
   checkout() {
     const token = localStorage.getItem('token');
 
@@ -85,7 +86,6 @@ export class CartComponent implements OnInit {
 
     this.orderService.createOrder(order).subscribe({
       next: (res) => {
-        
         this.cartService.clearCart();
         this.actualizarVista();
         this.router.navigate(['/compra-finalizada'], { queryParams: { orderId: res.orderId } });
@@ -97,24 +97,37 @@ export class CartComponent implements OnInit {
     });
   }
 
-  pagarConStripe() {
+  /**
+   * Pagar con Stripe (redirige a Checkout)
+   */
+pagarConStripe() {
   const cart = this.cartService.getCart();
-
-  if (cart.length === 0) {
+  if (!cart.length) {
     alert('El carrito está vacío.');
     return;
   }
 
+  // ⬇️ Tomamos el userId del token (si existe)
+  const token = localStorage.getItem('token');
+  let userId: number | undefined = undefined;
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userId = Number(payload.id);
+    } catch { /* ignore */ }
+  }
+
   const items = cart.map(item => ({
+    productId: item.product.id,
     title: item.product.name,
-    unit_price: Number(item.product.price),
+    unit_price: Number(item.product.price), // misma moneda que cobrás en Stripe
     quantity: item.quantity
   }));
 
-  this.orderService.crearCheckout(items).subscribe({
+  this.orderService.crearCheckout(items, userId).subscribe({
     next: (res) => {
       if (res.url) {
-        window.location.href = res.url;
+        window.location.href = res.url; // redirige a Stripe
       } else {
         alert('No se pudo iniciar el pago.');
       }
@@ -125,5 +138,4 @@ export class CartComponent implements OnInit {
     }
   });
 }
-
 }
