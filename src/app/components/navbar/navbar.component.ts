@@ -24,16 +24,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  ngOnInit() {
-    this.userSubscription = this.authService.currentUser$.subscribe((user) => {
-      this.userName = user ? user.name : null;
-      this.isAdmin = user?.role === 'admin'; 
-    });
-  
-    this.cartSubscription = this.cartService.cartCount$.subscribe((count: number) => {
-      this.cartCount = count;
-    });
-  }
+ ngOnInit() {
+  this.userSubscription = this.authService.currentUser$.subscribe((user) => {
+    this.userName = user ? user.name : null;
+    this.isAdmin = user?.role === 'admin';
+
+    if (user) {
+      // 🔥 IMPORTANTE: recalcular el carrito del usuario logueado
+      this.cartService.refreshCartCount();
+
+    }
+  });
+
+  this.cartSubscription = this.cartService.cartCount$.subscribe((count: number) => {
+    this.cartCount = count;
+  });
+}
+
   
 
   ngOnDestroy() {
