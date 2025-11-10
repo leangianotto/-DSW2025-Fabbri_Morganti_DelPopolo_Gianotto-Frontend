@@ -64,8 +64,7 @@ export class CompraFinalizadaComponent implements OnInit {
             }
           });
         }
-        // opcional para debug:
-        // console.log('Orden normalizada:', this.order);
+       
       }
 
       // 3) Limpiar carrito local

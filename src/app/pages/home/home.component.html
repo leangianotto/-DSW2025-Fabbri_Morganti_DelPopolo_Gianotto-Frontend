@@ -102,29 +102,6 @@
     </div>
   </section>
 
-  <!-- Marcas asociadas -->
-  <section>
-    <h2 class="text-center mb-4 fw-bold text-secondary">
-      Marcas que confiamos
-    </h2>
-    <div
-      class="d-flex justify-content-center align-items-center gap-5 mb-5 flex-wrap"
-    >
-      <img
-        *ngFor="let brand of brands"
-        [src]="brand.logoUrl"
-        [alt]="brand.name"
-        class="brand-logo rounded"
-        style="
-          height: 50px;
-          filter: grayscale(100%);
-          transition: filter 0.3s;
-          cursor: pointer;
-        "
-      />
-    </div>
-  </section>
-
   <!-- Por qué elegirnos -->
   <section>
     <h2 class="text-center mb-4 fw-bold text-primary">¿Por qué elegirnos?</h2>

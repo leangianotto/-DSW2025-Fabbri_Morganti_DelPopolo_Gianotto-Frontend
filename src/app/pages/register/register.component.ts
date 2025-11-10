@@ -11,7 +11,7 @@ export class RegisterComponent {
   name = '';
   email = '';
   password = '';
-  loading = false; // ✅ nueva bandera
+  loading = false; 
 
   constructor(
     private UserService: UserService,

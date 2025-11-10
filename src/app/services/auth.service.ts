@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import { CartService } from '../services/cart.service';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
 
 interface LoginResponse {
@@ -23,7 +23,8 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<LoginResponse['user'] | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+  private cartService: CartService) {
     const user = localStorage.getItem('user');
     if (user) {
       this.currentUserSubject.next(JSON.parse(user));
@@ -45,6 +46,11 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role'); 
+     localStorage.removeItem('cart');// correccion error
+     this.cartService.clearCart();
+
+     
+
     this.currentUserSubject.next(null);
   }
 

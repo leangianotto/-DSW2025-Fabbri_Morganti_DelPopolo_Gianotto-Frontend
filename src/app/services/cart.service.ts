@@ -10,30 +10,33 @@ export interface CartItem {
 
 @Injectable({
   providedIn: 'root',
-  
 })
 export class CartService {
   private cartKey = 'cart';
-  
+
+  private cartCountSubject = new BehaviorSubject<number>(0);
+  cartCount$ = this.cartCountSubject.asObservable();
+
   constructor() {
     this.initCart();
   }
 
   private initCart() {
     const existing = localStorage.getItem(this.cartKey);
+
     if (!existing) {
       localStorage.setItem(this.cartKey, JSON.stringify([]));
-      this.updateCartCount();
     }
+
+    //  recalcular SIEMPRE para evitar que quede “1”
+    this.updateCartCount();
   }
 
-  private cartCountSubject = new BehaviorSubject<number>(0);
-cartCount$ = this.cartCountSubject.asObservable(); // observable para suscribirse
-
-private updateCartCount(): void {
-  const cart = this.getCart();
-  this.cartCountSubject.next(cart.reduce((sum, item) => sum + item.quantity, 0));
-}
+  private updateCartCount(): void {
+    const cart = this.getCart();
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    this.cartCountSubject.next(total); //  actualiza navbar automáticamente
+  }
 
   getCart(): CartItem[] {
     const data = localStorage.getItem(this.cartKey);
@@ -63,7 +66,7 @@ private updateCartCount(): void {
 
   clearCart(): void {
     localStorage.setItem(this.cartKey, JSON.stringify([]));
-    this.updateCartCount();
+    this.updateCartCount(); //  contador a 0
   }
 
   getTotal(): number {
@@ -80,7 +83,7 @@ private updateCartCount(): void {
     if (item) {
       item.quantity = quantity;
       if (item.quantity <= 0) {
-        this.removeProduct(productId); // elimina si es 0 o menos
+        this.removeProduct(productId);
       } else {
         localStorage.setItem(this.cartKey, JSON.stringify(cart));
         this.updateCartCount();
