@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { finalize } from 'rxjs/operators';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-login',
@@ -14,37 +15,50 @@ export class LoginComponent {
   loading = false;
   captchaToken: string | null = null;
 
+  @ViewChild('captchaRef') captchaRef!: RecaptchaComponent; // Ajuste aquí
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private toast: ToastService
   ) {}
 
+  // Captcha resuelto
   onCaptchaResolved(token: string | null) {
-  this.captchaToken = token;
-}
-
-  onSubmit(): void {
-  if (!this.email || !this.password || !this.captchaToken) {
-    this.toast.showToast('Debe completar todos los campos y resolver el CAPTCHA.', 'warning');
-    return;
+    this.captchaToken = token;
   }
 
-  this.loading = true;
+  // Reset del captcha
+  resetCaptcha() {
+    this.captchaToken = null;
+    if (this.captchaRef) this.captchaRef.reset();
+  }
 
-  this.authService.login(this.email, this.password, this.captchaToken)
-    .pipe(finalize(() => this.loading = false))
-    .subscribe({
-      next: () => {
-        this.toast.showToast('Inicio de sesión exitoso.', 'success');
-        setTimeout(() => this.router.navigate(['/products']), 1500);
-      },
-      error: () => {
-        this.toast.showToast('Email o contraseña incorrectos.', 'danger');
-      },
-    });
+  onSubmit(): void {
+    if (!this.email || !this.password || !this.captchaToken) {
+      this.toast.showToast(
+        'Debe completar todos los campos y resolver el CAPTCHA.',
+        'warning'
+      );
+      return;
+    }
+
+    this.loading = true;
+
+    this.authService
+      .login(this.email, this.password, this.captchaToken)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: () => {
+          this.toast.showToast('Inicio de sesión exitoso.', 'success');
+          setTimeout(() => this.router.navigate(['/products']), 1500);
+        },
+        error: () => {
+          // Mostrar error
+          this.toast.showToast('Email o contraseña incorrectos.', 'danger');
+          // Limpiar el captcha para reintento
+          this.resetCaptcha();
+        },
+      });
+  }
 }
-
-}
-
-
