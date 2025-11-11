@@ -2,6 +2,7 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { RecaptchaModule } from 'ng-recaptcha';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -56,6 +57,7 @@ registerLocaleData(localeEsAr ?? localeEs, 'es-AR');
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    RecaptchaModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

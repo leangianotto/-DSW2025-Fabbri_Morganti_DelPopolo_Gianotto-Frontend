@@ -54,11 +54,20 @@
       </div>
     </div>
 
+    <!-- CAPTCHA -->
+    <div class="mb-3">
+      <re-captcha
+        siteKey="6LdtnQgsAAAAADyOWrGO8X8anfXNOyLPCOZKFLue"
+        (resolved)="onCaptchaResolved($event)"
+      >
+      </re-captcha>
+    </div>
+
     <!-- Botón -->
     <button
       type="submit"
       class="btn btn-primary w-100"
-      [disabled]="loginForm.invalid || loading"
+      [disabled]="loginForm.invalid || loading || !captchaToken"
     >
       <span
         *ngIf="loading"

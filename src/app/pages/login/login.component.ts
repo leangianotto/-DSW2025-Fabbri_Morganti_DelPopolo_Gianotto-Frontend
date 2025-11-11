@@ -12,6 +12,7 @@ export class LoginComponent {
   email = '';
   password = '';
   loading = false;
+  captchaToken: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -19,26 +20,31 @@ export class LoginComponent {
     private toast: ToastService
   ) {}
 
+  onCaptchaResolved(token: string | null) {
+  this.captchaToken = token;
+}
+
   onSubmit(): void {
-    if (!this.email || !this.password) {
-      this.toast.showToast('Debe completar todos los campos.', 'warning');
-      return;
-    }
-
-    this.loading = true;
-
-    this.authService.login(this.email, this.password)
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: () => {
-          this.toast.showToast('Inicio de sesión exitoso.', 'success');
-          setTimeout(() => this.router.navigate(['/products']), 1500);
-        },
-        error: () => {
-          this.toast.showToast('Email o contraseña incorrectos.', 'danger');
-        },
-      });
+  if (!this.email || !this.password || !this.captchaToken) {
+    this.toast.showToast('Debe completar todos los campos y resolver el CAPTCHA.', 'warning');
+    return;
   }
+
+  this.loading = true;
+
+  this.authService.login(this.email, this.password, this.captchaToken)
+    .pipe(finalize(() => this.loading = false))
+    .subscribe({
+      next: () => {
+        this.toast.showToast('Inicio de sesión exitoso.', 'success');
+        setTimeout(() => this.router.navigate(['/products']), 1500);
+      },
+      error: () => {
+        this.toast.showToast('Email o contraseña incorrectos.', 'danger');
+      },
+    });
+}
+
 }
 
 

@@ -31,16 +31,24 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
+ login(email: string, password: string, captchaToken: string)
+: Observable<LoginResponse> {
+  return this.http
+    .post<LoginResponse>(`${this.apiUrl}/login`, {
+      email,
+      password,
+  captchaToken
+    })
+    .pipe(
       tap(response => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
-        localStorage.setItem('role', response.user.role); 
+        localStorage.setItem('role', response.user.role);
         this.currentUserSubject.next(response.user);
       })
     );
-  }
+}
+
 
   logout(): void {
     localStorage.removeItem('token');
