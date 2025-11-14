@@ -13,7 +13,6 @@
             id="name"
             class="form-control"
             type="text"
-            placeholder="Ej: Samsung Galaxy A54"
             required
           />
         </div>
@@ -26,7 +25,6 @@
             id="price"
             class="form-control"
             type="number"
-            placeholder="Ej: 1499.99"
             required
           />
         </div>
@@ -39,7 +37,6 @@
             id="stock"
             class="form-control"
             type="number"
-            placeholder="Ej: 25"
             required
           />
         </div>
@@ -52,7 +49,6 @@
             id="categoryId"
             class="form-control"
             type="number"
-            placeholder="Ej: 2"
             required
           />
         </div>
@@ -65,7 +61,6 @@
             id="imageUrl"
             class="form-control"
             type="text"
-            placeholder="https://ejemplo.com/imagen.jpg"
           />
         </div>
 
@@ -77,9 +72,15 @@
             id="description"
             class="form-control"
             rows="3"
-            placeholder="Breve descripción del producto"
             required
           ></textarea>
+        </div>
+
+        <!-- NUEVO: CHECKBOX ACTIVE -->
+        <div class="col-12">
+          <label class="form-label d-block">Activo</label>
+          <input type="checkbox" [(ngModel)]="active" name="active" />
+          <span class="ms-2">{{ active ? "Activo" : "Inactivo" }}</span>
         </div>
 
         <div class="col-12 text-end">
@@ -97,6 +98,7 @@
       <div class="card-header bg-primary text-white">
         <h5 class="mb-0">Listado de Productos</h5>
       </div>
+
       <div class="table-responsive">
         <table class="table table-striped align-middle mb-0">
           <thead class="table-light">
@@ -105,27 +107,56 @@
               <th>Precio</th>
               <th>Stock</th>
               <th>Categoría</th>
+              <th>Activo</th>
               <th class="text-center">Acciones</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr *ngFor="let p of products">
-              <td class="fw-semibold">{{ p.name }}</td>
+            <tr
+              *ngFor="let p of products"
+              [ngClass]="!p.active ? 'table-secondary' : ''"
+            >
+              <td>{{ p.name }}</td>
               <td>${{ p.price }}</td>
               <td>{{ p.stock }}</td>
               <td>{{ p.categoryId }}</td>
+
+              <!-- Badge activo/inactivo -->
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="p.active ? 'bg-success' : 'bg-danger'"
+                >
+                  {{ p.active ? "Sí" : "No" }}
+                </span>
+              </td>
+
               <td class="text-center">
+                <!-- BOTÓN EDITAR -->
                 <button
                   class="btn btn-sm btn-outline-warning me-2"
                   (click)="onEdit(p)"
                 >
                   Editar
                 </button>
+
+                <!-- SI ESTÁ ACTIVO → botón desactivar -->
                 <button
+                  *ngIf="p.active"
                   class="btn btn-sm btn-outline-danger"
-                  (click)="onDelete(p.id)"
+                  (click)="onDisable(p.id)"
                 >
-                  Eliminar
+                  Desactivar
+                </button>
+
+                <!-- SI ESTÁ INACTIVO → botón activar -->
+                <button
+                  *ngIf="!p.active"
+                  class="btn btn-sm btn-outline-success"
+                  (click)="onEnable(p.id)"
+                >
+                  Activar
                 </button>
               </td>
             </tr>

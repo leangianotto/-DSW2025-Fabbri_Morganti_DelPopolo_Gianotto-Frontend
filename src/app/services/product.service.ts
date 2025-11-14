@@ -2,46 +2,64 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Product } from '../models/product';
+import { Product, ProductForm } from '../models/product';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  private apiUrl = 'http://localhost:3000/api/products'; 
+  private apiUrl = 'http://localhost:3000/api/products';
 
   constructor(private http: HttpClient) {}
 
-  getProducts(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  /** Obtener solo productos activos (ruta pública) */
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.apiUrl);
   }
 
-  getProductById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
-  
-  getProductsByCategory(categoryId: number): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}?categoryId=${categoryId}`);
+  /** Obtener producto por ID */
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  createProduct(product: Omit<Product, 'id'>): Observable<Product> {
-  return this.http.post<Product>(this.apiUrl, product);
+  /** Obtener productos por un array de IDs */
+getProductsByIds(ids: number[]): Observable<Product[]> {
+  return this.http.get<Product[]>(`${this.apiUrl}/by-ids?ids=${ids.join(',')}`);
 }
 
-  
-  updateProduct(product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${product.id}`, product);
-  }
-  
-  deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  /** Obtener productos por categoría */
+  getProductsByCategory(categoryId: number): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/category/${categoryId}`);
   }
 
+  /** Obtener TODOS los productos (admin: activos + inactivos) */
+  getAllProductsAdmin(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/admin/all`);
+  }
+
+  /** Crear producto */
+  createProduct(product: ProductForm): Observable<Product> {
+    return this.http.post<Product>(this.apiUrl, product);
+  }
+
+  /** Actualizar producto */
+  updateProduct(product: ProductForm): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${product.id}`, product);
+  }
+
+  /** Desactivar producto */
+  deactivateProduct(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/disable`, {});
+  }
+
+  /** Activar producto */
+  activateProduct(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/enable`, {});
+  }
+
+  /** Top vendidos */
   getTopSellingProducts(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/top-selling`);
   }
-  
 }
-
-

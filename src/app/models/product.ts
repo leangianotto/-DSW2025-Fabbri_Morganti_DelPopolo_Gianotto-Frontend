@@ -1,7 +1,6 @@
 export interface Category {
   id: number;
   name: string;
-  
 }
 
 export interface Product {
@@ -12,7 +11,8 @@ export interface Product {
   stock: number;
   image?: string;
   categoryId: number;
-  category?: Category;  // hace falta?
+  category?: Category;
+  active: boolean;     // <-- VIENE DEL BACKEND
 }
 
 // Tipo para formularios (crear o editar)

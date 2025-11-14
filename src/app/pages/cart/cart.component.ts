@@ -4,8 +4,6 @@ import { CartService, CartItem } from 'src/app/services/cart.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ToastService } from 'src/app/services/toast.service';
 
-declare var MercadoPago: any;
-
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
@@ -24,10 +22,33 @@ export class CartComponent implements OnInit {
     this.actualizarVista();
   }
 
+  // ===============================
+  //   CARGA Y LIMPIEZA DEL CARRITO
+  // ===============================
   actualizarVista(): void {
-    this.cartItems = this.cartService.getCart();
+    this.cartService.getCart().subscribe(cart => {
+      this.cartItems = cart;
+
+      // Productos eliminados en el service
+      const removed: CartItem[] = (this.cartService as any)._removedItems || [];
+
+      if (removed.length > 0) {
+        removed.forEach(r => {
+          this.toast.showToast(
+            `El producto "${r.product.name}" ya no está disponible y fue removido del carrito.`,
+            'warning'
+          );
+        });
+
+        // Evita repetir avisos
+        (this.cartService as any)._removedItems = [];
+      }
+    });
   }
 
+  // ===============================
+  //         ELIMINAR ITEMS
+  // ===============================
   removeItem(productId: number): void {
     this.cartService.removeProduct(productId);
     this.actualizarVista();
@@ -42,10 +63,16 @@ export class CartComponent implements OnInit {
     }
   }
 
+  // ===============================
+  //        TOTAL DEL CARRITO
+  // ===============================
   getTotal(): number {
     return this.cartService.getTotal();
   }
 
+  // ===============================
+  //       ACTUALIZAR CANTIDAD
+  // ===============================
   updateQuantity(productId: number, change: number): void {
     const item = this.cartItems.find(i => i.product.id === productId);
     if (!item) return;
@@ -57,7 +84,9 @@ export class CartComponent implements OnInit {
     this.actualizarVista();
   }
 
-
+  // ===============================
+  //             CHECKOUT
+  // ===============================
   checkout() {
     const token = localStorage.getItem('token');
 
@@ -67,75 +96,86 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const userId = payload.id;
-
-    const cart = this.cartService.getCart();
-    if (cart.length === 0) {
-      alert('El carrito está vacío.');
+    let userId: number;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userId = payload.id;
+    } catch {
+      alert('Error al validar sesión.');
       return;
     }
 
-    const items = cart.map(item => ({
-      productId: item.product.id,
-      quantity: item.quantity
-    }));
+    this.cartService.getCart().subscribe(cart => {
+      if (cart.length === 0) {
+        alert('El carrito está vacío.');
+        return;
+      }
 
-    const totalAmount = this.cartService.getTotal();
-    const order = { userId, totalAmount, items };
+      const items = cart.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity
+      }));
 
-    this.orderService.createOrder(order).subscribe({
-      next: (res) => {
-        this.cartService.clearCart();
-        this.actualizarVista();
-        this.router.navigate(['/compra-finalizada'], { queryParams: { orderId: res.orderId } });
-      },
-      error: (err) => {
-        console.error('Error al realizar el pedido:', err);
-        alert('Hubo un problema al realizar el pedido.');
-      },
+      const totalAmount = this.cartService.getTotal();
+
+      const order = { userId, totalAmount, items };
+
+      this.orderService.createOrder(order).subscribe({
+        next: (res) => {
+          this.cartService.clearCart();
+          this.actualizarVista();
+          this.router.navigate(['/compra-finalizada'], {
+            queryParams: { orderId: res.orderId }
+          });
+        },
+        error: (err) => {
+          console.error('Error al realizar el pedido:', err);
+          alert('Hubo un problema al realizar el pedido.');
+        },
+      });
     });
   }
 
-  /**
-   * Pagar con Stripe (redirige a Checkout)
-   */
-pagarConStripe() {
-  const cart = this.cartService.getCart();
-  if (!cart.length) {
-    alert('El carrito está vacío.');
-    return;
-  }
-
-  // ⬇️ Tomamos el userId del token (si existe)
-  const token = localStorage.getItem('token');
-  let userId: number | undefined = undefined;
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      userId = Number(payload.id);
-    } catch { /* ignore */ }
-  }
-
-  const items = cart.map(item => ({
-    productId: item.product.id,
-    title: item.product.name,
-    unit_price: Number(item.product.price), // misma moneda que cobrás en Stripe
-    quantity: item.quantity
-  }));
-
-  this.orderService.crearCheckout(items, userId).subscribe({
-    next: (res) => {
-      if (res.url) {
-        window.location.href = res.url; // redirige a Stripe
-      } else {
-        alert('No se pudo iniciar el pago.');
+  // ===============================
+  //            STRIPE
+  // ===============================
+  pagarConStripe() {
+    this.cartService.getCart().subscribe(cart => {
+      if (cart.length === 0) {
+        alert('El carrito está vacío.');
+        return;
       }
-    },
-    error: (err) => {
-      console.error('Error al crear la sesión de Stripe:', err);
-      alert('Error al iniciar el pago.');
-    }
-  });
-}
+
+      const token = localStorage.getItem('token');
+      let userId: number | undefined = undefined;
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          userId = Number(payload.id);
+        } catch {}
+      }
+
+      const items = cart.map(item => ({
+        productId: item.product.id,
+        title: item.product.name,
+        unit_price: Number(item.product.price),
+        quantity: item.quantity
+      }));
+
+      this.orderService.crearCheckout(items, userId).subscribe({
+        next: (res) => {
+          if (res.url) {
+            window.location.href = res.url;
+          } else {
+            alert('No se pudo iniciar el pago.');
+          }
+        },
+        error: (err) => {
+          console.error('Error al crear la sesión de Stripe:', err);
+          alert('Error al iniciar el pago.');
+        }
+      });
+    });
+  }
 }
