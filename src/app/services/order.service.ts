@@ -76,12 +76,13 @@ export class OrderService {
   }
 
 
-crearCheckout(
-  items: { productId: number; title: string; unit_price: number; quantity: number }[],
-  userId?: number
-) {
-  return this.http.post<{ url: string }>(`${this.apiUrl}/checkout`, { items, userId });
+crearCheckout(items: { productId: number; title: string; unit_price: number; quantity: number }[]): Observable<any> {
+  return this.http.post(`${this.apiUrl}/checkout`, { items });
 }
+
+
+
+
 
 
   getUserOrders(): Observable<any[]> {

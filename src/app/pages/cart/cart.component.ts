@@ -29,9 +29,7 @@ export class CartComponent implements OnInit {
     this.cartService.getCart().subscribe(cart => {
       this.cartItems = cart;
 
-      // Productos eliminados en el service
       const removed: CartItem[] = (this.cartService as any)._removedItems || [];
-
       if (removed.length > 0) {
         removed.forEach(r => {
           this.toast.showToast(
@@ -39,8 +37,6 @@ export class CartComponent implements OnInit {
             'warning'
           );
         });
-
-        // Evita repetir avisos
         (this.cartService as any)._removedItems = [];
       }
     });
@@ -89,7 +85,6 @@ export class CartComponent implements OnInit {
   // ===============================
   checkout() {
     const token = localStorage.getItem('token');
-
     if (!token) {
       alert('Debes iniciar sesión para realizar un pedido.');
       this.router.navigate(['/login']);
@@ -117,7 +112,6 @@ export class CartComponent implements OnInit {
       }));
 
       const totalAmount = this.cartService.getTotal();
-
       const order = { userId, totalAmount, items };
 
       this.orderService.createOrder(order).subscribe({
@@ -140,42 +134,56 @@ export class CartComponent implements OnInit {
   //            STRIPE
   // ===============================
   pagarConStripe() {
-    this.cartService.getCart().subscribe(cart => {
-      if (cart.length === 0) {
-        alert('El carrito está vacío.');
-        return;
-      }
-
-      const token = localStorage.getItem('token');
-      let userId: number | undefined = undefined;
-
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          userId = Number(payload.id);
-        } catch {}
-      }
-
-      const items = cart.map(item => ({
-        productId: item.product.id,
-        title: item.product.name,
-        unit_price: Number(item.product.price),
-        quantity: item.quantity
-      }));
-
-      this.orderService.crearCheckout(items, userId).subscribe({
-        next: (res) => {
-          if (res.url) {
-            window.location.href = res.url;
-          } else {
-            alert('No se pudo iniciar el pago.');
-          }
-        },
-        error: (err) => {
-          console.error('Error al crear la sesión de Stripe:', err);
-          alert('Error al iniciar el pago.');
-        }
+  this.cartService.getCart().subscribe(cart => {
+    // Revisar si hay productos inactivos removidos
+    const removed: CartItem[] = (this.cartService as any)._removedItems || [];
+    if (removed.length > 0) {
+      removed.forEach(r => {
+        this.toast.showToast(
+          `El producto "${r.product.name}" ya no está disponible y fue removido del carrito.`,
+          'warning'
+        );
       });
+      // Limpiar lista de removidos para próximas llamadas
+      (this.cartService as any)._removedItems = [];
+    }
+
+    // Validar que queden items para pagar
+    if (cart.length === 0) {
+      this.toast.showToast('No hay productos disponibles para pagar.', 'warning');
+      return;
+    }
+
+    // Crear items para enviar al backend
+    const items = cart.map(item => ({
+      productId: item.product.id,
+      title: item.product.name,
+      unit_price: Number(item.product.price),
+      quantity: item.quantity
+    }));
+
+    console.log('Items que envío a checkout:', items);
+
+    // Llamada al backend para crear sesión de Stripe
+    this.orderService.crearCheckout(items).subscribe({
+      next: (res: any) => {
+        // Redirigir a Stripe
+        if (res && res.url) {
+          window.location.href = res.url;
+        } else {
+          this.toast.showToast('Error al procesar el pago.', 'warning');
+        }
+      },
+      error: (err) => {
+        console.error('Error al crear la sesión de Stripe:', err);
+        this.toast.showToast(
+          err?.error?.error || 'Error al crear la sesión de Stripe',
+          'warning'
+        );
+      }
     });
-  }
+  });
+}
+
+
 }
