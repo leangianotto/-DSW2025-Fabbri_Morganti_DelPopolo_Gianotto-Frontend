@@ -107,6 +107,7 @@ export class ProductListComponent implements OnInit {
     this.currentPage = page;
   }
 
+  // 🔥 VALIDACIÓN COMPLETA DE STOCK AL AGREGAR
   addToCart(product: Product): void {
     if (product.stock === 0) {
       this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
@@ -115,8 +116,35 @@ export class ProductListComponent implements OnInit {
 
     this.addingProductId = product.id;
 
-    this.cartService.addProduct(product);
-    this.toast.showToast('Producto agregado al carrito.', 'success');
+    // Obtenemos carrito actual desde localStorage
+    const cart = JSON.parse(localStorage.getItem(this.cartService['getCartKey']()) || '[]');
+
+    const existing = cart.find((i: any) => i.product.id === product.id);
+
+    // Si ya existe en carrito → validar si puede sumar 1 más
+    if (existing) {
+      if (existing.quantity >= product.stock) {
+        this.toast.showToast(
+          `Solo hay ${product.stock} unidades disponibles. Ya alcanzaste el máximo.`,
+          'warning'
+        );
+
+        this.addingProductId = null;
+        return;
+      }
+
+      // Puede sumar 1 → lo agregamos
+      this.cartService.addProduct(product);
+      this.toast.showToast('Producto agregado al carrito.', 'success');
+    } else {
+      // No existe → agregarlo normalmente
+      this.cartService.addProduct(product);
+      this.toast.showToast('Producto agregado al carrito.', 'success');
+
+      if (product.stock === 1) {
+        this.toast.showToast('Ojo: queda solo 1 en stock.', 'info');
+      }
+    }
 
     setTimeout(() => {
       this.addingProductId = null;

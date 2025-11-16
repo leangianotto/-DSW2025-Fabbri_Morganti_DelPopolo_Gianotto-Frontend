@@ -99,24 +99,46 @@
         <h5 class="card-title text-truncate" title="{{ product.name }}">
           {{ product.name }}
         </h5>
+
         <p
           class="card-text flex-grow-1 text-truncate"
           title="{{ product.description }}"
         >
           {{ product.description }}
         </p>
+
         <p class="card-text mb-1">
           <strong>Precio:</strong> ${{ product.price.toFixed(2) }}
         </p>
-        <p class="card-text mb-3">
+
+        <!-- 🔥 STOCK con color según cantidad -->
+        <p
+          class="card-text mb-2"
+          [ngClass]="{
+            'text-danger fw-bold': product.stock === 0,
+            'text-warning fw-bold': product.stock > 0 && product.stock <= 2,
+            'text-success': product.stock > 2
+          }"
+        >
           <strong>Stock:</strong> {{ product.stock }}
         </p>
+
+        <!-- 🔥 Mensaje si queda muy poco stock -->
+        <div
+          *ngIf="product.stock <= 2 && product.stock > 0"
+          class="text-warning small mb-2"
+        >
+          ⚠ Solo quedan {{ product.stock }} unidades
+        </div>
+
         <a
           [routerLink]="['/products', product.id]"
           class="btn btn-outline-primary mb-2"
         >
           Ver Detalles
         </a>
+
+        <!-- 🔥 Botón agregar con spinner -->
         <button
           class="btn btn-success d-flex align-items-center justify-content-center gap-2"
           (click)="addToCart(product)"
@@ -126,9 +148,11 @@
             *ngIf="addingProductId === product.id"
             class="spinner-border spinner-border-sm"
           ></span>
+
           <span *ngIf="addingProductId !== product.id">
             🛒 Agregar al carrito
           </span>
+
           <span *ngIf="addingProductId === product.id">Agregando...</span>
         </button>
       </div>

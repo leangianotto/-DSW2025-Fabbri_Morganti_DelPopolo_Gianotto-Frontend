@@ -20,8 +20,10 @@
         <tr *ngFor="let item of cartItems">
           <td>{{ item.product.name }}</td>
           <td>${{ item.product.price.toFixed(2) }}</td>
+
           <td>
             <div class="d-flex align-items-center">
+              <!-- BOTÓN RESTAR -->
               <button
                 class="btn btn-sm btn-outline-secondary me-2"
                 (click)="updateQuantity(item.product.id, -1)"
@@ -30,17 +32,23 @@
               >
                 −
               </button>
+
               <span class="fw-bold">{{ item.quantity }}</span>
+
+              <!-- BOTÓN SUMAR con límite por stock -->
               <button
                 class="btn btn-sm btn-outline-secondary ms-2"
                 (click)="updateQuantity(item.product.id, 1)"
                 title="Aumentar cantidad"
+                [disabled]="item.quantity >= item.product.stock"
               >
                 +
               </button>
             </div>
           </td>
+
           <td>${{ (item.product.price * item.quantity).toFixed(2) }}</td>
+
           <td>
             <button
               class="btn btn-sm btn-danger"

@@ -50,15 +50,28 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  addToCart(product: Product) {
-    if (product.stock === 0) {
-      this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
-      return;
-    }
+ addToCart(product: Product) {
+  const currentItem = this.cartService.getCartItem(product.id);
 
-    this.cartService.addProduct(product);
-    this.toast.showToast('Producto agregado al carrito.', 'success');
+  // ❌ Sin stock
+  if (product.stock === 0) {
+    this.toast.showToast('Este producto no tiene stock disponible.', 'warning');
+    return;
   }
+
+  // ❌ Excede el stock disponible
+  if (currentItem && currentItem.quantity >= product.stock) {
+    this.toast.showToast(
+      `No puedes agregar más. Stock disponible: ${product.stock}`,
+      'warning'
+    );
+    return;
+  }
+
+  // ✔ Ok, agregar
+  this.cartService.addProduct(product);
+  this.toast.showToast('Producto agregado al carrito.', 'success');
+}
 
   loadReviews() {
     this.reviewService.getReviewsByProduct(this.product.id).subscribe({

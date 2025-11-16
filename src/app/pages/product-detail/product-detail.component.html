@@ -42,6 +42,7 @@
         </ng-template>
       </div>
 
+      <!-- BOTÓN AGREGAR CON VALIDACIÓN DE STOCK -->
       <button
         class="btn btn-success"
         (click)="addToCart(product)"
@@ -49,6 +50,11 @@
       >
         🛒 Agregar al carrito
       </button>
+
+      <!-- Aviso si stock = 0 -->
+      <div *ngIf="product.stock === 0" class="text-danger mt-2">
+        Este producto no tiene stock disponible.
+      </div>
     </div>
   </div>
 

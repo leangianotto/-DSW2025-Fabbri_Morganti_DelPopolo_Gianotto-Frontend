@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ProductService } from './product.service';
 import { Product } from '../models/product';
 
@@ -15,6 +15,10 @@ export interface CartItem {
 export class CartService {
   private cartCountSubject = new BehaviorSubject<number>(0);
   cartCount$ = this.cartCountSubject.asObservable();
+
+  // Para mostrar mensajes en CartComponent
+  _removedItems: CartItem[] = [];
+  _adjustedItems: { old: number; new: number; item: CartItem }[] = [];
 
   constructor(private productService: ProductService) {
     this.initCart();
@@ -50,7 +54,10 @@ export class CartService {
   }
 
   /**
-   * Devuelve un Observable<CartItem[]> con productos activos actualizados
+   * Carga carrito con todas las VALIDACIONES:
+   * - Producto inactivo → remover
+   * - Stock 0 → remover
+   * - Cantidad > stock → ajustar
    */
   getCart(): Observable<CartItem[]> {
     const cart = this.getLocalCart();
@@ -61,22 +68,47 @@ export class CartService {
     return this.productService.getProductsByIds(ids).pipe(
       map((updatedProducts: Product[]) => {
         const removed: CartItem[] = [];
+        const adjusted: { old: number; new: number; item: CartItem }[] = [];
         const updatedCart: CartItem[] = [];
 
         cart.forEach(item => {
           const updated = updatedProducts.find(p => p.id === item.product.id);
+
+          // 🔥 Si no existe o está inactivo → se remueve
           if (!updated || updated.active === false) {
             removed.push(item);
+            return;
+          }
+
+          // 🔥 Sin stock → se remueve también
+          if (updated.stock <= 0) {
+            removed.push(item);
+            return;
+          }
+
+          // 🔥 Cantidad mayor al stock → ajustar
+          if (item.quantity > updated.stock) {
+            adjusted.push({
+              old: item.quantity,
+              new: updated.stock,
+              item: { product: updated, quantity: updated.stock },
+            });
+
+            updatedCart.push({
+              product: updated,
+              quantity: updated.stock,
+            });
           } else {
             updatedCart.push({ product: updated, quantity: item.quantity });
           }
         });
 
-        // Guardar items removidos para mostrar alerta en CartComponent
-        (this as any)._removedItems = removed;
+        // Guardar para mostrar en el componente
+        this._removedItems = removed;
+        this._adjustedItems = adjusted;
 
-        // Actualizar localStorage si hubo cambios
-        if (removed.length > 0) {
+        // Actualizar storage si hubo cambios
+        if (removed.length > 0 || adjusted.length > 0) {
           localStorage.setItem(this.getCartKey(), JSON.stringify(updatedCart));
           this.updateCartCount();
         }
@@ -88,9 +120,24 @@ export class CartService {
 
   addProduct(product: Product): void {
     const cart = this.getLocalCart();
+
+    // No agregar si está inactivo
+    if (!product.active) return;
+
+    // No agregar si no hay stock
+    if (product.stock <= 0) return;
+
     const existing = cart.find(i => i.product.id === product.id);
-    if (existing) existing.quantity++;
-    else cart.push({ product, quantity: 1 });
+
+    if (existing) {
+      if (existing.quantity < product.stock) {
+        existing.quantity++;
+      }
+      // Si ya está al máximo stock, no suma más
+    } else {
+      cart.push({ product, quantity: 1 });
+    }
+
     localStorage.setItem(this.getCartKey(), JSON.stringify(cart));
     this.updateCartCount();
   }
@@ -114,15 +161,27 @@ export class CartService {
 
     if (quantity <= 0) {
       this.removeProduct(productId);
+      return;
+    }
+
+    // Evitar cantidades mayores al stock actual
+    if (quantity > item.product.stock) {
+      item.quantity = item.product.stock;
     } else {
       item.quantity = quantity;
-      localStorage.setItem(this.getCartKey(), JSON.stringify(cart));
-      this.updateCartCount();
     }
+
+    localStorage.setItem(this.getCartKey(), JSON.stringify(cart));
+    this.updateCartCount();
   }
 
   getTotal(): number {
     const cart = this.getLocalCart();
     return cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   }
+
+  getCartItem(productId: number): CartItem | undefined {
+  const cart = this.getLocalCart();
+  return cart.find(i => i.product.id === productId);
+}
 }

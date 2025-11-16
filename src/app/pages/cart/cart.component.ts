@@ -23,22 +23,31 @@ export class CartComponent implements OnInit {
   }
 
   // ===============================
-  //   CARGA Y LIMPIEZA DEL CARRITO
+  //   CARGA Y VALIDACIONES
   // ===============================
   actualizarVista(): void {
     this.cartService.getCart().subscribe(cart => {
       this.cartItems = cart;
 
-      const removed: CartItem[] = (this.cartService as any)._removedItems || [];
-      if (removed.length > 0) {
-        removed.forEach(r => {
-          this.toast.showToast(
-            `El producto "${r.product.name}" ya no está disponible y fue removido del carrito.`,
-            'warning'
-          );
-        });
-        (this.cartService as any)._removedItems = [];
-      }
+      // 🔥 ITEMS REMOVIDOS
+      const removed: CartItem[] = this.cartService._removedItems || [];
+      removed.forEach(r => {
+        this.toast.showToast(
+          `El producto "${r.product.name}" ya no está disponible y fue eliminado del carrito.`,
+          'warning'
+        );
+      });
+      this.cartService._removedItems = [];
+
+      // 🔥 ITEMS AJUSTADOS POR STOCK
+      const adjusted = this.cartService._adjustedItems || [];
+      adjusted.forEach(a => {
+        this.toast.showToast(
+          `La cantidad del producto "${a.item.product.name}" fue ajustada de ${a.old} a ${a.new} por falta de stock.`,
+          'warning'
+        );
+      });
+      this.cartService._adjustedItems = [];
     });
   }
 
@@ -81,13 +90,23 @@ export class CartComponent implements OnInit {
   }
 
   // ===============================
-  //             CHECKOUT
+  //           CHECKOUT
   // ===============================
   checkout() {
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Debes iniciar sesión para realizar un pedido.');
       this.router.navigate(['/login']);
+      return;
+    }
+
+    // Bloquear checkout si se ajustó o removió algo
+    if (this.cartService._removedItems.length > 0 || this.cartService._adjustedItems.length > 0) {
+      this.toast.showToast(
+        'Se actualizaron productos del carrito. Revisá los cambios antes de continuar.',
+        'warning'
+      );
+      this.actualizarVista();
       return;
     }
 
@@ -108,21 +127,21 @@ export class CartComponent implements OnInit {
 
       const items = cart.map(item => ({
         productId: item.product.id,
-        quantity: item.quantity
+        quantity: item.quantity,
       }));
 
       const totalAmount = this.cartService.getTotal();
       const order = { userId, totalAmount, items };
 
       this.orderService.createOrder(order).subscribe({
-        next: (res) => {
+        next: res => {
           this.cartService.clearCart();
           this.actualizarVista();
           this.router.navigate(['/compra-finalizada'], {
             queryParams: { orderId: res.orderId }
           });
         },
-        error: (err) => {
+        error: err => {
           console.error('Error al realizar el pedido:', err);
           alert('Hubo un problema al realizar el pedido.');
         },
@@ -131,59 +150,48 @@ export class CartComponent implements OnInit {
   }
 
   // ===============================
-  //            STRIPE
+  //              STRIPE
   // ===============================
   pagarConStripe() {
-  this.cartService.getCart().subscribe(cart => {
-    // Revisar si hay productos inactivos removidos
-    const removed: CartItem[] = (this.cartService as any)._removedItems || [];
-    if (removed.length > 0) {
-      removed.forEach(r => {
+    this.cartService.getCart().subscribe(cart => {
+      
+      if (this.cartService._removedItems.length || this.cartService._adjustedItems.length) {
         this.toast.showToast(
-          `El producto "${r.product.name}" ya no está disponible y fue removido del carrito.`,
+          'Se actualizaron productos del carrito. Revisá los cambios antes de pagar.',
           'warning'
         );
-      });
-      // Limpiar lista de removidos para próximas llamadas
-      (this.cartService as any)._removedItems = [];
-    }
-
-    // Validar que queden items para pagar
-    if (cart.length === 0) {
-      this.toast.showToast('No hay productos disponibles para pagar.', 'warning');
-      return;
-    }
-
-    // Crear items para enviar al backend
-    const items = cart.map(item => ({
-      productId: item.product.id,
-      title: item.product.name,
-      unit_price: Number(item.product.price),
-      quantity: item.quantity
-    }));
-
-    console.log('Items que envío a checkout:', items);
-
-    // Llamada al backend para crear sesión de Stripe
-    this.orderService.crearCheckout(items).subscribe({
-      next: (res: any) => {
-        // Redirigir a Stripe
-        if (res && res.url) {
-          window.location.href = res.url;
-        } else {
-          this.toast.showToast('Error al procesar el pago.', 'warning');
-        }
-      },
-      error: (err) => {
-        console.error('Error al crear la sesión de Stripe:', err);
-        this.toast.showToast(
-          err?.error?.error || 'Error al crear la sesión de Stripe',
-          'warning'
-        );
+        this.actualizarVista();
+        return;
       }
+
+      if (cart.length === 0) {
+        this.toast.showToast('No hay productos disponibles para pagar.', 'warning');
+        return;
+      }
+
+      const items = cart.map(item => ({
+        productId: item.product.id,
+        title: item.product.name,
+        unit_price: Number(item.product.price),
+        quantity: item.quantity
+      }));
+
+      this.orderService.crearCheckout(items).subscribe({
+        next: (res: any) => {
+          if (res && res.url) {
+            window.location.href = res.url;
+          } else {
+            this.toast.showToast('Error al procesar el pago.', 'warning');
+          }
+        },
+        error: err => {
+          console.error('Error al crear la sesión de Stripe:', err);
+          this.toast.showToast(
+            err?.error?.error || 'Error al crear la sesión de Stripe',
+            'warning'
+          );
+        }
+      });
     });
-  });
-}
-
-
+  }
 }
