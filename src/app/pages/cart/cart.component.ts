@@ -199,41 +199,57 @@ export class CartComponent implements OnInit {
   //                        STRIPE
   // =========================================================
   pagarConStripe() {
-    this.cartService.getCart().subscribe(cart => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    this.toast.showToast('Debes iniciar sesión para continuar con el pago.', 'warning');
+    this.router.navigate(['/login']);
+    return;
+  }
 
-      if (this.cartService._removedItems.length || this.cartService._adjustedItems.length) {
-        this.toast.showToast(
-          'Se actualizaron productos del carrito. Revisá los cambios antes de pagar.',
-          'warning'
-        );
-        this.actualizarVista();
-        return;
-      }
+  this.cartService.getCart().subscribe(cart => {
 
-      if (!cart.length) {
-        this.toast.showToast('No hay productos para pagar.', 'warning');
-        return;
-      }
+    if (this.cartService._removedItems.length || this.cartService._adjustedItems.length) {
+      this.toast.showToast(
+        'Se actualizaron productos del carrito. Revisá los cambios antes de pagar.',
+        'warning'
+      );
+      this.actualizarVista();
+      return;
+    }
 
-      const items = cart.map(item => ({
-        productId: item.product.id,
-        title: item.product.name,
-        unit_price: Number(item.product.price),
-        quantity: item.quantity,
-      }));
+    if (!cart.length) {
+      this.toast.showToast('No hay productos en el carrito para pagar.', 'warning');
+      return;
+    }
 
-      this.orderService.crearCheckout(items).subscribe({
-        next: res => {
-          if (res?.url) window.location.href = res.url;
-          else this.toast.showToast('No se pudo iniciar el pago.', 'danger');
-        },
-        error: err => {
+    const items = cart.map(item => ({
+      productId: item.product.id,
+      title: item.product.name,
+      unit_price: Number(item.product.price),
+      quantity: item.quantity,
+    }));
+
+    this.orderService.crearCheckout(items).subscribe({
+      next: res => {
+        if (res?.url) {
+          window.location.href = res.url;
+        } else {
+          this.toast.showToast('Ocurrió un problema al procesar el pago. Intenta nuevamente.', 'danger');
+        }
+      },
+      error: err => {
+        if (err.status === 401) {
+          this.toast.showToast('Debes iniciar sesión para continuar con el pago.', 'warning');
+          this.router.navigate(['/login']);
+        } else {
           this.toast.showToast(
-            err?.error?.error || 'Error al crear sesión de pago.',
+            'Ocurrió un problema al procesar el pago. Intenta nuevamente.',
             'danger'
           );
         }
-      });
+      }
     });
-  }
+  });
+}
+
 }

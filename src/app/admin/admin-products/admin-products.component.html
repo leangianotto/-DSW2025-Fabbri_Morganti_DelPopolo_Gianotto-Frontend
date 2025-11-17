@@ -1,91 +1,129 @@
 <div class="container py-5">
-  <div class="bg-white p-4 rounded shadow-sm">
+  <div class="bg-white p-5 rounded shadow-sm">
     <h2 class="mb-4 text-center text-primary">Gestión de Productos</h2>
 
-    <!-- FORMULARIO -->
+    <!-- FORMULARIO MEJORADO -->
     <form (ngSubmit)="onSubmit()">
-      <div class="row g-4">
+      <div class="row g-3">
+        <!-- Nombre -->
         <div class="col-md-6">
-          <label for="name" class="form-label">Nombre del producto</label>
+          <label for="name" class="form-label fw-semibold">
+            <i class="bi bi-tag-fill me-1"></i> Nombre
+          </label>
           <input
             [(ngModel)]="name"
             name="name"
             id="name"
-            class="form-control"
+            class="form-control form-control-lg"
             type="text"
+            placeholder="Ingrese nombre del producto"
             required
           />
         </div>
 
+        <!-- Precio -->
         <div class="col-md-6">
-          <label for="price" class="form-label">Precio ($)</label>
+          <label for="price" class="form-label fw-semibold">
+            <i class="bi bi-currency-dollar me-1"></i> Precio
+          </label>
           <input
             [(ngModel)]="price"
             name="price"
             id="price"
-            class="form-control"
+            class="form-control form-control-lg"
             type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
             required
           />
         </div>
 
+        <!-- Stock -->
         <div class="col-md-6">
-          <label for="stock" class="form-label">Stock disponible</label>
+          <label for="stock" class="form-label fw-semibold">
+            <i class="bi bi-box-seam me-1"></i> Stock
+          </label>
           <input
             [(ngModel)]="stock"
             name="stock"
             id="stock"
-            class="form-control"
+            class="form-control form-control-lg"
             type="number"
+            min="0"
+            placeholder="Cantidad disponible"
             required
           />
         </div>
 
+        <!-- Categoría -->
         <div class="col-md-6">
-          <label for="categoryId" class="form-label">ID de Categoría</label>
+          <label for="categoryId" class="form-label fw-semibold">
+            <i class="bi bi-list-ul me-1"></i> Categoría
+          </label>
           <input
             [(ngModel)]="categoryId"
             name="categoryId"
             id="categoryId"
-            class="form-control"
+            class="form-control form-control-lg"
             type="number"
+            min="0"
+            placeholder="ID de categoría"
             required
           />
         </div>
 
+        <!-- URL de Imagen -->
         <div class="col-12">
-          <label for="imageUrl" class="form-label">URL de imagen</label>
+          <label for="imageUrl" class="form-label fw-semibold">
+            <i class="bi bi-image me-1"></i> URL de Imagen
+          </label>
           <input
             [(ngModel)]="image"
             name="imageUrl"
             id="imageUrl"
-            class="form-control"
+            class="form-control form-control-lg"
             type="text"
+            placeholder="https://ejemplo.com/imagen.jpg"
           />
         </div>
 
+        <!-- Descripción -->
         <div class="col-12">
-          <label for="description" class="form-label">Descripción</label>
+          <label for="description" class="form-label fw-semibold">
+            <i class="bi bi-card-text me-1"></i> Descripción
+          </label>
           <textarea
             [(ngModel)]="description"
             name="description"
             id="description"
-            class="form-control"
+            class="form-control form-control-lg"
             rows="3"
+            placeholder="Descripción del producto"
             required
           ></textarea>
         </div>
 
-        <!-- NUEVO: CHECKBOX ACTIVE -->
+        <!-- Checkbox Activo -->
         <div class="col-12">
-          <label class="form-label d-block">Activo</label>
-          <input type="checkbox" [(ngModel)]="active" name="active" />
-          <span class="ms-2">{{ active ? "Activo" : "Inactivo" }}</span>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [(ngModel)]="active"
+              name="active"
+              id="activeSwitch"
+            />
+            <label class="form-check-label fw-semibold" for="activeSwitch">
+              Activo
+            </label>
+          </div>
         </div>
 
-        <div class="col-12 text-end">
-          <button type="submit" class="btn btn-success px-4 fw-bold">
-            {{ selectedProductId ? "Actualizar" : "Crear" }} producto
+        <!-- Botón Submit -->
+        <div class="col-12 text-center mt-4">
+          <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold">
+            {{ selectedProductId ? "Actualizar" : "Crear" }} Producto
           </button>
         </div>
       </div>
@@ -138,25 +176,25 @@
                   class="btn btn-sm btn-outline-warning me-2"
                   (click)="onEdit(p)"
                 >
-                  Editar
+                  <i class="bi bi-pencil"></i> Editar
                 </button>
 
-                <!-- SI ESTÁ ACTIVO → botón desactivar -->
+                <!-- BOTÓN DESACTIVAR CON MODAL -->
                 <button
                   *ngIf="p.active"
                   class="btn btn-sm btn-outline-danger"
-                  (click)="onDisable(p.id)"
+                  (click)="askDisableProduct(p.id)"
                 >
-                  Desactivar
+                  <i class="bi bi-x-circle"></i> Desactivar
                 </button>
 
-                <!-- SI ESTÁ INACTIVO → botón activar -->
+                <!-- BOTÓN ACTIVAR -->
                 <button
                   *ngIf="!p.active"
                   class="btn btn-sm btn-outline-success"
                   (click)="onEnable(p.id)"
                 >
-                  Activar
+                  <i class="bi bi-check-circle"></i> Activar
                 </button>
               </td>
             </tr>
@@ -166,3 +204,14 @@
     </div>
   </div>
 </div>
+
+<!-- ========================================================= -->
+<!--            MODAL UNIVERSAL DE CONFIRMACIÓN                -->
+<!-- ========================================================= -->
+<app-confirm-modal
+  *ngIf="showModal"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  (onConfirm)="confirmModal()"
+  (onCancel)="cancelModal()"
+></app-confirm-modal>

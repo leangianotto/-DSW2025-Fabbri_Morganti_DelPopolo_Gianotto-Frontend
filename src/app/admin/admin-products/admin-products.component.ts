@@ -19,8 +19,13 @@ export class AdminProductsComponent implements OnInit {
   image: string = '';
 
   active: boolean = true; // <-- controla el checkbox
-
   selectedProductId: number | null = null;
+
+  // 🔥 Modal universal
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
+  actionToConfirm: (() => void) | null = null;
 
   constructor(private productService: ProductService) {}
 
@@ -47,23 +52,45 @@ export class AdminProductsComponent implements OnInit {
     this.stock = product.stock;
     this.categoryId = product.categoryId;
     this.image = product.image ?? '';
-
     this.active = product.active; // <-- carga el checkbox
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /** Desactivar producto */
-  onDisable(id: number) {
-    if (!confirm('¿Seguro querés desactivar este producto?')) return;
+  /** ================= MODAL UNIVERSAL ================= */
+  openModal(title: string, message: string, action: () => void) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.actionToConfirm = action;
+    this.showModal = true;
+  }
 
+  cancelModal() {
+    this.showModal = false;
+    this.actionToConfirm = null;
+  }
+
+  confirmModal() {
+    if (this.actionToConfirm) this.actionToConfirm();
+    this.cancelModal();
+  }
+
+  /** ================= DESACTIVAR / ACTIVAR ================= */
+  askDisableProduct(id: number) {
+    this.openModal(
+      'Desactivar producto',
+      '¿Seguro que querés desactivar este producto?',
+      () => this.onDisable(id)
+    );
+  }
+
+  onDisable(id: number) {
     this.productService.deactivateProduct(id).subscribe({
       next: () => this.loadProducts(),
       error: (err) => console.error(err),
     });
   }
 
-  /** Activar producto */
   onEnable(id: number) {
     this.productService.activateProduct(id).subscribe({
       next: () => this.loadProducts(),
@@ -71,7 +98,7 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
-  /** Crear o editar */
+  /** ================= CREAR / EDITAR ================= */
   onSubmit() {
     const productForm: ProductForm = {
       id: this.selectedProductId ?? undefined,
@@ -84,8 +111,6 @@ export class AdminProductsComponent implements OnInit {
       active: this.active,
     };
 
-    console.log('onSubmit, productForm:', productForm);
-
     // --- EDICIÓN ---
     if (this.selectedProductId != null) {
       this.productService.updateProduct(productForm).subscribe({
@@ -95,7 +120,6 @@ export class AdminProductsComponent implements OnInit {
         },
         error: (err) => console.error('Update error:', err),
       });
-
       return;
     }
 
@@ -117,6 +141,6 @@ export class AdminProductsComponent implements OnInit {
     this.stock = 0;
     this.categoryId = 0;
     this.image = '';
-    this.active = true; // default
+    this.active = true;
   }
 }
