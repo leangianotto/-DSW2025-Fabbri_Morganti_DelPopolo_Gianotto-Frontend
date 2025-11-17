@@ -1,12 +1,14 @@
 <div class="container mt-5" style="max-width: 800px">
   <h2 class="mb-4 text-center fw-bold">Carrito de Compras</h2>
 
+  <!-- CARRITO VACÍO -->
   <div *ngIf="cartItems.length === 0" class="alert alert-info text-center">
     Tu carrito está vacío.
   </div>
 
+  <!-- CARRITO -->
   <div *ngIf="cartItems.length > 0" class="table-responsive">
-    <table class="table table-striped align-middle">
+    <table class="table table-striped align-middle shadow-sm rounded">
       <thead class="table-dark">
         <tr>
           <th>Producto</th>
@@ -16,30 +18,28 @@
           <th>Acciones</th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let item of cartItems">
-          <td>{{ item.product.name }}</td>
+          <td class="fw-semibold">{{ item.product.name }}</td>
           <td>${{ item.product.price.toFixed(2) }}</td>
 
+          <!-- CANTIDAD -->
           <td>
             <div class="d-flex align-items-center">
-              <!-- BOTÓN RESTAR -->
               <button
-                class="btn btn-sm btn-outline-secondary me-2"
+                class="btn btn-outline-secondary btn-quantity me-2"
                 (click)="updateQuantity(item.product.id, -1)"
                 [disabled]="item.quantity <= 1"
-                title="Disminuir cantidad"
               >
                 −
               </button>
 
-              <span class="fw-bold">{{ item.quantity }}</span>
+              <span class="fw-bold px-2">{{ item.quantity }}</span>
 
-              <!-- BOTÓN SUMAR con límite por stock -->
               <button
-                class="btn btn-sm btn-outline-secondary ms-2"
+                class="btn btn-outline-secondary btn-quantity ms-2"
                 (click)="updateQuantity(item.product.id, 1)"
-                title="Aumentar cantidad"
                 [disabled]="item.quantity >= item.product.stock"
               >
                 +
@@ -49,35 +49,93 @@
 
           <td>${{ (item.product.price * item.quantity).toFixed(2) }}</td>
 
+          <!-- BOTÓN ELIMINAR MEJORADO -->
           <td>
             <button
-              class="btn btn-sm btn-danger"
-              (click)="removeItem(item.product.id)"
-              title="Eliminar producto"
+              class="btn btn-danger btn-delete"
+              (click)="askRemoveItem(item.product.id, item.product.name)"
             >
-              Eliminar
+              <i class="bi bi-trash"></i> Eliminar
             </button>
           </td>
         </tr>
       </tbody>
     </table>
 
+    <!-- TOTAL + ACCIONES -->
     <div class="d-flex justify-content-between align-items-center mt-4">
       <h4>Total: ${{ getTotal().toFixed(2) }}</h4>
-      <div>
-        <!--  BOTÓN DE Pago -->
+
+      <div class="d-flex gap-2">
         <button
-          class="btn btn-success me-2"
+          class="btn btn-primary btn-action"
           (click)="pagarConStripe()"
           [disabled]="cartItems.length === 0"
         >
-          Pagar con Stripe
+          <i class="bi bi-credit-card"></i> Pagar
         </button>
 
-        <button class="btn btn-outline-danger" (click)="clearCart()">
-          Vaciar carrito
+        <button class="btn btn-secondary btn-action" (click)="askClearCart()">
+          <i class="bi bi-trash"></i> Vaciar
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- MODAL UNIVERSAL DE CONFIRMACIÓN -->
+<app-confirm-modal
+  *ngIf="showModal"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  (onConfirm)="confirmModal()"
+  (onCancel)="cancelModal()"
+></app-confirm-modal>
+
+<!-- ==================== ESTILOS INLINE ==================== -->
+<style>
+  /* Botón eliminar producto */
+  .btn-delete {
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    transition: 0.15s ease-in-out;
+  }
+  .btn-delete:hover {
+    transform: scale(1.05);
+  }
+
+  /* Botones de acción “Pagar” y “Vaciar” */
+  .btn-action {
+    padding: 8px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.15s ease-in-out;
+  }
+  .btn-action:hover {
+    transform: scale(1.03);
+  }
+  .btn-action i {
+    font-size: 1.05rem;
+  }
+
+  /* Botones de cantidad + / − */
+  .btn-quantity {
+    padding: 4px 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: 0.15s;
+  }
+  .btn-quantity:hover {
+    transform: scale(1.1);
+  }
+</style>

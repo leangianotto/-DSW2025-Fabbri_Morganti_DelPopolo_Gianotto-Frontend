@@ -11,6 +11,12 @@ import { ToastService } from 'src/app/services/toast.service';
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
 
+  // 🔥 MODAL UNIVERSAL
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
+  actionToConfirm: (() => void) | null = null;
+
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
@@ -22,15 +28,35 @@ export class CartComponent implements OnInit {
     this.actualizarVista();
   }
 
-  // ===============================
-  //   CARGA Y VALIDACIONES
-  // ===============================
+  // =========================================================
+  //                      MODAL UNIVERSAL
+  // =========================================================
+  openModal(title: string, message: string, action: () => void) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.actionToConfirm = action;
+    this.showModal = true;
+  }
+
+  cancelModal() {
+    this.showModal = false;
+    this.actionToConfirm = null;
+  }
+
+  confirmModal() {
+    if (this.actionToConfirm) this.actionToConfirm();
+    this.cancelModal();
+  }
+
+  // =========================================================
+  //                   ACTUALIZAR VISTA
+  // =========================================================
   actualizarVista(): void {
     this.cartService.getCart().subscribe(cart => {
       this.cartItems = cart;
 
-      // 🔥 ITEMS REMOVIDOS
-      const removed: CartItem[] = this.cartService._removedItems || [];
+      // Productos eliminados por falta de stock
+      const removed = this.cartService._removedItems || [];
       removed.forEach(r => {
         this.toast.showToast(
           `El producto "${r.product.name}" ya no está disponible y fue eliminado del carrito.`,
@@ -39,7 +65,7 @@ export class CartComponent implements OnInit {
       });
       this.cartService._removedItems = [];
 
-      // 🔥 ITEMS AJUSTADOS POR STOCK
+      // Productos ajustados
       const adjusted = this.cartService._adjustedItems || [];
       adjusted.forEach(a => {
         this.toast.showToast(
@@ -51,59 +77,74 @@ export class CartComponent implements OnInit {
     });
   }
 
-  // ===============================
-  //         ELIMINAR ITEMS
-  // ===============================
+  // =========================================================
+  //               ELIMINAR ITEM DEL CARRITO
+  // =========================================================
   removeItem(productId: number): void {
     this.cartService.removeProduct(productId);
     this.actualizarVista();
   }
 
-  clearCart(): void {
-    const confirmDelete = window.confirm('¿Estás seguro de que querés vaciar el carrito?');
-    if (confirmDelete) {
-      this.cartService.clearCart();
-      this.toast.showToast('Carrito vaciado con éxito', 'info');
-      this.actualizarVista();
-    }
+  askRemoveItem(productId: number, productName: string) {
+    this.openModal(
+      'Eliminar producto',
+      `¿Seguro que querés eliminar "${productName}" del carrito?"`,
+      () => this.removeItem(productId)
+    );
   }
 
-  // ===============================
-  //        TOTAL DEL CARRITO
-  // ===============================
+  // =========================================================
+  //                  VACIAR TODO EL CARRITO
+  // =========================================================
+  clearCart(): void {
+    this.cartService.clearCart();
+    this.toast.showToast('Carrito vaciado con éxito', 'info');
+    this.actualizarVista();
+  }
+
+  askClearCart(): void {
+    this.openModal(
+      'Vaciar carrito',
+      'Esta acción eliminará todos los productos. ¿Estás seguro?',
+      () => this.clearCart()
+    );
+  }
+
+  // =========================================================
+  //                       TOTAL
+  // =========================================================
   getTotal(): number {
     return this.cartService.getTotal();
   }
 
-  // ===============================
-  //       ACTUALIZAR CANTIDAD
-  // ===============================
+  // =========================================================
+  //               ACTUALIZAR CANTIDAD
+  // =========================================================
   updateQuantity(productId: number, change: number): void {
     const item = this.cartItems.find(i => i.product.id === productId);
     if (!item) return;
 
-    const newQuantity = item.quantity + change;
-    if (newQuantity < 1) return;
+    const newQty = item.quantity + change;
+    if (newQty < 1) return;
 
-    this.cartService.updateQuantity(productId, newQuantity);
+    this.cartService.updateQuantity(productId, newQty);
     this.actualizarVista();
   }
 
-  // ===============================
-  //           CHECKOUT
-  // ===============================
+  // =========================================================
+  //                        CHECKOUT
+  // =========================================================
   checkout() {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Debes iniciar sesión para realizar un pedido.');
+      this.toast.showToast('Debes iniciar sesión para continuar.', 'warning');
       this.router.navigate(['/login']);
       return;
     }
 
-    // Bloquear checkout si se ajustó o removió algo
-    if (this.cartService._removedItems.length > 0 || this.cartService._adjustedItems.length > 0) {
+    if (this.cartService._removedItems.length || this.cartService._adjustedItems.length) {
       this.toast.showToast(
-        'Se actualizaron productos del carrito. Revisá los cambios antes de continuar.',
+        'El carrito tiene actualizaciones recientes. Revisá los cambios antes de continuar.',
         'warning'
       );
       this.actualizarVista();
@@ -115,13 +156,13 @@ export class CartComponent implements OnInit {
       const payload = JSON.parse(atob(token.split('.')[1]));
       userId = payload.id;
     } catch {
-      alert('Error al validar sesión.');
+      this.toast.showToast('Error al validar la sesión.', 'danger');
       return;
     }
 
     this.cartService.getCart().subscribe(cart => {
-      if (cart.length === 0) {
-        alert('El carrito está vacío.');
+      if (!cart.length) {
+        this.toast.showToast('Tu carrito está vacío.', 'warning');
         return;
       }
 
@@ -130,8 +171,11 @@ export class CartComponent implements OnInit {
         quantity: item.quantity,
       }));
 
-      const totalAmount = this.cartService.getTotal();
-      const order = { userId, totalAmount, items };
+      const order = {
+        userId,
+        totalAmount: this.cartService.getTotal(),
+        items
+      };
 
       this.orderService.createOrder(order).subscribe({
         next: res => {
@@ -142,19 +186,21 @@ export class CartComponent implements OnInit {
           });
         },
         error: err => {
-          console.error('Error al realizar el pedido:', err);
-          alert('Hubo un problema al realizar el pedido.');
-        },
+          this.toast.showToast(
+            err?.error?.error || 'Ocurrió un problema al procesar el pedido.',
+            'danger'
+          );
+        }
       });
     });
   }
 
-  // ===============================
-  //              STRIPE
-  // ===============================
+  // =========================================================
+  //                        STRIPE
+  // =========================================================
   pagarConStripe() {
     this.cartService.getCart().subscribe(cart => {
-      
+
       if (this.cartService._removedItems.length || this.cartService._adjustedItems.length) {
         this.toast.showToast(
           'Se actualizaron productos del carrito. Revisá los cambios antes de pagar.',
@@ -164,8 +210,8 @@ export class CartComponent implements OnInit {
         return;
       }
 
-      if (cart.length === 0) {
-        this.toast.showToast('No hay productos disponibles para pagar.', 'warning');
+      if (!cart.length) {
+        this.toast.showToast('No hay productos para pagar.', 'warning');
         return;
       }
 
@@ -173,22 +219,18 @@ export class CartComponent implements OnInit {
         productId: item.product.id,
         title: item.product.name,
         unit_price: Number(item.product.price),
-        quantity: item.quantity
+        quantity: item.quantity,
       }));
 
       this.orderService.crearCheckout(items).subscribe({
-        next: (res: any) => {
-          if (res && res.url) {
-            window.location.href = res.url;
-          } else {
-            this.toast.showToast('Error al procesar el pago.', 'warning');
-          }
+        next: res => {
+          if (res?.url) window.location.href = res.url;
+          else this.toast.showToast('No se pudo iniciar el pago.', 'danger');
         },
         error: err => {
-          console.error('Error al crear la sesión de Stripe:', err);
           this.toast.showToast(
-            err?.error?.error || 'Error al crear la sesión de Stripe',
-            'warning'
+            err?.error?.error || 'Error al crear sesión de pago.',
+            'danger'
           );
         }
       });

@@ -29,6 +29,7 @@ import { CompraFinalizadaComponent } from './pages/compra-finalizada/compra-fina
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import localeEs from '@angular/common/locales/es';
+import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
 
 registerLocaleData(localeEsAr ?? localeEs, 'es-AR');
 
@@ -50,7 +51,8 @@ registerLocaleData(localeEsAr ?? localeEs, 'es-AR');
     AdminUsersComponent,
     ToastComponent,
     UserOrdersComponent,
-    CompraFinalizadaComponent
+    CompraFinalizadaComponent,
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,

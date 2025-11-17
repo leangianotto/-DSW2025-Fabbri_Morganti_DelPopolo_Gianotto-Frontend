@@ -1,0 +1,88 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  /* MÁS ALTO POR SI ALGO LO TAPA */
+}
+
+/* Caja del modal */
+.modal-container {
+  background: #ffffff;
+  padding: 24px 28px;
+  width: 350px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: slideIn 0.18s ease-out;
+}
+
+/* Animación al aparecer */
+@keyframes slideIn {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Título */
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Texto */
+.modal-message {
+  font-size: 1.05rem;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+/* Botones */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Base de botones */
+.btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.15s;
+}
+
+/* Cancelar */
+.btn.cancel {
+  background: #e5e5e5;
+  color: #333;
+}
+
+.btn.cancel:hover {
+  background: #d4d4d4;
+}
+
+/* Confirmar */
+.btn.confirm {
+  background: #e63946;
+  color: white;
+}
+
+.btn.confirm:hover {
+  background: #d62839;
+}
