@@ -7,10 +7,18 @@ import { CategoryService, Category } from 'src/app/services/category.service';
   styleUrls: ['./admin-categories.component.css']
 })
 export class AdminCategoriesComponent implements OnInit {
+
   categories: Category[] = [];
   newCategoryName: string = '';
+
   editingCategory: Category | null = null;
   updatedName: string = '';
+
+  // 🔥 Modal Universal
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
+  actionToConfirm: (() => void) | null = null;
 
   constructor(private categoryService: CategoryService) {}
 
@@ -18,13 +26,15 @@ export class AdminCategoriesComponent implements OnInit {
     this.loadCategories();
   }
 
+  /** CARGAR CATEGORÍAS */
   loadCategories() {
     this.categoryService.getAll().subscribe({
-      next: (data) => this.categories = data,
-      error: (err) => console.error('Error al cargar categorías', err)
+      next: (data) => (this.categories = data),
+      error: (err) => console.error('Error al cargar categorías', err),
     });
   }
 
+  /** CREAR */
   createCategory() {
     if (!this.newCategoryName.trim()) return;
 
@@ -33,15 +43,14 @@ export class AdminCategoriesComponent implements OnInit {
         this.newCategoryName = '';
         this.loadCategories();
       },
-      error: (err) => console.error('Error al crear categoría', err)
+      error: (err) => console.error('Error al crear categoría', err),
     });
   }
 
+  /** EDITAR */
   startEdit(category: Category) {
     this.editingCategory = { ...category };
     this.updatedName = category.name;
-
-    
   }
 
   saveEdit() {
@@ -53,7 +62,7 @@ export class AdminCategoriesComponent implements OnInit {
         this.updatedName = '';
         this.loadCategories();
       },
-      error: (err) => console.error('Error al editar categoría', err)
+      error: (err) => console.error('Error al editar categoría', err),
     });
   }
 
@@ -62,13 +71,39 @@ export class AdminCategoriesComponent implements OnInit {
     this.updatedName = '';
   }
 
+  /** ================== MODAL UNIVERSAL ================== */
+
+  openModal(title: string, message: string, action: () => void) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.actionToConfirm = action;
+    this.showModal = true;
+  }
+
+  cancelModal() {
+    this.showModal = false;
+    this.actionToConfirm = null;
+  }
+
+  confirmModal() {
+    if (this.actionToConfirm) this.actionToConfirm();
+    this.cancelModal();
+  }
+
+  /** ================== ELIMINAR ================== */
+
+  askDeleteCategory(id: number) {
+    this.openModal(
+      'Eliminar categoría',
+      '¿Seguro que querés eliminar esta categoría? Esta acción NO se puede deshacer.',
+      () => this.deleteCategory(id)
+    );
+  }
+
   deleteCategory(id: number) {
-    if (confirm('¿Estás seguro de eliminar esta categoría?')) {
-      this.categoryService.delete(id).subscribe({
-        next: () => this.loadCategories(),
-        error: (err) => console.error('Error al eliminar categoría', err)
-      });
-    }
+    this.categoryService.delete(id).subscribe({
+      next: () => this.loadCategories(),
+      error: (err) => console.error('Error al eliminar categoría', err),
+    });
   }
 }
-

@@ -50,18 +50,18 @@
                   type="text"
                   [(ngModel)]="updatedName"
                   class="form-control"
-                  placeholder="Nuevo nombre"
                 />
               </td>
 
-              <!-- Visualización -->
+              <!-- Lectura -->
               <td *ngIf="editingCategory?.id !== cat.id" class="fw-semibold">
                 {{ cat.name }}
               </td>
 
               <td class="text-center">
+                <!-- Modo edición -->
                 <ng-container
-                  *ngIf="editingCategory?.id === cat.id; else accionesNormales"
+                  *ngIf="editingCategory?.id === cat.id; else normalRows"
                 >
                   <button
                     class="btn btn-sm btn-outline-primary me-2"
@@ -77,16 +77,18 @@
                   </button>
                 </ng-container>
 
-                <ng-template #accionesNormales>
+                <ng-template #normalRows>
                   <button
                     class="btn btn-sm btn-outline-warning me-2"
                     (click)="startEdit(cat)"
                   >
                     Editar
                   </button>
+
+                  <!-- 🔥 ELIMINAR CON MODAL -->
                   <button
                     class="btn btn-sm btn-outline-danger"
-                    (click)="deleteCategory(cat.id)"
+                    (click)="askDeleteCategory(cat.id)"
                   >
                     Eliminar
                   </button>
@@ -99,3 +101,14 @@
     </div>
   </div>
 </div>
+
+<!-- ============================= -->
+<!-- MODAL UNIVERSAL DE CONFIRMACIÓN -->
+<!-- ============================= -->
+<app-confirm-modal
+  *ngIf="showModal"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  (onConfirm)="confirmModal()"
+  (onCancel)="cancelModal()"
+></app-confirm-modal>
