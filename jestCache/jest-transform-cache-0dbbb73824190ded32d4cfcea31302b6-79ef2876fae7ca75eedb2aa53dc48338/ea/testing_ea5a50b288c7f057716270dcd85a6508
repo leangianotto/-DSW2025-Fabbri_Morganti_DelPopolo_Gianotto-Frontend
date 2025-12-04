@@ -1,0 +1,481 @@
+37e92093db1cc14bf452991d33c7e4a9
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var testing_exports = {};
+__export(testing_exports, {
+  MOCK_PLATFORM_LOCATION_CONFIG: () => MOCK_PLATFORM_LOCATION_CONFIG,
+  MockLocationStrategy: () => MockLocationStrategy,
+  MockPlatformLocation: () => MockPlatformLocation,
+  SpyLocation: () => SpyLocation,
+  provideLocationMocks: () => provideLocationMocks
+});
+module.exports = __toCommonJS(testing_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_common = require("@angular/common");
+var import_rxjs = require("rxjs");
+/**
+ * @license Angular v16.2.12
+ * (c) 2010-2022 Google LLC. https://angular.io/
+ * License: MIT
+ */
+function joinWithSlash(start, end) {
+  if (start.length == 0) {
+    return end;
+  }
+  if (end.length == 0) {
+    return start;
+  }
+  let slashes = 0;
+  if (start.endsWith("/")) {
+    slashes++;
+  }
+  if (end.startsWith("/")) {
+    slashes++;
+  }
+  if (slashes == 2) {
+    return start + end.substring(1);
+  }
+  if (slashes == 1) {
+    return start + end;
+  }
+  return start + "/" + end;
+}
+function stripTrailingSlash(url) {
+  const match = url.match(/#|\?|$/);
+  const pathEndIdx = match && match.index || url.length;
+  const droppedSlashIdx = pathEndIdx - (url[pathEndIdx - 1] === "/" ? 1 : 0);
+  return url.slice(0, droppedSlashIdx) + url.slice(pathEndIdx);
+}
+function normalizeQueryParams(params) {
+  return params && params[0] !== "?" ? "?" + params : params;
+}
+const _SpyLocation = class _SpyLocation {
+  constructor() {
+    this.urlChanges = [];
+    this._history = [new LocationState("", "", null)];
+    this._historyIndex = 0;
+    this._subject = new import_core.EventEmitter();
+    this._basePath = "";
+    this._locationStrategy = null;
+    this._urlChangeListeners = [];
+    this._urlChangeSubscription = null;
+  }
+  /** @nodoc */
+  ngOnDestroy() {
+    var _a;
+    (_a = this._urlChangeSubscription) == null ? void 0 : _a.unsubscribe();
+    this._urlChangeListeners = [];
+  }
+  setInitialPath(url) {
+    this._history[this._historyIndex].path = url;
+  }
+  setBaseHref(url) {
+    this._basePath = url;
+  }
+  path() {
+    return this._history[this._historyIndex].path;
+  }
+  getState() {
+    return this._history[this._historyIndex].state;
+  }
+  isCurrentPathEqualTo(path, query = "") {
+    const givenPath = path.endsWith("/") ? path.substring(0, path.length - 1) : path;
+    const currPath = this.path().endsWith("/") ? this.path().substring(0, this.path().length - 1) : this.path();
+    return currPath == givenPath + (query.length > 0 ? "?" + query : "");
+  }
+  simulateUrlPop(pathname) {
+    this._subject.emit({ "url": pathname, "pop": true, "type": "popstate" });
+  }
+  simulateHashChange(pathname) {
+    const path = this.prepareExternalUrl(pathname);
+    this.pushHistory(path, "", null);
+    this.urlChanges.push("hash: " + pathname);
+    this._subject.emit({ "url": pathname, "pop": true, "type": "popstate" });
+    this._subject.emit({ "url": pathname, "pop": true, "type": "hashchange" });
+  }
+  prepareExternalUrl(url) {
+    if (url.length > 0 && !url.startsWith("/")) {
+      url = "/" + url;
+    }
+    return this._basePath + url;
+  }
+  go(path, query = "", state = null) {
+    path = this.prepareExternalUrl(path);
+    this.pushHistory(path, query, state);
+    const locationState = this._history[this._historyIndex - 1];
+    if (locationState.path == path && locationState.query == query) {
+      return;
+    }
+    const url = path + (query.length > 0 ? "?" + query : "");
+    this.urlChanges.push(url);
+    this._notifyUrlChangeListeners(path + normalizeQueryParams(query), state);
+  }
+  replaceState(path, query = "", state = null) {
+    path = this.prepareExternalUrl(path);
+    const history = this._history[this._historyIndex];
+    history.state = state;
+    if (history.path == path && history.query == query) {
+      return;
+    }
+    history.path = path;
+    history.query = query;
+    const url = path + (query.length > 0 ? "?" + query : "");
+    this.urlChanges.push("replace: " + url);
+    this._notifyUrlChangeListeners(path + normalizeQueryParams(query), state);
+  }
+  forward() {
+    if (this._historyIndex < this._history.length - 1) {
+      this._historyIndex++;
+      this._subject.emit({ "url": this.path(), "state": this.getState(), "pop": true, "type": "popstate" });
+    }
+  }
+  back() {
+    if (this._historyIndex > 0) {
+      this._historyIndex--;
+      this._subject.emit({ "url": this.path(), "state": this.getState(), "pop": true, "type": "popstate" });
+    }
+  }
+  historyGo(relativePosition = 0) {
+    const nextPageIndex = this._historyIndex + relativePosition;
+    if (nextPageIndex >= 0 && nextPageIndex < this._history.length) {
+      this._historyIndex = nextPageIndex;
+      this._subject.emit({ "url": this.path(), "state": this.getState(), "pop": true, "type": "popstate" });
+    }
+  }
+  onUrlChange(fn) {
+    this._urlChangeListeners.push(fn);
+    if (!this._urlChangeSubscription) {
+      this._urlChangeSubscription = this.subscribe((v) => {
+        this._notifyUrlChangeListeners(v.url, v.state);
+      });
+    }
+    return () => {
+      var _a;
+      const fnIndex = this._urlChangeListeners.indexOf(fn);
+      this._urlChangeListeners.splice(fnIndex, 1);
+      if (this._urlChangeListeners.length === 0) {
+        (_a = this._urlChangeSubscription) == null ? void 0 : _a.unsubscribe();
+        this._urlChangeSubscription = null;
+      }
+    };
+  }
+  /** @internal */
+  _notifyUrlChangeListeners(url = "", state) {
+    this._urlChangeListeners.forEach((fn) => fn(url, state));
+  }
+  subscribe(onNext, onThrow, onReturn) {
+    return this._subject.subscribe({ next: onNext, error: onThrow, complete: onReturn });
+  }
+  normalize(url) {
+    return null;
+  }
+  pushHistory(path, query, state) {
+    if (this._historyIndex > 0) {
+      this._history.splice(this._historyIndex + 1);
+    }
+    this._history.push(new LocationState(path, query, state));
+    this._historyIndex = this._history.length - 1;
+  }
+};
+_SpyLocation.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _SpyLocation, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_SpyLocation.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _SpyLocation });
+let SpyLocation = _SpyLocation;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: SpyLocation, decorators: [{
+  type: import_core.Injectable
+}] });
+class LocationState {
+  constructor(path, query, state) {
+    this.path = path;
+    this.query = query;
+    this.state = state;
+  }
+}
+const _MockLocationStrategy = class _MockLocationStrategy extends import_common.LocationStrategy {
+  constructor() {
+    super();
+    this.internalBaseHref = "/";
+    this.internalPath = "/";
+    this.internalTitle = "";
+    this.urlChanges = [];
+    this._subject = new import_core.EventEmitter();
+    this.stateChanges = [];
+  }
+  simulatePopState(url) {
+    this.internalPath = url;
+    this._subject.emit(new _MockPopStateEvent(this.path()));
+  }
+  path(includeHash = false) {
+    return this.internalPath;
+  }
+  prepareExternalUrl(internal) {
+    if (internal.startsWith("/") && this.internalBaseHref.endsWith("/")) {
+      return this.internalBaseHref + internal.substring(1);
+    }
+    return this.internalBaseHref + internal;
+  }
+  pushState(ctx, title, path, query) {
+    this.stateChanges.push(ctx);
+    this.internalTitle = title;
+    const url = path + (query.length > 0 ? "?" + query : "");
+    this.internalPath = url;
+    const externalUrl = this.prepareExternalUrl(url);
+    this.urlChanges.push(externalUrl);
+  }
+  replaceState(ctx, title, path, query) {
+    this.stateChanges[(this.stateChanges.length || 1) - 1] = ctx;
+    this.internalTitle = title;
+    const url = path + (query.length > 0 ? "?" + query : "");
+    this.internalPath = url;
+    const externalUrl = this.prepareExternalUrl(url);
+    this.urlChanges.push("replace: " + externalUrl);
+  }
+  onPopState(fn) {
+    this._subject.subscribe({ next: fn });
+  }
+  getBaseHref() {
+    return this.internalBaseHref;
+  }
+  back() {
+    if (this.urlChanges.length > 0) {
+      this.urlChanges.pop();
+      this.stateChanges.pop();
+      const nextUrl = this.urlChanges.length > 0 ? this.urlChanges[this.urlChanges.length - 1] : "";
+      this.simulatePopState(nextUrl);
+    }
+  }
+  forward() {
+    throw "not implemented";
+  }
+  getState() {
+    return this.stateChanges[(this.stateChanges.length || 1) - 1];
+  }
+};
+_MockLocationStrategy.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _MockLocationStrategy, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_MockLocationStrategy.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _MockLocationStrategy });
+let MockLocationStrategy = _MockLocationStrategy;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: MockLocationStrategy, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: function() {
+  return [];
+} });
+class _MockPopStateEvent {
+  constructor(newUrl) {
+    this.newUrl = newUrl;
+    this.pop = true;
+    this.type = "popstate";
+  }
+}
+const urlParse = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+function parseUrl(urlStr, baseHref) {
+  const verifyProtocol = /^((http[s]?|ftp):\/\/)/;
+  let serverBase;
+  if (!verifyProtocol.test(urlStr)) {
+    serverBase = "http://empty.com/";
+  }
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(urlStr, serverBase);
+  } catch (e) {
+    const result = urlParse.exec(serverBase || "" + urlStr);
+    if (!result) {
+      throw new Error(`Invalid URL: ${urlStr} with base: ${baseHref}`);
+    }
+    const hostSplit = result[4].split(":");
+    parsedUrl = {
+      protocol: result[1],
+      hostname: hostSplit[0],
+      port: hostSplit[1] || "",
+      pathname: result[5],
+      search: result[6],
+      hash: result[8]
+    };
+  }
+  if (parsedUrl.pathname && parsedUrl.pathname.indexOf(baseHref) === 0) {
+    parsedUrl.pathname = parsedUrl.pathname.substring(baseHref.length);
+  }
+  return {
+    hostname: !serverBase && parsedUrl.hostname || "",
+    protocol: !serverBase && parsedUrl.protocol || "",
+    port: !serverBase && parsedUrl.port || "",
+    pathname: parsedUrl.pathname || "/",
+    search: parsedUrl.search || "",
+    hash: parsedUrl.hash || ""
+  };
+}
+const MOCK_PLATFORM_LOCATION_CONFIG = new import_core.InjectionToken("MOCK_PLATFORM_LOCATION_CONFIG");
+const _MockPlatformLocation = class _MockPlatformLocation {
+  constructor(config) {
+    this.baseHref = "";
+    this.hashUpdate = new import_rxjs.Subject();
+    this.popStateSubject = new import_rxjs.Subject();
+    this.urlChangeIndex = 0;
+    this.urlChanges = [{ hostname: "", protocol: "", port: "", pathname: "/", search: "", hash: "", state: null }];
+    if (config) {
+      this.baseHref = config.appBaseHref || "";
+      const parsedChanges = this.parseChanges(null, config.startUrl || "http://_empty_/", this.baseHref);
+      this.urlChanges[0] = __spreadValues({}, parsedChanges);
+    }
+  }
+  get hostname() {
+    return this.urlChanges[this.urlChangeIndex].hostname;
+  }
+  get protocol() {
+    return this.urlChanges[this.urlChangeIndex].protocol;
+  }
+  get port() {
+    return this.urlChanges[this.urlChangeIndex].port;
+  }
+  get pathname() {
+    return this.urlChanges[this.urlChangeIndex].pathname;
+  }
+  get search() {
+    return this.urlChanges[this.urlChangeIndex].search;
+  }
+  get hash() {
+    return this.urlChanges[this.urlChangeIndex].hash;
+  }
+  get state() {
+    return this.urlChanges[this.urlChangeIndex].state;
+  }
+  getBaseHrefFromDOM() {
+    return this.baseHref;
+  }
+  onPopState(fn) {
+    const subscription = this.popStateSubject.subscribe(fn);
+    return () => subscription.unsubscribe();
+  }
+  onHashChange(fn) {
+    const subscription = this.hashUpdate.subscribe(fn);
+    return () => subscription.unsubscribe();
+  }
+  get href() {
+    let url = `${this.protocol}//${this.hostname}${this.port ? ":" + this.port : ""}`;
+    url += `${this.pathname === "/" ? "" : this.pathname}${this.search}${this.hash}`;
+    return url;
+  }
+  get url() {
+    return `${this.pathname}${this.search}${this.hash}`;
+  }
+  parseChanges(state, url, baseHref = "") {
+    state = JSON.parse(JSON.stringify(state));
+    return __spreadProps(__spreadValues({}, parseUrl(url, baseHref)), { state });
+  }
+  replaceState(state, title, newUrl) {
+    const { pathname, search, state: parsedState, hash } = this.parseChanges(state, newUrl);
+    this.urlChanges[this.urlChangeIndex] = __spreadProps(__spreadValues({}, this.urlChanges[this.urlChangeIndex]), { pathname, search, hash, state: parsedState });
+  }
+  pushState(state, title, newUrl) {
+    const { pathname, search, state: parsedState, hash } = this.parseChanges(state, newUrl);
+    if (this.urlChangeIndex > 0) {
+      this.urlChanges.splice(this.urlChangeIndex + 1);
+    }
+    this.urlChanges.push(__spreadProps(__spreadValues({}, this.urlChanges[this.urlChangeIndex]), { pathname, search, hash, state: parsedState }));
+    this.urlChangeIndex = this.urlChanges.length - 1;
+  }
+  forward() {
+    const oldUrl = this.url;
+    const oldHash = this.hash;
+    if (this.urlChangeIndex < this.urlChanges.length) {
+      this.urlChangeIndex++;
+    }
+    this.emitEvents(oldHash, oldUrl);
+  }
+  back() {
+    const oldUrl = this.url;
+    const oldHash = this.hash;
+    if (this.urlChangeIndex > 0) {
+      this.urlChangeIndex--;
+    }
+    this.emitEvents(oldHash, oldUrl);
+  }
+  historyGo(relativePosition = 0) {
+    const oldUrl = this.url;
+    const oldHash = this.hash;
+    const nextPageIndex = this.urlChangeIndex + relativePosition;
+    if (nextPageIndex >= 0 && nextPageIndex < this.urlChanges.length) {
+      this.urlChangeIndex = nextPageIndex;
+    }
+    this.emitEvents(oldHash, oldUrl);
+  }
+  getState() {
+    return this.state;
+  }
+  /**
+   * Browsers are inconsistent in when they fire events and perform the state updates
+   * The most easiest thing to do in our mock is synchronous and that happens to match
+   * Firefox and Chrome, at least somewhat closely
+   *
+   * https://github.com/WICG/navigation-api#watching-for-navigations
+   * https://docs.google.com/document/d/1Pdve-DJ1JCGilj9Yqf5HxRJyBKSel5owgOvUJqTauwU/edit#heading=h.3ye4v71wsz94
+   * popstate is always sent before hashchange:
+   * https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event#when_popstate_is_sent
+   */
+  emitEvents(oldHash, oldUrl) {
+    this.popStateSubject.next({ type: "popstate", state: this.getState(), oldUrl, newUrl: this.url });
+    if (oldHash !== this.hash) {
+      this.hashUpdate.next({ type: "hashchange", state: null, oldUrl, newUrl: this.url });
+    }
+  }
+};
+_MockPlatformLocation.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _MockPlatformLocation, deps: [{ token: MOCK_PLATFORM_LOCATION_CONFIG, optional: true }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_MockPlatformLocation.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: _MockPlatformLocation });
+let MockPlatformLocation = _MockPlatformLocation;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: MockPlatformLocation, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: function() {
+  return [{ type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [MOCK_PLATFORM_LOCATION_CONFIG]
+  }, {
+    type: import_core.Optional
+  }] }];
+} });
+function provideLocationMocks() {
+  return [
+    { provide: import_common.Location, useClass: SpyLocation },
+    { provide: import_common.LocationStrategy, useClass: MockLocationStrategy }
+  ];
+}

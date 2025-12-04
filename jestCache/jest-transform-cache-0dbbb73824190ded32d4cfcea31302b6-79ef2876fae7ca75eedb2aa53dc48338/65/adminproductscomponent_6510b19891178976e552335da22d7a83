@@ -1,0 +1,47 @@
+5d34ea5610e95195701e0cf900517869
+/* istanbul ignore next */
+function cov_1w0z7ltmap() {
+  var path = "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\admin\\admin-products\\admin-products.component.html";
+  var hash = "f4860290a8a82a36add40c8cb11e62c36fde991f";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\admin\\admin-products\\admin-products.component.html",
+    statementMap: {
+      "0": {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7416
+        }
+      }
+    },
+    fnMap: {},
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {},
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "f4860290a8a82a36add40c8cb11e62c36fde991f"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1w0z7ltmap = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1w0z7ltmap();
+cov_1w0z7ltmap().s[0]++;
+module.exports = "<div class=\"container py-5\">\r\n  <div class=\"bg-white p-5 rounded shadow-sm\">\r\n    <h2 class=\"mb-4 text-center text-primary\">Gestión de Productos</h2>\r\n\r\n    <!-- FORMULARIO MEJORADO -->\r\n    <form (ngSubmit)=\"onSubmit()\">\r\n      <div class=\"row g-3\">\r\n        <!-- Nombre -->\r\n        <div class=\"col-md-6\">\r\n          <label for=\"name\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-tag-fill me-1\"></i> Nombre\r\n          </label>\r\n          <input\r\n            [(ngModel)]=\"name\"\r\n            name=\"name\"\r\n            id=\"name\"\r\n            class=\"form-control form-control-lg\"\r\n            type=\"text\"\r\n            placeholder=\"Ingrese nombre del producto\"\r\n            required\r\n          />\r\n        </div>\r\n\r\n        <!-- Precio -->\r\n        <div class=\"col-md-6\">\r\n          <label for=\"price\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-currency-dollar me-1\"></i> Precio\r\n          </label>\r\n          <input\r\n            [(ngModel)]=\"price\"\r\n            name=\"price\"\r\n            id=\"price\"\r\n            class=\"form-control form-control-lg\"\r\n            type=\"number\"\r\n            min=\"0\"\r\n            step=\"0.01\"\r\n            placeholder=\"0.00\"\r\n            required\r\n          />\r\n        </div>\r\n\r\n        <!-- Stock -->\r\n        <div class=\"col-md-6\">\r\n          <label for=\"stock\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-box-seam me-1\"></i> Stock\r\n          </label>\r\n          <input\r\n            [(ngModel)]=\"stock\"\r\n            name=\"stock\"\r\n            id=\"stock\"\r\n            class=\"form-control form-control-lg\"\r\n            type=\"number\"\r\n            min=\"0\"\r\n            placeholder=\"Cantidad disponible\"\r\n            required\r\n          />\r\n        </div>\r\n\r\n        <!-- Categoría -->\r\n        <div class=\"col-md-6\">\r\n          <label for=\"categoryId\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-list-ul me-1\"></i> Categoría\r\n          </label>\r\n          <input\r\n            [(ngModel)]=\"categoryId\"\r\n            name=\"categoryId\"\r\n            id=\"categoryId\"\r\n            class=\"form-control form-control-lg\"\r\n            type=\"number\"\r\n            min=\"0\"\r\n            placeholder=\"ID de categoría\"\r\n            required\r\n          />\r\n        </div>\r\n\r\n        <!-- URL de Imagen -->\r\n        <div class=\"col-12\">\r\n          <label for=\"imageUrl\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-image me-1\"></i> URL de Imagen\r\n          </label>\r\n          <input\r\n            [(ngModel)]=\"image\"\r\n            name=\"imageUrl\"\r\n            id=\"imageUrl\"\r\n            class=\"form-control form-control-lg\"\r\n            type=\"text\"\r\n            placeholder=\"https://ejemplo.com/imagen.jpg\"\r\n          />\r\n        </div>\r\n\r\n        <!-- Descripción -->\r\n        <div class=\"col-12\">\r\n          <label for=\"description\" class=\"form-label fw-semibold\">\r\n            <i class=\"bi bi-card-text me-1\"></i> Descripción\r\n          </label>\r\n          <textarea\r\n            [(ngModel)]=\"description\"\r\n            name=\"description\"\r\n            id=\"description\"\r\n            class=\"form-control form-control-lg\"\r\n            rows=\"3\"\r\n            placeholder=\"Descripción del producto\"\r\n            required\r\n          ></textarea>\r\n        </div>\r\n\r\n        <!-- Checkbox Activo -->\r\n        <div class=\"col-12\">\r\n          <div class=\"form-check form-switch\">\r\n            <input\r\n              class=\"form-check-input\"\r\n              type=\"checkbox\"\r\n              [(ngModel)]=\"active\"\r\n              name=\"active\"\r\n              id=\"activeSwitch\"\r\n            />\r\n            <label class=\"form-check-label fw-semibold\" for=\"activeSwitch\">\r\n              Activo\r\n            </label>\r\n          </div>\r\n        </div>\r\n\r\n        <!-- Botón Submit -->\r\n        <div class=\"col-12 text-center mt-4\">\r\n          <button type=\"submit\" class=\"btn btn-primary btn-lg px-5 fw-bold\">\r\n            {{ selectedProductId ? \"Actualizar\" : \"Crear\" }} Producto\r\n          </button>\r\n        </div>\r\n      </div>\r\n    </form>\r\n  </div>\r\n\r\n  <!-- TABLA -->\r\n  <div *ngIf=\"products.length\" class=\"mt-5\">\r\n    <div class=\"card shadow-sm\">\r\n      <div class=\"card-header bg-primary text-white\">\r\n        <h5 class=\"mb-0\">Listado de Productos</h5>\r\n      </div>\r\n\r\n      <div class=\"table-responsive\">\r\n        <table class=\"table table-striped align-middle mb-0\">\r\n          <thead class=\"table-light\">\r\n            <tr>\r\n              <th>Nombre</th>\r\n              <th>Precio</th>\r\n              <th>Stock</th>\r\n              <th>Categoría</th>\r\n              <th>Activo</th>\r\n              <th class=\"text-center\">Acciones</th>\r\n            </tr>\r\n          </thead>\r\n\r\n          <tbody>\r\n            <tr\r\n              *ngFor=\"let p of products\"\r\n              [ngClass]=\"!p.active ? 'table-secondary' : ''\"\r\n            >\r\n              <td>{{ p.name }}</td>\r\n              <td>${{ p.price }}</td>\r\n              <td>{{ p.stock }}</td>\r\n              <td>{{ p.categoryId }}</td>\r\n\r\n              <!-- Badge activo/inactivo -->\r\n              <td>\r\n                <span\r\n                  class=\"badge\"\r\n                  [ngClass]=\"p.active ? 'bg-success' : 'bg-danger'\"\r\n                >\r\n                  {{ p.active ? \"Sí\" : \"No\" }}\r\n                </span>\r\n              </td>\r\n\r\n              <td class=\"text-center\">\r\n                <!-- BOTÓN EDITAR -->\r\n                <button\r\n                  class=\"btn btn-sm btn-outline-warning me-2\"\r\n                  (click)=\"onEdit(p)\"\r\n                >\r\n                  <i class=\"bi bi-pencil\"></i> Editar\r\n                </button>\r\n\r\n                <!-- BOTÓN DESACTIVAR CON MODAL -->\r\n                <button\r\n                  *ngIf=\"p.active\"\r\n                  class=\"btn btn-sm btn-outline-danger\"\r\n                  (click)=\"askDisableProduct(p.id)\"\r\n                >\r\n                  <i class=\"bi bi-x-circle\"></i> Desactivar\r\n                </button>\r\n\r\n                <!-- BOTÓN ACTIVAR -->\r\n                <button\r\n                  *ngIf=\"!p.active\"\r\n                  class=\"btn btn-sm btn-outline-success\"\r\n                  (click)=\"onEnable(p.id)\"\r\n                >\r\n                  <i class=\"bi bi-check-circle\"></i> Activar\r\n                </button>\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n\r\n<!-- ========================================================= -->\r\n<!--            MODAL UNIVERSAL DE CONFIRMACIÓN                -->\r\n<!-- ========================================================= -->\r\n<app-confirm-modal\r\n  *ngIf=\"showModal\"\r\n  [title]=\"modalTitle\"\r\n  [message]=\"modalMessage\"\r\n  (onConfirm)=\"confirmModal()\"\r\n  (onCancel)=\"cancelModal()\"\r\n></app-confirm-modal>\r\n";

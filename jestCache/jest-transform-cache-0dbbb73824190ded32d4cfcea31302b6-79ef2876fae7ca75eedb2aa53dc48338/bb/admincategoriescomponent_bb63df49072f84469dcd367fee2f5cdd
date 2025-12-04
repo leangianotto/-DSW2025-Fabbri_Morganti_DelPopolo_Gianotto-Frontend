@@ -1,0 +1,47 @@
+4e58ee84455e47244a6f4a592ea1a80e
+/* istanbul ignore next */
+function cov_10y6f7febj() {
+  var path = "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\admin\\admin-categories\\admin-categories.component.html";
+  var hash = "4330cb00979f22011b950f53b2b844c2ef12c4ec";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\admin\\admin-categories\\admin-categories.component.html",
+    statementMap: {
+      "0": {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 3859
+        }
+      }
+    },
+    fnMap: {},
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {},
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "4330cb00979f22011b950f53b2b844c2ef12c4ec"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_10y6f7febj = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_10y6f7febj();
+cov_10y6f7febj().s[0]++;
+module.exports = "<div class=\"container py-5\">\r\n  <div class=\"bg-white p-4 rounded shadow-sm\">\r\n    <h2 class=\"text-center text-primary mb-4\">Gestión de Categorías</h2>\r\n\r\n    <!-- Crear nueva categoría -->\r\n    <div class=\"row g-3 align-items-end mb-4\">\r\n      <div class=\"col-md-9\">\r\n        <label for=\"newCategory\" class=\"form-label\">Nueva categoría</label>\r\n        <input\r\n          id=\"newCategory\"\r\n          type=\"text\"\r\n          [(ngModel)]=\"newCategoryName\"\r\n          class=\"form-control\"\r\n          placeholder=\"Ej: Tablets\"\r\n        />\r\n      </div>\r\n      <div class=\"col-md-3 text-end\">\r\n        <button\r\n          class=\"btn btn-success w-100 fw-bold\"\r\n          (click)=\"createCategory()\"\r\n        >\r\n          Crear\r\n        </button>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Tabla de categorías -->\r\n  <div *ngIf=\"categories.length\" class=\"mt-5\">\r\n    <div class=\"card shadow-sm\">\r\n      <div class=\"card-header bg-primary text-white\">\r\n        <h5 class=\"mb-0\">Listado de Categorías</h5>\r\n      </div>\r\n      <div class=\"table-responsive\">\r\n        <table class=\"table table-striped align-middle mb-0\">\r\n          <thead class=\"table-light\">\r\n            <tr>\r\n              <th>ID</th>\r\n              <th>Nombre</th>\r\n              <th class=\"text-center\">Acciones</th>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr *ngFor=\"let cat of categories\">\r\n              <td>{{ cat.id }}</td>\r\n\r\n              <!-- Edición -->\r\n              <td *ngIf=\"editingCategory?.id === cat.id\">\r\n                <input\r\n                  type=\"text\"\r\n                  [(ngModel)]=\"updatedName\"\r\n                  class=\"form-control\"\r\n                />\r\n              </td>\r\n\r\n              <!-- Lectura -->\r\n              <td *ngIf=\"editingCategory?.id !== cat.id\" class=\"fw-semibold\">\r\n                {{ cat.name }}\r\n              </td>\r\n\r\n              <td class=\"text-center\">\r\n                <!-- Modo edición -->\r\n                <ng-container\r\n                  *ngIf=\"editingCategory?.id === cat.id; else normalRows\"\r\n                >\r\n                  <button\r\n                    class=\"btn btn-sm btn-outline-primary me-2\"\r\n                    (click)=\"saveEdit()\"\r\n                  >\r\n                    Guardar\r\n                  </button>\r\n                  <button\r\n                    class=\"btn btn-sm btn-outline-secondary\"\r\n                    (click)=\"cancelEdit()\"\r\n                  >\r\n                    Cancelar\r\n                  </button>\r\n                </ng-container>\r\n\r\n                <ng-template #normalRows>\r\n                  <button\r\n                    class=\"btn btn-sm btn-outline-warning me-2\"\r\n                    (click)=\"startEdit(cat)\"\r\n                  >\r\n                    Editar\r\n                  </button>\r\n\r\n                  <!-- 🔥 ELIMINAR CON MODAL -->\r\n                  <button\r\n                    class=\"btn btn-sm btn-outline-danger\"\r\n                    (click)=\"askDeleteCategory(cat.id)\"\r\n                  >\r\n                    Eliminar\r\n                  </button>\r\n                </ng-template>\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n\r\n<!-- ============================= -->\r\n<!-- MODAL UNIVERSAL DE CONFIRMACIÓN -->\r\n<!-- ============================= -->\r\n<app-confirm-modal\r\n  *ngIf=\"showModal\"\r\n  [title]=\"modalTitle\"\r\n  [message]=\"modalMessage\"\r\n  (onConfirm)=\"confirmModal()\"\r\n  (onCancel)=\"cancelModal()\"\r\n></app-confirm-modal>\r\n";

@@ -1,0 +1,47 @@
+7b4e87ecaed9c21a78dce398427bed21
+/* istanbul ignore next */
+function cov_2q347l7ouu() {
+  var path = "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\app.component.html";
+  var hash = "334012517dc12b74d238ea71728b219516a3d003";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Agus\\UTN\\3er a\xF1o\\TP-DSW\\-DSW2025-Fabbri_Morganti_DelPopolo_Gianotto-Frontend-Testing\\src\\app\\app.component.html",
+    statementMap: {
+      "0": {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 137
+        }
+      }
+    },
+    fnMap: {},
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {},
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "334012517dc12b74d238ea71728b219516a3d003"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_2q347l7ouu = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_2q347l7ouu();
+cov_2q347l7ouu().s[0]++;
+module.exports = "<app-navbar></app-navbar>\r\n<app-toast></app-toast>\r\n<router-outlet></router-outlet>\r\n<app-footer></app-footer>\r\n";
