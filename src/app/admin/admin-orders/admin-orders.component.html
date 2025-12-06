@@ -46,8 +46,8 @@
                     style="height: 60px; object-fit: cover"
                   />
                 </td>
-                <td>{{ item.product.price | currency : "ARS" }}</td>
-                <td>{{ item.totalVendidas }}</td>
+                <td style="text-align: right;">{{ item.product.price | currency : "ARS" }}</td>
+                <td style="text-align: right;">{{ item.totalVendidas }}</td>
               </tr>
             </tbody>
           </table>
@@ -80,7 +80,7 @@
                   <tr class="align-middle">
                     <td>{{ order.id }}</td>
                     <td>{{ order.User?.name || "Sin asignar" }}</td>
-                    <td>{{ order.totalAmount | currency : "ARS" }}</td>
+                    <td style="text-align: right;">{{ order.totalAmount | currency : "ARS" }}</td>
                     <td>
                       <ng-container
                         *ngIf="
@@ -156,12 +156,13 @@
                   <tr *ngIf="expandedOrderId === order.id">
                     <td colspan="6" class="p-3">
                       <div
+                        class="border rounded shadow-sm p-3 "
                         *ngIf="order.productos?.length > 0; else sinProductos"
                       >
                         <h6 class="mb-3 fw-semibold">Productos del pedido:</h6>
                         <div class="table-responsive">
-                          <table class="table table-sm table-striped mb-0">
-                            <thead class="table-light">
+                          <table class="table table-sm table-striped mb-0 table-bordered">
+                            <thead>
                               <tr>
                                 <th>Producto</th>
                                 <th>Precio unitario</th>
@@ -173,8 +174,8 @@
                             <tbody>
                               <tr *ngFor="let p of order.productos">
                                 <td>{{ p.name }}</td>
-                                <td>{{ p.price | currency : "ARS" }}</td>
-                                <td style="width: 100px">
+                                <td style="text-align: right;">{{ p.price | currency : "ARS" }}</td>
+                                <td style="width: 100px;">
                                   <input
                                     type="number"
                                     min="1"
@@ -185,7 +186,7 @@
                                     "
                                   />
                                 </td>
-                                <td>
+                                <td style="text-align: right;">
                                   {{
                                     p.price * (p.OrderProduct?.quantity || 0)
                                       | currency : "ARS"

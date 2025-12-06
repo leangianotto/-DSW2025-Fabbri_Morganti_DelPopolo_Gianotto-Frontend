@@ -138,15 +138,15 @@
       </div>
 
       <div class="table-responsive">
-        <table class="table table-striped align-middle mb-0">
+        <table class="table table-striped align-middle mb-0 table-bordered">
           <thead class="table-light">
             <tr>
-              <th>Nombre</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Categoría</th>
-              <th>Activo</th>
-              <th class="text-center">Acciones</th>
+              <th style="text-align: center;">Nombre</th>
+              <th style="text-align: center;">Precio</th>
+              <th style="text-align: center;">Stock</th>
+              <th style="text-align: center;">Categoría</th>
+              <th style="text-align: center;">Activo</th>
+              <th style="text-align: center;">Acciones</th>
             </tr>
           </thead>
 
@@ -156,12 +156,12 @@
               [ngClass]="!p.active ? 'table-secondary' : ''"
             >
               <td>{{ p.name }}</td>
-              <td>${{ p.price }}</td>
-              <td>{{ p.stock }}</td>
-              <td>{{ p.categoryId }}</td>
+              <td style="text-align: right;">${{ p.price }}</td>
+              <td style="text-align: right;">{{ p.stock }}</td>
+              <td style="text-align: right;">{{ p.categoryId }}</td>
 
               <!-- Badge activo/inactivo -->
-              <td>
+              <td class="text-center">
                 <span
                   class="badge"
                   [ngClass]="p.active ? 'bg-success' : 'bg-danger'"

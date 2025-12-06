@@ -8,9 +8,9 @@
 
   <!-- CARRITO -->
   <div *ngIf="cartItems.length > 0" class="table-responsive">
-    <table class="table table-striped align-middle shadow-sm rounded">
+    <table class="table table-striped align-middle shadow-sm rounded table-bordered">
       <thead class="table-dark">
-        <tr>
+        <tr style="text-align: center;">
           <th>Producto</th>
           <th>Precio</th>
           <th style="width: 140px">Cantidad</th>
@@ -22,11 +22,11 @@
       <tbody>
         <tr *ngFor="let item of cartItems">
           <td class="fw-semibold">{{ item.product.name }}</td>
-          <td>${{ item.product.price.toFixed(2) }}</td>
+          <td style="text-align: right;">${{ item.product.price.toFixed(2) }}</td>
 
           <!-- CANTIDAD -->
           <td>
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-between">
               <button
                 class="btn btn-outline-secondary btn-quantity me-2"
                 (click)="updateQuantity(item.product.id, -1)"
@@ -47,7 +47,7 @@
             </div>
           </td>
 
-          <td>${{ (item.product.price * item.quantity).toFixed(2) }}</td>
+          <td style="text-align: right;">${{ (item.product.price * item.quantity).toFixed(2) }}</td>
 
           <!-- BOTÓN ELIMINAR MEJORADO -->
           <td>
