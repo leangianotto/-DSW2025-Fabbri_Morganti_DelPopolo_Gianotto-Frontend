@@ -1,105 +1,119 @@
 <div class="container py-5">
-  <div class="bg-white p-4 rounded shadow-sm">
-    <h2 class="text-center text-primary mb-4">Gestión de Categorías</h2>
+  <div class="bg-white p-4 rounded">
+    <h2 class="text-center text-primary mb-4 fw-bold">Gestión de Categorías</h2>
 
     <!-- Crear nueva categoría -->
-    <div class="row g-3 align-items-end mb-4">
-      <div class="col-md-9">
-        <label for="newCategory" class="form-label">Nueva categoría</label>
+    <div class="border rounded p-4 mb-4 shadow-sm">
+      <h5 class="fw-semibold mb-3">Crear nueva categoría</h5>
+
+      <div >
+        <label for="newCategory" class="form-label fw-semibold">
+          <i class="bi bi-list-ul me-1"></i> Nueva categoría
+        </label>
         <input
           id="newCategory"
           type="text"
           [(ngModel)]="newCategoryName"
-          class="form-control"
+          class="form-control form-control-lg"
           placeholder="Ej: Tablets"
         />
       </div>
-      <div class="col-md-3 text-end">
+
+   
+      <div class="mt-3 text-center">
         <button
-          class="btn btn-success w-100 fw-bold"
+          class="btn btn-lg btn-primary px-5 fw-bold"
           (click)="createCategory()"
         >
-          Crear
+          Crear Categoría
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Tabla de categorías -->
-  <div *ngIf="categories.length" class="mt-5">
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Listado de Categorías</h5>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cat of categories">
-              <td>{{ cat.id }}</td>
+    <!-- Tabla de categorías -->
+    <div *ngIf="categories.length" class="mt-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Listado de Categorías</h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0 table-bordered">
 
-              <!-- Edición -->
-              <td *ngIf="editingCategory?.id === cat.id">
-                <input
-                  type="text"
-                  [(ngModel)]="updatedName"
-                  class="form-control"
-                />
-              </td>
+            <colgroup>
+              <col style="width: 8%" />
+              <col />
+              <col style="width: 20%" />
+            </colgroup>
 
-              <!-- Lectura -->
-              <td *ngIf="editingCategory?.id !== cat.id" class="fw-semibold">
-                {{ cat.name }}
-              </td>
+            <thead class="table-light">
+              <tr class="text-center">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cat of categories">
+                <td style="text-align: right;">{{ cat.id }}</td>
 
-              <td class="text-center">
-                <!-- Modo edición -->
-                <ng-container
-                  *ngIf="editingCategory?.id === cat.id; else normalRows"
-                >
-                  <button
-                    class="btn btn-sm btn-outline-primary me-2"
-                    (click)="saveEdit()"
+                <!-- Edición -->
+                <td *ngIf="editingCategory?.id === cat.id">
+                  <input
+                    type="text"
+                    [(ngModel)]="updatedName"
+                    class="form-control"
+                  />
+                </td>
+
+                <!-- Lectura -->
+                <td *ngIf="editingCategory?.id !== cat.id" class="fw-semibold">
+                  {{ cat.name }}
+                </td>
+
+                <td class="text-center">
+                  <!-- Modo edición -->
+                  <ng-container
+                    *ngIf="editingCategory?.id === cat.id; else normalRows"
                   >
-                    Guardar
-                  </button>
-                  <button
-                    class="btn btn-sm btn-outline-secondary"
-                    (click)="cancelEdit()"
-                  >
-                    Cancelar
-                  </button>
-                </ng-container>
+                    <button
+                      class="btn btn-sm btn-outline-primary me-2"
+                      (click)="saveEdit()"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-secondary"
+                      (click)="cancelEdit()"
+                    >
+                      Cancelar
+                    </button>
+                  </ng-container>
 
-                <ng-template #normalRows>
-                  <button
-                    class="btn btn-sm btn-outline-warning me-2"
-                    (click)="startEdit(cat)"
-                  >
-                    Editar
-                  </button>
+                  <ng-template #normalRows>
+                    <button
+                      class="btn btn-sm btn-outline-warning me-2"
+                      (click)="startEdit(cat)"
+                    >
+                      Editar
+                    </button>
 
-                  <!-- 🔥 ELIMINAR CON MODAL -->
-                  <button
-                    class="btn btn-sm btn-outline-danger"
-                    (click)="askDeleteCategory(cat.id)"
-                  >
-                    Eliminar
-                  </button>
-                </ng-template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    <!-- 🔥 ELIMINAR CON MODAL -->
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="askDeleteCategory(cat.id)"
+                    >
+                      Eliminar
+                    </button>
+                  </ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- ============================= -->

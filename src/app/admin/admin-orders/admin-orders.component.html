@@ -1,6 +1,6 @@
 <div class="container py-5">
-  <div class="bg-white p-4 rounded shadow-sm">
-    <h2 class="mb-4 text-center fw-bold text-primary">Lista de Pedidos</h2>
+  <div class="bg-white p-4 rounded ">
+    <h2 class="mb-4 text-center fw-bold text-primary">Gestión de Pedidos</h2>
 
     <!-- Botón para alternar vista -->
     <div class="d-flex justify-content-center mb-4">
@@ -19,14 +19,21 @@
 
     <!-- Top productos vendidos -->
     <div *ngIf="mostrarTopVendidos" class="card shadow-sm mb-4">
-      <div class="card-body">
+      <div class="card-body shadow-sm">
         <h5 class="mb-3 text-success fw-semibold">
           <i class="bi bi-star-fill me-2"></i>Top productos más vendidos
         </h5>
-        <div class="table-responsive">
+
+        <div class="table-responsive border rounded">
           <table class="table table-bordered table-hover mb-0 align-middle">
+            <colgroup>
+              <col style="width: 50%;"/>
+              <col style="width: 20%;"/>
+              <col style="width: 15%;"/>
+              <col style="width: 15%;"/>
+            </colgroup>
             <thead class="table-success">
-              <tr>
+              <tr class="text-center">
                 <th>Producto</th>
                 <th>Imagen</th>
                 <th>Precio</th>
@@ -57,16 +64,28 @@
 
     <!-- Sección de filtros y tabla de pedidos -->
     <div *ngIf="!mostrarTopVendidos">
-      <!-- FILTROS -->
-      <!-- ... tu HTML de filtros permanece igual ... -->
+
 
       <!-- TABLA DE PEDIDOS -->
       <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Listado de Pedidos</h5>
+        </div>
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-bordered table-hover mb-0">
+
+              <colgroup>
+                <col style="width: 8%" />
+                <col style="width: 25%" />
+                <col style="width: 15%" />
+                <col style="width: 12%" />
+                <col style="width: 15%" />
+                <col style="width: 25%" />
+              </colgroup>
+
               <thead class="table-primary">
-                <tr>
+                <tr class="text-center">
                   <th>ID</th>
                   <th>Usuario</th>
                   <th>Total ($)</th>
@@ -78,7 +97,7 @@
               <tbody>
                 <ng-container *ngFor="let order of orders">
                   <tr class="align-middle">
-                    <td>{{ order.id }}</td>
+                    <td style="text-align: right;">{{ order.id }}</td>
                     <td>{{ order.User?.name || "Sin asignar" }}</td>
                     <td style="text-align: right;">{{ order.totalAmount | currency : "ARS" }}</td>
                     <td>
@@ -102,10 +121,10 @@
                         {{ order.status | titlecase }}
                       </ng-template>
                     </td>
-                    <td class="text-nowrap">
-                      {{ order.createdAt | date : "short" }}
+                    <td class="text-nowrap" style="text-align: right;">
+                      {{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                     </td>
-                    <td class="text-nowrap">
+                    <td class="text-nowrap text-center">
                       <ng-container
                         *ngIf="
                           selectedOrder?.id === order.id;
@@ -163,7 +182,7 @@
                         <div class="table-responsive">
                           <table class="table table-sm table-striped mb-0 table-bordered">
                             <thead>
-                              <tr>
+                              <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Precio unitario</th>
                                 <th>Cantidad</th>
@@ -192,7 +211,7 @@
                                       | currency : "ARS"
                                   }}
                                 </td>
-                                <td class="text-nowrap">
+                                <td class="text-nowrap text-center">
                                   <button
                                     class="btn btn-success btn-sm me-1 fw-semibold"
                                     (click)="

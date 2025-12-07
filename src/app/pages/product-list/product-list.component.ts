@@ -79,7 +79,7 @@ export class ProductListComponent implements OnInit {
     this.mostrandoMasVendidos = false;
     this.categoriaActivaId = categoryId;
     this.tituloDeSeccion = this.getCategoryIcon(categoryId) + ' ' + categoryName;
-
+    this.tituloDeSeccion = `${this.getCategoryIcon(categoryId)} ${categoryName}`;
     this.productService.getProductsByCategory(categoryId).subscribe({
       next: (data) => {
         this.products = data.map(p => this.normalizeProductImage(p));

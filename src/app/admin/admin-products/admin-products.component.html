@@ -1,205 +1,221 @@
 <div class="container py-5">
-  <div class="bg-white p-5 rounded shadow-sm">
-    <h2 class="mb-4 text-center text-primary">Gestión de Productos</h2>
+  <div class="bg-white p-4 rounded">
+    <h2 class="text-center text-primary mb-4 pb-3 fw-bold">Gestión de Productos</h2>
 
     <!-- FORMULARIO MEJORADO -->
-    <form (ngSubmit)="onSubmit()">
-      <div class="row g-3">
-        <!-- Nombre -->
-        <div class="col-md-6">
-          <label for="name" class="form-label fw-semibold">
-            <i class="bi bi-tag-fill me-1"></i> Nombre
-          </label>
-          <input
-            [(ngModel)]="name"
-            name="name"
-            id="name"
-            class="form-control form-control-lg"
-            type="text"
-            placeholder="Ingrese nombre del producto"
-            required
-          />
-        </div>
+    <div class="border p-4 rounded mb-4 shadow-sm">
+      <h5 class="fw-semibold ">Crear nuevo producto</h5>
+      <form (ngSubmit)="onSubmit()" class="row g-3">
 
-        <!-- Precio -->
-        <div class="col-md-6">
-          <label for="price" class="form-label fw-semibold">
-            <i class="bi bi-currency-dollar me-1"></i> Precio
-          </label>
-          <input
-            [(ngModel)]="price"
-            name="price"
-            id="price"
-            class="form-control form-control-lg"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-            required
-          />
-        </div>
-
-        <!-- Stock -->
-        <div class="col-md-6">
-          <label for="stock" class="form-label fw-semibold">
-            <i class="bi bi-box-seam me-1"></i> Stock
-          </label>
-          <input
-            [(ngModel)]="stock"
-            name="stock"
-            id="stock"
-            class="form-control form-control-lg"
-            type="number"
-            min="0"
-            placeholder="Cantidad disponible"
-            required
-          />
-        </div>
-
-        <!-- Categoría -->
-        <div class="col-md-6">
-          <label for="categoryId" class="form-label fw-semibold">
-            <i class="bi bi-list-ul me-1"></i> Categoría
-          </label>
-          <input
-            [(ngModel)]="categoryId"
-            name="categoryId"
-            id="categoryId"
-            class="form-control form-control-lg"
-            type="number"
-            min="0"
-            placeholder="ID de categoría"
-            required
-          />
-        </div>
-
-        <!-- URL de Imagen -->
-        <div class="col-12">
-          <label for="imageUrl" class="form-label fw-semibold">
-            <i class="bi bi-image me-1"></i> URL de Imagen
-          </label>
-          <input
-            [(ngModel)]="image"
-            name="imageUrl"
-            id="imageUrl"
-            class="form-control form-control-lg"
-            type="text"
-            placeholder="https://ejemplo.com/imagen.jpg"
-          />
-        </div>
-
-        <!-- Descripción -->
-        <div class="col-12">
-          <label for="description" class="form-label fw-semibold">
-            <i class="bi bi-card-text me-1"></i> Descripción
-          </label>
-          <textarea
-            [(ngModel)]="description"
-            name="description"
-            id="description"
-            class="form-control form-control-lg"
-            rows="3"
-            placeholder="Descripción del producto"
-            required
-          ></textarea>
-        </div>
-
-        <!-- Checkbox Activo -->
-        <div class="col-12">
-          <div class="form-check form-switch">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              [(ngModel)]="active"
-              name="active"
-              id="activeSwitch"
-            />
-            <label class="form-check-label fw-semibold" for="activeSwitch">
-              Activo
+          <!-- Nombre -->
+          <div class="col-md-6">
+            <label for="name" class="form-label fw-semibold">
+              <i class="bi bi-tag-fill me-1"></i> Nombre
             </label>
+            <input
+              [(ngModel)]="name"
+              name="name"
+              id="name"
+              class="form-control form-control-lg"
+              type="text"
+              placeholder="Ingrese nombre del producto"
+              required
+            />
           </div>
-        </div>
 
-        <!-- Botón Submit -->
-        <div class="col-12 text-center mt-4">
-          <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold">
-            {{ selectedProductId ? "Actualizar" : "Crear" }} Producto
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
+          <!-- Precio -->
+          <div class="col-md-6">
+            <label for="price" class="form-label fw-semibold">
+              <i class="bi bi-currency-dollar me-1"></i> Precio
+            </label>
+            <input
+              [(ngModel)]="price"
+              name="price"
+              id="price"
+              class="form-control form-control-lg"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              required
+            />
+          </div>
 
-  <!-- TABLA -->
-  <div *ngIf="products.length" class="mt-5">
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Listado de Productos</h5>
-      </div>
+          <!-- Stock -->
+          <div class="col-md-6">
+            <label for="stock" class="form-label fw-semibold">
+              <i class="bi bi-box-seam me-1"></i> Stock
+            </label>
+            <input
+              [(ngModel)]="stock"
+              name="stock"
+              id="stock"
+              class="form-control form-control-lg"
+              type="number"
+              min="0"
+              placeholder="Cantidad disponible"
+              required
+            />
+          </div>
 
-      <div class="table-responsive">
-        <table class="table table-striped align-middle mb-0 table-bordered">
-          <thead class="table-light">
-            <tr>
-              <th style="text-align: center;">Nombre</th>
-              <th style="text-align: center;">Precio</th>
-              <th style="text-align: center;">Stock</th>
-              <th style="text-align: center;">Categoría</th>
-              <th style="text-align: center;">Activo</th>
-              <th style="text-align: center;">Acciones</th>
-            </tr>
-          </thead>
+          <!-- Categoría -->
+          <div class="col-md-6">
+            <label for="categoryId" class="form-label fw-semibold">
+              <i class="bi bi-list-ul me-1"></i> Categoría
+            </label>
+            <input
+              [(ngModel)]="categoryId"
+              name="categoryId"
+              id="categoryId"
+              class="form-control form-control-lg"
+              type="number"
+              min="0"
+              placeholder="ID de categoría"
+              required
+            />
+          </div>
 
-          <tbody>
-            <tr
-              *ngFor="let p of products"
-              [ngClass]="!p.active ? 'table-secondary' : ''"
+          <!-- URL de Imagen -->
+          <div class="col-12">
+            <label for="imageUrl" class="form-label fw-semibold">
+              <i class="bi bi-image me-1"></i> URL de Imagen
+            </label>
+            <input
+              [(ngModel)]="image"
+              name="imageUrl"
+              id="imageUrl"
+              class="form-control form-control-lg"
+              type="text"
+              placeholder="https://ejemplo.com/imagen.jpg"
+            />
+          </div>
+
+          <!-- Descripción -->
+          <div class="col-12">
+            <label for="description" class="form-label fw-semibold">
+              <i class="bi bi-card-text me-1"></i> Descripción
+            </label>
+            <textarea
+              [(ngModel)]="description"
+              name="description"
+              id="description"
+              class="form-control form-control-lg"
+              rows="3"
+              placeholder="Descripción del producto"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Checkbox Activo -->
+          <div class="col-12">
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="active"
+                name="active"
+                id="activeSwitch"
+              />
+              <label class="form-check-label fw-semibold" for="activeSwitch">
+                {{ active ? 'Activo' : 'Inactivo' }}
+              </label>
+            </div>
+          </div>
+
+          <!-- Botón Submit -->
+          <div class="col-12 text-center mt-4">
+            <button 
+              type="submit" 
+              class="btn btn-primary btn-lg px-5 fw-bold"
             >
-              <td>{{ p.name }}</td>
-              <td style="text-align: right;">${{ p.price }}</td>
-              <td style="text-align: right;">{{ p.stock }}</td>
-              <td style="text-align: right;">{{ p.categoryId }}</td>
+              {{ selectedProductId ? "Actualizar" : "Crear" }} Producto
+            </button>
+          </div>
+        </form>
+      </div>
+  
 
-              <!-- Badge activo/inactivo -->
-              <td class="text-center">
-                <span
-                  class="badge"
-                  [ngClass]="p.active ? 'bg-success' : 'bg-danger'"
-                >
-                  {{ p.active ? "Sí" : "No" }}
-                </span>
-              </td>
+    <!-- TABLA -->
+    <div *ngIf="products.length" class="mt-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Listado de Productos</h5>
+        </div>
 
-              <td class="text-center">
-                <!-- BOTÓN EDITAR -->
-                <button
-                  class="btn btn-sm btn-outline-warning me-2"
-                  (click)="onEdit(p)"
-                >
-                  <i class="bi bi-pencil"></i> Editar
-                </button>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0 table-bordered">
 
-                <!-- BOTÓN DESACTIVAR CON MODAL -->
-                <button
-                  *ngIf="p.active"
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="askDisableProduct(p.id)"
-                >
-                  <i class="bi bi-x-circle"></i> Desactivar
-                </button>
+            <colgroup>
+              <col style="width: 40%;"/>
+              <col style="width: 10%;"/>
+              <col style="width: 10%;"/>
+              <col style="width: 10%;"/>
+              <col style="width: 10%;"/>
+              <col style="width: 20%;"/>
+            </colgroup>
 
-                <!-- BOTÓN ACTIVAR -->
-                <button
-                  *ngIf="!p.active"
-                  class="btn btn-sm btn-outline-success"
-                  (click)="onEnable(p.id)"
-                >
-                  <i class="bi bi-check-circle"></i> Activar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            <thead class="table-light">
+              <tr class="text-center">
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let p of products"
+                [ngClass]="!p.active ? 'table-secondary' : ''"
+              >
+                <td>{{ p.name }}</td>
+                <td style="text-align: right;">${{ p.price }}</td>
+                <td style="text-align: right;">{{ p.stock }}</td>
+                <td style="text-align: right;">{{ p.categoryId }}</td>
+
+                <!-- Badge activo/inactivo -->
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [ngClass]="p.active ? 'bg-success' : 'bg-danger'"
+                  >
+                    {{ p.active ? "Sí" : "No" }}
+                  </span>
+                </td>
+
+                <td class="text-center">
+                  <!-- BOTÓN EDITAR -->
+                  <button
+                    class="btn btn-sm btn-outline-warning me-2"
+                    (click)="onEdit(p)"
+                  >
+                    <i class="bi bi-pencil"></i> Editar
+                  </button>
+
+                  <!-- BOTÓN DESACTIVAR CON MODAL -->
+                  <button
+                    *ngIf="p.active"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="askDisableProduct(p.id)"
+                  >
+                    <i class="bi bi-x-circle"></i> Desactivar
+                  </button>
+
+                  <!-- BOTÓN ACTIVAR -->
+                  <button
+                    *ngIf="!p.active"
+                    class="btn btn-sm btn-outline-success"
+                    (click)="onEnable(p.id)"
+                  >
+                    <i class="bi bi-check-circle"></i> Activar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
