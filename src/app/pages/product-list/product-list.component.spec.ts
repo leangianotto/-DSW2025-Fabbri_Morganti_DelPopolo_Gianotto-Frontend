@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ProductListComponent } from './product-list.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ProductService } from '../../services/product.service';
+import { CartService } from 'src/app/services/cart.service';
+import { ToastService } from 'src/app/services/toast.service';
+import { FormsModule } from '@angular/forms';
+
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
@@ -8,7 +13,11 @@ describe('ProductListComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ProductListComponent]
+      declarations: [ProductListComponent],
+      imports: [HttpClientTestingModule,
+        FormsModule
+      ],
+      providers: [ProductService, CartService, ToastService]
     });
     fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;

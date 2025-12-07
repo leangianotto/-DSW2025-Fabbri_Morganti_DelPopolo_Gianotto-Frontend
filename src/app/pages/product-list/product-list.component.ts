@@ -24,6 +24,9 @@ export class ProductListComponent implements OnInit {
 
   mostrandoMasVendidos: boolean = false;
 
+  categoriaActivaId: number | null = 0;
+  tituloDeSeccion: string = '🛒 Todos los productos'; //Título dinámico
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
@@ -44,6 +47,8 @@ export class ProductListComponent implements OnInit {
   loadAllProducts(): void {
     this.loading = true;
     this.mostrandoMasVendidos = false;
+    this.categoriaActivaId = 0;
+    this.tituloDeSeccion = '🛒 Todos los productos';
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products = data.map(p => this.normalizeProductImage(p));
@@ -57,7 +62,8 @@ export class ProductListComponent implements OnInit {
   loadMasVendidos(): void {
     this.loading = true;
     this.mostrandoMasVendidos = true;
-
+    this.categoriaActivaId = null;
+    this.tituloDeSeccion = '🛒 Productos más vendidos';
     this.productService.getTopSellingProducts().subscribe({
       next: (data) => {
         this.products = data.map(p => this.normalizeProductImage(p.Product));
@@ -68,9 +74,12 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  getByCategory(categoryId: number): void {
+  getByCategory(categoryId: number, categoryName: string): void {
     this.loading = true;
     this.mostrandoMasVendidos = false;
+    this.categoriaActivaId = categoryId;
+    this.tituloDeSeccion = this.getCategoryIcon(categoryId) + ' ' + categoryName;
+    this.tituloDeSeccion = `${this.getCategoryIcon(categoryId)} ${categoryName}`;
     this.productService.getProductsByCategory(categoryId).subscribe({
       next: (data) => {
         this.products = data.map(p => this.normalizeProductImage(p));
@@ -80,6 +89,19 @@ export class ProductListComponent implements OnInit {
       error: (err) => console.error('Error al obtener productos por categoría:', err),
       complete: () => (this.loading = false)
     });
+  }
+
+  getCategoryIcon(categoryId: number): string {
+    switch (categoryId) {
+      case 1: 
+        return '📱'; // Celulares}
+      case 2: 
+        return '💻'; // Tecnologí
+      case 3: 
+        return '🎧';
+      default:
+        return '';
+    }
   }
 
   applyFilters(): void {

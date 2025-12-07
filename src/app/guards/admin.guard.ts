@@ -1,6 +1,6 @@
 // src/app/guards/admin.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
@@ -9,7 +9,9 @@ import { AuthService } from '../services/auth.service';
 export class AdminGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
+  canActivate(): boolean | UrlTree {
+    route: ActivatedRouteSnapshot;
+    state: RouterStateSnapshot;
     if (this.authService.isLoggedIn() && this.authService.isAdmin()) {
       return true;
     } else {

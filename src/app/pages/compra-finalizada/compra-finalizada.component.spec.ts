@@ -1,17 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router'; 
 import { CompraFinalizadaComponent } from './compra-finalizada.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 describe('CompraFinalizadaComponent', () => {
   let component: CompraFinalizadaComponent;
   let fixture: ComponentFixture<CompraFinalizadaComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
+      imports: [HttpClientTestingModule],
       declarations: [CompraFinalizadaComponent],
       providers: [
-      { provide: ActivatedRoute, useValue: {} }
+      { 
+        provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+            paramMap: {
+              get: () => null
+            },
+            queryParamMap: {  
+              get: () => null
+            } 
+          }
+        }
+      }
+    
       ]
     });
     fixture = TestBed.createComponent(CompraFinalizadaComponent);
