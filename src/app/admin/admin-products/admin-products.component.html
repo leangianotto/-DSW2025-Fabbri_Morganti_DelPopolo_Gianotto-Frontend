@@ -130,6 +130,9 @@
             >
               {{ selectedProductId ? "Actualizar" : "Crear" }} Producto
             </button>
+            <p *ngIf="errorMessage" class="text-danger">
+  {{ errorMessage }}
+</p>
           </div>
         </form>
       </div>

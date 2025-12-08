@@ -20,6 +20,9 @@ export class AdminCategoriesComponent implements OnInit {
   modalMessage = '';
   actionToConfirm: (() => void) | null = null;
 
+  errorMessage: string = '';
+
+
   constructor(private categoryService: CategoryService) {}
 
   ngOnInit(): void {
@@ -35,17 +38,29 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   /** CREAR */
-  createCategory() {
-    if (!this.newCategoryName.trim()) return;
+createCategory() {
+  if (!this.newCategoryName.trim()) return;
 
-    this.categoryService.create(this.newCategoryName).subscribe({
-      next: () => {
-        this.newCategoryName = '';
-        this.loadCategories();
-      },
-      error: (err) => console.error('Error al crear categoría', err),
-    });
-  }
+  // limpiamos error anterior
+  this.errorMessage = '';
+
+  this.categoryService.create(this.newCategoryName).subscribe({
+    next: () => {
+      this.newCategoryName = '';
+      this.loadCategories();
+    },
+    error: (err) => {
+      console.error('Error al crear categoría', err);
+
+      // Si viene del backend con 400 y { error: '...' }
+      if (err.status === 400 && err.error?.error) {
+        this.errorMessage = err.error.error; // ej: "Ya existe una categoría con ese nombre."
+      } else {
+        this.errorMessage = 'Ocurrió un error al crear la categoría.';
+      }
+    },
+  });
+}
 
   /** EDITAR */
   startEdit(category: Category) {

@@ -27,6 +27,8 @@ export class AdminProductsComponent implements OnInit {
   modalMessage = '';
   actionToConfirm: (() => void) | null = null;
 
+    errorMessage: string = '';
+
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
@@ -99,48 +101,66 @@ export class AdminProductsComponent implements OnInit {
   }
 
   /** ================= CREAR / EDITAR ================= */
-  onSubmit() {
-    const productForm: ProductForm = {
-      id: this.selectedProductId ?? undefined,
-      name: this.name,
-      description: this.description,
-      price: this.price,
-      stock: this.stock,
-      categoryId: this.categoryId,
-      image: this.image,
-      active: this.active,
-    };
+onSubmit() {
+  const productForm: ProductForm = {
+    id: this.selectedProductId ?? undefined,
+    name: this.name,
+    description: this.description,
+    price: this.price,
+    stock: this.stock,
+    categoryId: this.categoryId,
+    image: this.image,
+    active: this.active,
+  };
 
-    // --- EDICIÓN ---
-    if (this.selectedProductId != null) {
-      this.productService.updateProduct(productForm).subscribe({
-        next: () => {
-          this.resetForm();
-          this.loadProducts();
-        },
-        error: (err) => console.error('Update error:', err),
-      });
-      return;
-    }
+  // limpiamos error anterior
+  this.errorMessage = '';
 
-    // --- CREACIÓN ---
-    this.productService.createProduct(productForm).subscribe({
+  // --- EDICIÓN ---
+  if (this.selectedProductId != null) {
+    this.productService.updateProduct(productForm).subscribe({
       next: () => {
         this.resetForm();
         this.loadProducts();
       },
-      error: (err) => console.error('Create error:', err),
+      error: (err) => {
+        console.error('Update error:', err);
+
+        if (err.status === 400 && err.error?.error) {
+          this.errorMessage = err.error.error; // ej: "Ya existe un producto con ese nombre."
+        } else {
+          this.errorMessage = 'Ocurrió un error al actualizar el producto.';
+        }
+      },
     });
+    return;
   }
 
-  resetForm() {
-    this.selectedProductId = null;
-    this.name = '';
-    this.description = '';
-    this.price = 0;
-    this.stock = 0;
-    this.categoryId = 0;
-    this.image = '';
-    this.active = true;
-  }
+  // --- CREACIÓN ---
+  this.productService.createProduct(productForm).subscribe({
+    next: () => {
+      this.resetForm();
+      this.loadProducts();
+    },
+    error: (err) => {
+      console.error('Create error:', err);
+
+      if (err.status === 400 && err.error?.error) {
+        this.errorMessage = err.error.error;
+      } else {
+        this.errorMessage = 'Ocurrió un error al crear el producto.';
+      }
+    },
+  });
 }
+
+resetForm() {
+  this.selectedProductId = null;
+  this.name = '';
+  this.description = '';
+  this.price = 0;
+  this.stock = 0;
+  this.categoryId = 0;
+  this.image = '';
+  this.active = true;
+}}
