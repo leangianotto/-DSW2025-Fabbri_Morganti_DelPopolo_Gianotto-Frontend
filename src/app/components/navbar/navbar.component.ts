@@ -15,8 +15,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin = false;
 
 
-  private userSubscription!: Subscription;
-  private cartSubscription!: Subscription;
+  private userSubscription: Subscription = new Subscription();
+  private cartSubscription: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
