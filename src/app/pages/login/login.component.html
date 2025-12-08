@@ -1,6 +1,12 @@
 <div class="container mt-5" style="max-width: 400px">
   <h2 class="mb-4 text-center fw-bold">Iniciar sesión</h2>
 
+  <!-- Mensaje de bloqueo -->
+  <div *ngIf="blocked" class="alert alert-danger text-center fw-bold">
+    Demasiados intentos. Podrás volver a intentar en
+    {{ blockSeconds }} segundos.
+  </div>
+
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
     <!-- Email -->
     <div class="mb-3">
@@ -14,6 +20,7 @@
         required
         email
         #emailInput="ngModel"
+        [disabled]="blocked || loading"
         [class.is-invalid]="emailInput.invalid && emailInput.touched"
       />
       <div
@@ -39,6 +46,7 @@
         required
         minlength="6"
         #passwordInput="ngModel"
+        [disabled]="blocked || loading"
         [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
       />
       <div
@@ -60,15 +68,15 @@
         #captchaRef
         siteKey="6LdtnQgsAAAAADyOWrGO8X8anfXNOyLPCOZKFLue"
         (resolved)="onCaptchaResolved($event)"
-      >
-      </re-captcha>
+        [ngClass]="{ 'opacity-50': blocked }"
+      ></re-captcha>
     </div>
 
     <!-- Botón -->
     <button
       type="submit"
       class="btn btn-primary w-100"
-      [disabled]="loginForm.invalid || loading || !captchaToken"
+      [disabled]="loginForm.invalid || loading || !captchaToken || blocked"
     >
       <span
         *ngIf="loading"
@@ -76,7 +84,11 @@
         role="status"
         aria-hidden="true"
       ></span>
-      Ingresar
+
+      <!-- Cambia el texto si está bloqueado -->
+      <ng-container *ngIf="!blocked; else blockedMsg"> Ingresar </ng-container>
+
+      <ng-template #blockedMsg> Espera {{ blockSeconds }}s… </ng-template>
     </button>
   </form>
 </div>

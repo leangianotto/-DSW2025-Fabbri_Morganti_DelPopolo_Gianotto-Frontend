@@ -15,7 +15,10 @@ export class LoginComponent {
   loading = false;
   captchaToken: string | null = null;
 
-  @ViewChild('captchaRef') captchaRef!: RecaptchaComponent; // Ajuste aquí
+  @ViewChild('captchaRef') captchaRef!: RecaptchaComponent;
+
+  blocked = false;        // ⬅️ Bloqueo temporal
+  blockSeconds = 0;       // ⬅️ Cuenta regresiva
 
   constructor(
     private authService: AuthService,
@@ -23,18 +26,39 @@ export class LoginComponent {
     private toast: ToastService
   ) {}
 
-  // Captcha resuelto
   onCaptchaResolved(token: string | null) {
     this.captchaToken = token;
   }
 
-  // Reset del captcha
   resetCaptcha() {
     this.captchaToken = null;
     if (this.captchaRef) this.captchaRef.reset();
   }
 
+  // ⬅️ Nueva función para bloquear el login X segundos
+  startBlock(seconds: number) {
+    this.blocked = true;
+    this.blockSeconds = seconds;
+
+    const interval = setInterval(() => {
+      this.blockSeconds--;
+
+      if (this.blockSeconds <= 0) {
+        this.blocked = false;
+        clearInterval(interval);
+      }
+    }, 1000);
+  }
+
   onSubmit(): void {
+    if (this.blocked) {
+      this.toast.showToast(
+        `Demasiados intentos. Espera ${this.blockSeconds} segundos.`,
+        'warning'
+      );
+      return;
+    }
+
     if (!this.email || !this.password || !this.captchaToken) {
       this.toast.showToast(
         'Debe completar todos los campos y resolver el CAPTCHA.',
@@ -53,10 +77,20 @@ export class LoginComponent {
           this.toast.showToast('Inicio de sesión exitoso.', 'success');
           setTimeout(() => this.router.navigate(['/products']), 1500);
         },
-        error: () => {
-          // Mostrar error
-          this.toast.showToast('Email o contraseña incorrectos.', 'danger');
-          // Limpiar el captcha para reintento
+        error: (error) => {
+          // ⬅️ Si es error 429 (demasiados intentos)
+          if (error.status === 429) {
+            this.toast.showToast(
+              'Demasiados intentos. Intenta nuevamente en 60 segundos.',
+              'danger'
+            );
+
+            this.startBlock(60); // ⬅️ Bloqueamos 60 segundos
+          } else {
+            // Error normal de credenciales incorrectas
+            this.toast.showToast('Email o contraseña incorrectos.', 'danger');
+          }
+
           this.resetCaptcha();
         },
       });
