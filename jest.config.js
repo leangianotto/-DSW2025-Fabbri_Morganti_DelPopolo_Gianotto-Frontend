@@ -10,6 +10,7 @@ module.exports = {
     cacheDirectory: '<rootDir>/jestCache',
     coverageReporters: ['text-summary', 'lcov'],
     coverageDirectory: 'coverage/mi-ecommerce',
+    verbose: true,
     globals: {
         'ts-jest': {
             tsconfig: '<rootDir>/tsconfig.spec.json',
