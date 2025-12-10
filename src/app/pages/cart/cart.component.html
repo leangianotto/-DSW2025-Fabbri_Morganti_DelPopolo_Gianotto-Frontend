@@ -29,6 +29,7 @@
             <div class="d-flex align-items-center justify-content-between">
               <button
                 class="btn btn-outline-secondary btn-quantity me-2"
+                data-testid="decrease-quantity-button"
                 (click)="updateQuantity(item.product.id, -1)"
                 [disabled]="item.quantity <= 1"
               >
@@ -39,6 +40,7 @@
 
               <button
                 class="btn btn-outline-secondary btn-quantity ms-2"
+                data-testid="increase-quantity-button"
                 (click)="updateQuantity(item.product.id, 1)"
                 [disabled]="item.quantity >= item.product.stock"
               >
@@ -69,6 +71,7 @@
       <div class="d-flex gap-2">
         <button
           class="btn btn-primary btn-action"
+          data-testid="pagar-button"
           (click)="pagarConStripe()"
           [disabled]="cartItems.length === 0"
         >

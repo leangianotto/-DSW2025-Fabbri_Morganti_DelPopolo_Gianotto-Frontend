@@ -3,6 +3,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { UserOrdersComponent } from './user-orders.component';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from 'src/app/services/order.service';
+import '@testing-library/jest-dom';
+import { expect } from '@jest/globals';
 
 
 describe('UserOrdersComponent', () => {

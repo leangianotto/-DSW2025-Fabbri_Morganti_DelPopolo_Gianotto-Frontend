@@ -159,6 +159,7 @@
         <!-- 🔥 Botón agregar con spinner -->
         <button
           class="btn btn-success d-flex align-items-center justify-content-center gap-2"
+          data-testid="add-to-cart-button"
           (click)="addToCart(product)"
           [disabled]="product.stock === 0 || addingProductId === product.id"
         >

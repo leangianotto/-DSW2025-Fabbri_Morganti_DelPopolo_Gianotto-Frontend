@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -9,7 +9,7 @@ import { RecaptchaComponent } from 'ng-recaptcha';
   selector: 'app-login',
   templateUrl: './login.component.html',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email = '';
   password = '';
   loading = false;
@@ -19,6 +19,7 @@ export class LoginComponent {
 
   blocked = false;        // ⬅️ Bloqueo temporal
   blockSeconds = 0;       // ⬅️ Cuenta regresiva
+  isE2E = false;         // ⬅️ verdadero cuando se ejecutan pruebas E2E
 
   constructor(
     private authService: AuthService,
@@ -26,11 +27,29 @@ export class LoginComponent {
     private toast: ToastService
   ) {}
 
+  ngOnInit(): void {
+    try {
+      // Activar modo E2E si `?e2e=true` está presente o la bandera window.__E2E__ está establecida
+      const params = new URLSearchParams(window.location.search);
+      this.isE2E = params.get('e2e') === 'true' || (window as any).__E2E__ === true;
+
+      if (this.isE2E) {
+        // Proporcionar un token de captcha falso para que el formulario se habilite de forma natural
+        this.captchaToken = 'fake-recaptcha-token';
+      }
+    } catch (e) {
+      // ignorar en entornos sin URL
+    }
+  }
+
   onCaptchaResolved(token: string | null) {
     this.captchaToken = token;
   }
 
   resetCaptcha() {
+    // En modo E2E mantenemos el token falso para que las pruebas no se bloqueen por resets
+    if (this.isE2E) return;
+
     this.captchaToken = null;
     if (this.captchaRef) this.captchaRef.reset();
   }
@@ -75,7 +94,7 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.toast.showToast('Inicio de sesión exitoso.', 'success');
-          setTimeout(() => this.router.navigate(['/products']), 1500);
+          setTimeout(() => this.router.navigate(['/products']), 1500); 
         },
         error: (error) => {
           // ⬅️ Si es error 429 (demasiados intentos)

@@ -22,6 +22,7 @@
         #emailInput="ngModel"
         [disabled]="blocked || loading"
         [class.is-invalid]="emailInput.invalid && emailInput.touched"
+        data-testid="email-input"
       />
       <div
         *ngIf="emailInput.invalid && emailInput.touched"
@@ -48,6 +49,7 @@
         #passwordInput="ngModel"
         [disabled]="blocked || loading"
         [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
+        data-testid="password-input"
       />
       <div
         *ngIf="passwordInput.invalid && passwordInput.touched"
@@ -69,6 +71,7 @@
         siteKey="6LdtnQgsAAAAADyOWrGO8X8anfXNOyLPCOZKFLue"
         (resolved)="onCaptchaResolved($event)"
         [ngClass]="{ 'opacity-50': blocked }"
+        data-testid="captcha"
       ></re-captcha>
     </div>
 
@@ -77,6 +80,7 @@
       type="submit"
       class="btn btn-primary w-100"
       [disabled]="loginForm.invalid || loading || !captchaToken || blocked"
+      data-testid="submit-button"
     >
       <span
         *ngIf="loading"
