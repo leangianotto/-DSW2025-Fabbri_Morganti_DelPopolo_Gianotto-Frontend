@@ -1,4 +1,4 @@
-describe('Login - E2E', () => {
+describe('Inicio de Sesión - E2E', () => {
   it('debería iniciar sesión correctamente y redirigir al home', () => {
     // Ir a la página de login (stubear captcha para entorno de tests). Añadimos
     // `?e2e=true` para que el componente active su modo E2E y ponga el token.

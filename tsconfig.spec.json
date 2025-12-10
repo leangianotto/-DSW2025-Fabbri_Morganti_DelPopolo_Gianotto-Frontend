@@ -13,5 +13,14 @@
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
+  ],
+  "files": [
+    "test.ts", 
+    "src/main.ts"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "cypress" // se asegura de que la carpeta Cypress esté excluida aquí
   ]
 }

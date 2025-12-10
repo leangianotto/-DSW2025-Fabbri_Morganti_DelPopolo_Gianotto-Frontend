@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { UserOrdersComponent } from './user-orders.component';
 import { FormsModule } from '@angular/forms';
-import { OrderService } from 'src/app/services/order.service';
+import { OrderService } from '../../services/order.service';
 import '@testing-library/jest-dom';
 import { expect } from '@jest/globals';
 
@@ -64,12 +64,12 @@ describe('UserOrdersComponent', () => {
     jest.restoreAllMocks();
   });
 
-  it('should create', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
   describe('Integración: Carga de pedidos del usuario', () => {
-    it('should load user orders on init', () => {
+    it('debería cargar los pedidos del usuario al iniciar', () => {
       fixture.detectChanges();
 
       const req = httpMock.expectOne('http://localhost:3000/api/orders/my-orders');
@@ -82,7 +82,7 @@ describe('UserOrdersComponent', () => {
       expect(component.loading).toBe(false);
     });
 
-    it('should set loading to true while fetching orders', (done) => {
+    it('debería establecer loading en true mientras obtiene los pedidos', (done) => {
       fixture.detectChanges();
 
       expect(component.loading).toBe(true);
@@ -97,7 +97,7 @@ describe('UserOrdersComponent', () => {
       });
     });
 
-    it('should handle error when loading user orders', () => {
+    it('debería manejar el error al cargar los pedidos del usuario', () => {
       jest.spyOn(console, 'error').mockImplementation(); //Oculta errores por usar mocks TEST SI FUNCIONA
       fixture.detectChanges();
 
@@ -110,7 +110,7 @@ describe('UserOrdersComponent', () => {
   });
 
   describe('Integración: Búsqueda de pedido por ID', () => {
-    it('should search for order by id and display it', () => {
+    it('debería buscar el pedido por id y mostrarlo', () => {
       component.buscarId = 1;
       component.buscarPedido();
 
@@ -125,7 +125,7 @@ describe('UserOrdersComponent', () => {
       expect(component.errorBusqueda).toBeNull();
     });
 
-    it('should handle error when searching for order by id', () => {
+    it('debería manejar el error al buscar el pedido por id', () => {
       component.buscarId = 999;
       component.buscarPedido();
 
@@ -140,7 +140,7 @@ describe('UserOrdersComponent', () => {
       expect(component.loading).toBe(false);
     });
 
-    it('should handle custom error message from server', () => {
+    it('debería manejar el mensaje de error personalizado del servidor', () => {
       component.buscarId = 999;
       component.buscarPedido();
 
@@ -154,14 +154,14 @@ describe('UserOrdersComponent', () => {
       expect(component.loading).toBe(false);
     });
 
-    it('should not search if buscarId is null', () => {
+    it('debería no buscar si buscarId es null', () => {
       component.buscarId = null;
       component.buscarPedido();
 
       httpMock.expectNone('http://localhost:3000/api/orders/null');
     });
 
-    it('should reset search state when buscarPedido is called', () => {
+    it('debería reiniciar el estado de búsqueda cuando se llama a buscarPedido', () => {
       component.pedidoBuscado = { id: 1 };
       component.errorBusqueda = 'Some error';
 
@@ -177,7 +177,7 @@ describe('UserOrdersComponent', () => {
   });
 
   describe('Integración: Ver todos los pedidos', () => {
-    it('should reset search state and reload all orders', () => {
+    it('debería reiniciar el estado de búsqueda y recargar todos los pedidos', () => {
       component.pedidoBuscado = { id: 1 };
       component.errorBusqueda = 'Error encontrado';
       component.buscarId = 1;
@@ -197,7 +197,7 @@ describe('UserOrdersComponent', () => {
   });
 
   describe('Integración: Servicio y Componente', () => {
-    it('should call orderService.getUserOrders() when cargarPedidos is called', () => {
+    it('debería llamar a orderService.getUserOrders() cuando se llama a cargarPedidos', () => {
       component.cargarPedidos();
 
       const req = httpMock.expectOne('http://localhost:3000/api/orders/my-orders');
@@ -208,7 +208,7 @@ describe('UserOrdersComponent', () => {
       expect(component.loading).toBe(false);
     });
 
-    it('should call orderService.getOrderById() when buscarPedido is called', () => {
+    it('debería llamar a orderService.getOrderById() cuando se llama a buscarPedido', () => {
       component.buscarId = 1;
       component.buscarPedido();
 
@@ -220,7 +220,7 @@ describe('UserOrdersComponent', () => {
       expect(component.loading).toBe(false);
     });
 
-    it('should handle multiple consecutive searches', () => {
+    it('debería manejar múltiples búsquedas consecutivas', () => {
       // First search
       component.buscarId = 1;
       component.buscarPedido();
@@ -240,7 +240,7 @@ describe('UserOrdersComponent', () => {
       expect(component.pedidoBuscado.id).toBe(2);
     });
 
-    it('should include authorization header in all requests', () => {
+    it('debería incluir el encabezado de autorización en todas las solicitudes', () => {
       localStorage.setItem('token', 'mock-token-12345');
 
       fixture.detectChanges();

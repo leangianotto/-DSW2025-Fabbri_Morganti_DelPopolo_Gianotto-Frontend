@@ -13,7 +13,7 @@ describe('CategoryService', () => {
     service = TestBed.inject(CategoryService);
   });
 
-  it('should be created', () => {
+  it('deberia crear el componente', () => {
     expect(service).toBeTruthy();
   });
 });

@@ -26,19 +26,19 @@ describe('AppComponent', () => {
     ]
   }));
 
-  it('should create the app', () => {
+  it('deberia crear el componente', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'a'`, () => {
+  it(`deberia tener como titulo 'a'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('a');
   });
 
-  it('should render navvar, toast, router-outlet and footer', () => {
+  it('deberia renderizar navvar, toast, router-outlet y footer', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;

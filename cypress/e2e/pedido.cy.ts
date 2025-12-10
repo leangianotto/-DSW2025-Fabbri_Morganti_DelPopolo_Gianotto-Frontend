@@ -13,7 +13,7 @@ describe('Realización de Pedido - E2E', () => {
     cy.intercept('POST', '/api/users/login', {
       statusCode: 200,
       body: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.fake',
+        token: 'fake-jwt-token',
         user: {
           id: 1,
           name: 'Test User',
@@ -50,7 +50,7 @@ describe('Realización de Pedido - E2E', () => {
     cy.intercept('POST', '/api/users/login', {
       statusCode: 200,
       body: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.fake',
+        token: 'fake-jwt-token',
         user: { id: 1, name: 'Test User', email: 'test@test.com' }
       }
     }).as('loginReq');
@@ -91,7 +91,7 @@ describe('Realización de Pedido - E2E', () => {
     cy.intercept('POST', '/api/users/login', {
       statusCode: 200,
       body: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.fake',
+        token: 'fake-jwt-token',
         user: { id: 1, name: 'Test User', email: 'test@test.com' }
       }
     }).as('loginReq');
@@ -138,7 +138,7 @@ describe('Realización de Pedido - E2E', () => {
     cy.intercept('POST', '/api/users/login', {
       statusCode: 200,
       body: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.fake',
+        token: 'fake-jwt-token',
         user: { id: 1, name: 'Test User', email: 'test@test.com' }
       }
     }).as('loginReq');
@@ -172,7 +172,7 @@ describe('Realización de Pedido - E2E', () => {
     cy.intercept('POST', '/api/users/login', {
       statusCode: 200,
       body: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.fake',
+        token: 'fake-jwt-token',
         user: { id: 1, name: 'Test User', email: 'test@test.com' }
       }
     }).as('loginReq');
