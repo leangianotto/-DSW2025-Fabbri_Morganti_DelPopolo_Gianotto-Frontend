@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
-import { ToastService } from 'src/app/services/toast.service';
+import { UserService } from '../../services/user.service';
+import { ToastService } from '../../services/toast.service';
 import { Router } from '@angular/router';
 
 @Component({

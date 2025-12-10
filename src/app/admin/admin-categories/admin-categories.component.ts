@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoryService, Category } from 'src/app/services/category.service';
+import { CategoryService, Category } from '../../services/category.service';
 
 @Component({
   selector: 'app-admin-categories',
@@ -82,6 +82,7 @@ createCategory() {
   }
 
   cancelEdit() {
+    this.editingCategory = null;
     this.editingCategory = null;
     this.updatedName = '';
   }
