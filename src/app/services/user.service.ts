@@ -19,9 +19,9 @@ interface RegisterResponse {
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/api/users';
+  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Registro común de usuario
   register(name: string, email: string, password: string): Observable<RegisterResponse> {
@@ -37,7 +37,7 @@ export class UserService {
   createUser(user: Partial<User>): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
-  
+
 
   // Editar usuario existente
   updateUser(id: number, data: Partial<User>): Observable<User> {

@@ -11,9 +11,9 @@ export interface Category {
   providedIn: 'root'
 })
 export class CategoryService {
-  private apiUrl = 'http://localhost:3000/api/categories';
+  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/categories';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrl);

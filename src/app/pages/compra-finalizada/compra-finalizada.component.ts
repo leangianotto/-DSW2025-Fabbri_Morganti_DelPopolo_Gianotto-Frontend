@@ -12,7 +12,7 @@ import { CartService } from '../../services/cart.service';
 })
 export class CompraFinalizadaComponent implements OnInit {
 
-  private readonly BACKEND_URL = 'http://localhost:3000';
+  private readonly BACKEND_URL = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com';
 
   order: any = null;
   loading = true;
@@ -24,7 +24,7 @@ export class CompraFinalizadaComponent implements OnInit {
     private orderService: OrderService,
     private cart: CartService,
     private router: Router
-  ) {}
+  ) { }
 
   async ngOnInit() {
     const sessionId = this.route.snapshot.queryParamMap.get('session_id');
@@ -64,7 +64,7 @@ export class CompraFinalizadaComponent implements OnInit {
             }
           });
         }
-       
+
       }
 
       // 3) Limpiar carrito local

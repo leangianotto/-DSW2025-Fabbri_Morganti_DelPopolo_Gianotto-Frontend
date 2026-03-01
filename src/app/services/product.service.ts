@@ -9,9 +9,9 @@ import { Product, ProductForm } from '../models/product';
 })
 export class ProductService {
 
-  private apiUrl = 'http://localhost:3000/api/products';
+  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/products';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /** Obtener solo productos activos (ruta pública) */
   getProducts(): Observable<Product[]> {
@@ -24,9 +24,9 @@ export class ProductService {
   }
 
   /** Obtener productos por un array de IDs */
-getProductsByIds(ids: number[]): Observable<Product[]> {
-  return this.http.get<Product[]>(`${this.apiUrl}/by-ids?ids=${ids.join(',')}`);
-}
+  getProductsByIds(ids: number[]): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/by-ids?ids=${ids.join(',')}`);
+  }
 
   /** Obtener productos por categoría */
   getProductsByCategory(categoryId: number): Observable<Product[]> {

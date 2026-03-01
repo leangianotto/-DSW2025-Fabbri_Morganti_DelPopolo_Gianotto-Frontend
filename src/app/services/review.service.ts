@@ -17,9 +17,9 @@ export interface Review {
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3000/api/reviews';
+  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/reviews';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getReviewsByProduct(productId: number): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.apiUrl}/product/${productId}`);
@@ -35,6 +35,6 @@ export class ReviewService {
 
 
   }
-  
+
 }
 
