@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface OrderItem {
   productId: number;
@@ -12,7 +13,7 @@ export interface OrderItem {
   providedIn: 'root',
 })
 export class OrderService {
-  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

@@ -41,9 +41,10 @@ describe('Realización de Pedido - E2E', () => {
     cy.get('table tbody tr', { timeout: 5000 }).should('have.length.greaterThan', 0);
   });
 
-  it('debería permitir cambiar cantidades antes de realizar el pedido', () => {
+    it('debería mostrar la cantidad inicial del producto como 1', () => {
     // 1. LOGIN
     (cy as any).visitWithRecaptcha('/login?e2e=true');
+
     cy.get('[data-testid="email-input"]').type('test@test.com');
     cy.get('[data-testid="password-input"]').type('123456');
 
@@ -51,35 +52,157 @@ describe('Realización de Pedido - E2E', () => {
       statusCode: 200,
       body: {
         token: 'fake-jwt-token',
-        user: { id: 1, name: 'Test User', email: 'test@test.com' }
+        user: {
+          id: 1,
+          name: 'Test User',
+          email: 'test@test.com'
+        }
       }
     }).as('loginReq');
 
     cy.get('[data-testid="submit-button"]').click();
     cy.wait('@loginReq');
 
-    // 2. ESPERAR A PRODUCTOS Y AGREGAR
+    // 2. AGREGAR PRODUCTO
     cy.url().should('include', '/products', { timeout: 10000 });
     cy.contains('Todos', { timeout: 5000 }).should('exist');
-    
-    cy.get('[data-testid="add-to-cart-button"]', { timeout: 5000 }).first().click({ force: true });
-    cy.contains('Producto agregado al carrito', { timeout: 5000 }).should('exist');
+
+    cy.get('[data-testid="add-to-cart-button"]', { timeout: 5000 })
+      .first()
+      .click({ force: true });
+
+    cy.contains('Producto agregado al carrito', { timeout: 5000 })
+      .should('exist');
 
     // 3. IR AL CARRITO
     cy.get('[data-testid="cart-link"]').click();
     cy.url().should('include', '/cart', { timeout: 10000 });
 
-    // 4. AUMENTAR LA CANTIDAD
-    cy.get('[data-testid="increase-quantity-button"]', { timeout: 5000 }).first().click({ force: true });
-    cy.wait(300);
+    // 4. VERIFICAR CANTIDAD INICIAL
+    cy.get('table tbody tr')
+      .first()
+      .find('td')
+      .eq(2)
+      .find('span')
+      .should('have.text', '1');
+  });
 
-    // 5. REDUCIR LA CANTIDAD
-    cy.get('[data-testid="decrease-quantity-button"]').first().click({ force: true });
-    cy.wait(300);
 
-    // Verificar que los botones aún existen después de cambios
-    cy.get('[data-testid="increase-quantity-button"]').should('exist');
-    cy.get('[data-testid="decrease-quantity-button"]').should('exist');
+  it('debería permitir aumentar la cantidad de un producto', () => {
+    // 1. LOGIN
+    (cy as any).visitWithRecaptcha('/login?e2e=true');
+
+    cy.get('[data-testid="email-input"]').type('test@test.com');
+    cy.get('[data-testid="password-input"]').type('123456');
+
+    cy.intercept('POST', '/api/users/login', {
+      statusCode: 200,
+      body: {
+        token: 'fake-jwt-token',
+        user: {
+          id: 1,
+          name: 'Test User',
+          email: 'test@test.com'
+        }
+      }
+    }).as('loginReq');
+
+    cy.get('[data-testid="submit-button"]').click();
+    cy.wait('@loginReq');
+
+    // 2. AGREGAR PRODUCTO
+    cy.url().should('include', '/products', { timeout: 10000 });
+    cy.contains('Todos', { timeout: 5000 }).should('exist');
+
+    cy.get('[data-testid="add-to-cart-button"]', { timeout: 5000 })
+      .first()
+      .click({ force: true });
+
+    cy.contains('Producto agregado al carrito', { timeout: 5000 })
+      .should('exist');
+
+    // 3. IR AL CARRITO
+    cy.get('[data-testid="cart-link"]').click();
+    cy.url().should('include', '/cart', { timeout: 10000 });
+
+    // 4. AUMENTAR CANTIDAD
+    cy.get('[data-testid="increase-quantity-button"]')
+      .first()
+      .should('not.be.disabled')
+      .click();
+
+    // 5. VERIFICAR QUE AUMENTÓ A 2
+    cy.get('table tbody tr')
+      .first()
+      .find('td')
+      .eq(2)
+      .find('span')
+      .should('have.text', '2');
+  });
+
+
+  it('debería permitir disminuir la cantidad de un producto', () => {
+    // 1. LOGIN
+    (cy as any).visitWithRecaptcha('/login?e2e=true');
+
+    cy.get('[data-testid="email-input"]').type('test@test.com');
+    cy.get('[data-testid="password-input"]').type('123456');
+
+    cy.intercept('POST', '/api/users/login', {
+      statusCode: 200,
+      body: {
+        token: 'fake-jwt-token',
+        user: {
+          id: 1,
+          name: 'Test User',
+          email: 'test@test.com'
+        }
+      }
+    }).as('loginReq');
+
+    cy.get('[data-testid="submit-button"]').click();
+    cy.wait('@loginReq');
+
+    // 2. AGREGAR PRODUCTO
+    cy.url().should('include', '/products', { timeout: 10000 });
+    cy.contains('Todos', { timeout: 5000 }).should('exist');
+
+    cy.get('[data-testid="add-to-cart-button"]', { timeout: 5000 })
+      .first()
+      .click({ force: true });
+
+    cy.contains('Producto agregado al carrito', { timeout: 5000 })
+      .should('exist');
+
+    // 3. IR AL CARRITO
+    cy.get('[data-testid="cart-link"]').click();
+    cy.url().should('include', '/cart', { timeout: 10000 });
+
+    // 4. AUMENTAR A 2
+    cy.get('[data-testid="increase-quantity-button"]')
+      .first()
+      .click();
+
+    cy.get('table tbody tr')
+      .first()
+      .find('td')
+      .eq(2)
+      .find('span')
+      .should('have.text', '2');
+
+    // 5. DISMINUIR A 1
+    cy.get('[data-testid="decrease-quantity-button"]')
+      .first()
+      .should('not.be.disabled')
+      .click();
+
+    // 6. VERIFICAR QUE VOLVIÓ A 1
+    cy.get('table tbody tr')
+      .first()
+      .find('td')
+      .eq(2)
+      .find('span')
+      .should('have.text', '1');
   });
 
   it('debería permitir eliminar un producto del carrito', () => {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 import { Product, ProductForm } from '../models/product';
 
@@ -9,7 +10,7 @@ import { Product, ProductForm } from '../models/product';
 })
 export class ProductService {
 
-  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/products';
+  private apiUrl = environment.apiUrl + '/products';
 
   constructor(private http: HttpClient) { }
 

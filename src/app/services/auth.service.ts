@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CartService } from '../services/cart.service';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 interface LoginResponse {
   token: string;
@@ -18,7 +20,7 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com/api/users';
+  private apiUrl = environment.apiUrl + '/users';
 
   private currentUserSubject = new BehaviorSubject<LoginResponse['user'] | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
