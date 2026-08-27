@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { OrderService } from '../../services/order.service';
 import { CartService } from '../../services/cart.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-compra-finalizada',
@@ -12,7 +13,7 @@ import { CartService } from '../../services/cart.service';
 })
 export class CompraFinalizadaComponent implements OnInit {
 
-  private readonly BACKEND_URL = 'https://dsw2025-fabbri-morganti-delpopolo.onrender.com';
+  private readonly BACKEND_URL = environment.apiUrl;
 
   order: any = null;
   loading = true;
@@ -42,7 +43,7 @@ export class CompraFinalizadaComponent implements OnInit {
       // 1) Confirmar pago + crear orden en el backend
       const confirm: any = await lastValueFrom(
         this.http.post(
-          `${this.BACKEND_URL}/api/checkout/confirm`,
+          `${this.BACKEND_URL}/checkout/confirm`,
           { sessionId },
           { headers }
         )
