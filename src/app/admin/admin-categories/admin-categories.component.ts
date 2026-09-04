@@ -106,12 +106,12 @@ createCategory() {
     this.cancelModal();
   }
 
-  /** ================== ELIMINAR ================== */
+  /** ================== DESACTIVAR ================== */
 
   askDeleteCategory(id: number) {
     this.openModal(
-      'Eliminar categoría',
-      '¿Seguro que querés eliminar esta categoría? Esta acción NO se puede deshacer.',
+      'Desactivar categoría',
+      '¿Seguro que querés desactivar esta categoría?',
       () => this.deleteCategory(id)
     );
   }
@@ -119,7 +119,7 @@ createCategory() {
   deleteCategory(id: number) {
     this.categoryService.delete(id).subscribe({
       next: () => this.loadCategories(),
-      error: (err) => console.error('Error al eliminar categoría', err),
+      error: (err) => console.error('Error al desactivar categoría', err),
     });
   }
 }

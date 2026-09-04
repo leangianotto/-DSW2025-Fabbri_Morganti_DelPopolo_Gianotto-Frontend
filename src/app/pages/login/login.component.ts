@@ -105,9 +105,28 @@ export class LoginComponent implements OnInit {
             );
 
             this.startBlock(60); // ⬅️ Bloqueamos 60 segundos
+          } else if (error.status === 0 || error.status >= 500) {
+            // Sitio no disponible / error de conexión o servidor
+            this.toast.showToast(
+              'Sitio no disponible. Intenta nuevamente más tarde.',
+              'danger'
+            );
+          } else if (error.status === 400 || error.status === 401) {
+            if (
+              error.error?.message === 'Captcha inválido' ||
+              error.error?.message === 'Captcha requerido'
+            ) {
+              this.toast.showToast(error.error.message, 'warning');
+            } else {
+              // Error de credenciales incorrectas
+              this.toast.showToast('Email o contraseña incorrectos.', 'danger');
+            }
           } else {
-            // Error normal de credenciales incorrectas
-            this.toast.showToast('Email o contraseña incorrectos.', 'danger');
+            // Cualquier otro error inesperado
+            this.toast.showToast(
+              'Sitio no disponible. Intenta nuevamente más tarde.',
+              'danger'
+            );
           }
 
           this.resetCaptcha();

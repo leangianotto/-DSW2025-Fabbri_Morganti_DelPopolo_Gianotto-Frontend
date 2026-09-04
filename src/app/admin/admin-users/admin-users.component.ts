@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService, User } from 'src/app/services/user.service';
+import { UserService, User } from '../../services/user.service';
 
 @Component({
   selector: 'app-admin-users',
   templateUrl: './admin-users.component.html',
+  styleUrls: ['./admin-users.component.css']
 })
 export class AdminUsersComponent implements OnInit {
   users: User[] = [];
   newUser: User = { name: '', email: '', password: '', role: 'user' };
-  editUser: User | null = null;
+  editUser: any = null;
   error = '';
   success = '';
 
@@ -72,16 +73,17 @@ export class AdminUsersComponent implements OnInit {
     });
   }
 
-  deleteUser(id: number): void {
-    if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+  deleteUser(id?: number): void {
+    if (!id) return;
+    if (!confirm('¿Estás seguro de desactivar este usuario?')) return;
 
     this.userService.deleteUser(id).subscribe({
       next: () => {
-        this.success = 'Usuario eliminado.';
+        this.success = 'Usuario desactivado.';
         this.loadUsers();
       },
       error: (err) => {
-        this.error = 'Error al eliminar usuario.';
+        this.error = 'Error al desactivar usuario.';
         console.error(err);
       }
     });

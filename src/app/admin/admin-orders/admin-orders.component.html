@@ -152,7 +152,7 @@
                           Editar
                         </button>
                         <button
-                          class="btn btn-info btn-sm me-2 fw-semibold"
+                          class="btn btn-info btn-sm fw-semibold"
                           (click)="toggleDetails(order.id)"
                         >
                           {{
@@ -160,12 +160,6 @@
                               ? "Ocultar detalles"
                               : "Ver detalles"
                           }}
-                        </button>
-                        <button
-                          class="btn btn-danger btn-sm fw-semibold"
-                          (click)="askDeleteOrder(order.id)"
-                        >
-                          Eliminar
                         </button>
                       </ng-template>
                     </td>
